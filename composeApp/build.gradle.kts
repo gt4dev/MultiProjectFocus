@@ -10,6 +10,12 @@ plugins {
 }
 
 kotlin {
+
+    compilerOptions {
+        // in the whole project - turn off warnings ab. using 'beta' expect/actual classes
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)

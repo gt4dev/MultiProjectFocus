@@ -1,13 +1,21 @@
 package gtr.mpfocus
 
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import gtr.mpfocus.domain.model.platform.MPFile
+import gtr.mpfocus.domain.model.platform.MPFolder
+import gtr.mpfocus.domain.model.platform.OperatingSystemActions
+import kotlinx.coroutines.runBlocking
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "mpfocus",
-    ) {
-        App()
-    }
+fun main() = runBlocking {
+    val m = OperatingSystemActions()
+    m.openFile(MPFile("""C:\Users\gtr\Dropbox\wf67\projects\home\px\aps\test123.md"""))
+    m.openFolder(MPFolder("""C:\Users\gtr\Dropbox\wf67\projects\home\px\"""))
 }
+
+//fun main() = application {
+//    Window(
+//        onCloseRequest = ::exitApplication,
+//        title = "mpfocus",
+//    ) {
+//        App()
+//    }
+//}
