@@ -54,11 +54,11 @@ kotlin {
 }
 
 android {
-    namespace = "gtr.mpfocus.mpfocus"
+    namespace = "gtr.mpfocus"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "gtr.mpfocus.mpfocus"
+        applicationId = "gtr.mpfocus"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
@@ -86,11 +86,11 @@ dependencies {
 
 compose.desktop {
     application {
-        mainClass = "gtr.mpfocus.mpfocus.MainKt"
+        mainClass = "gtr.mpfocus.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "gtr.mpfocus.mpfocus"
+            packageName = "gtr.mpfocus"
             packageVersion = "1.0.0"
         }
     }

@@ -1,4 +1,4 @@
-package gtr.mpfocus.mpfocus
+package gtr.mpfocus
 
 import platform.UIKit.UIDevice
 

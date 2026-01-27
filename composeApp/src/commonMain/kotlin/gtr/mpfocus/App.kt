@@ -1,4 +1,4 @@
-package gtr.mpfocus.mpfocus
+package gtr.mpfocus
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
