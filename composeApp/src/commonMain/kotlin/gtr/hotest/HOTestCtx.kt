@@ -1,8 +1,11 @@
 package gtr.hotest
 
+import gtr.hotest.variants.VariantsRuntime
+
 class HOTestCtx {
 
     val hotestCtx: HOTestCtx = this
+    internal var variantsRuntime: VariantsRuntime? = null
 
     private val items = mutableMapOf<String, Any>()
 
