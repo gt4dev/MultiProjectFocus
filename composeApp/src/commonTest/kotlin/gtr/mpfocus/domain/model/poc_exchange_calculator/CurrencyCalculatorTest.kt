@@ -1,6 +1,8 @@
 package gtr.mpfocus.domain.model.poc_exchange_calculator
 
-import gtr.hotest.Suspendable.hotestCtx
+import gtr.hotest.HOTestCtx
+import gtr.hotest.hotest
+import gtr.hotest.hotestAsync
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.ExchangeRate
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.Money
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`given 'exchange rates' returns rates`
@@ -10,22 +12,29 @@ import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`then exchange cal
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`then exchange calculator returns`
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`when exchange calculator converts`
 import kotlinx.coroutines.test.runTest
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class CurrencyCalculatorTest {
 
-    @Test
-    fun `exchange currencies - direct rate use`() = runTest {
-        hotestCtx {
+    lateinit var commonHotestCtx: HOTestCtx
+
+    @BeforeTest
+    fun setup() {
+        commonHotestCtx = hotest {
             `given there is a fake 'exchange rates' service`()
             `given 'exchange rates' returns rates`(
                 ExchangeRate("EUR", "PLN", 4),
                 ExchangeRate("EUR", "CHF", 2),
                 ExchangeRate("EUR", "USD", 1)
             )
-
             `given there is real exchange calculator`()
+        }
+    }
 
+    @Test
+    fun `exchange currencies - direct rate use`() = runTest {
+        hotestAsync(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.PLN
@@ -38,16 +47,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - reversed rate use`() = runTest {
-        hotestCtx {
-            `given there is a fake 'exchange rates' service`()
-            `given 'exchange rates' returns rates`(
-                ExchangeRate("EUR", "PLN", 4),
-                ExchangeRate("EUR", "CHF", 2),
-                ExchangeRate("EUR", "USD", 1)
-            )
-
-            `given there is real exchange calculator`()
-
+        hotestAsync(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(40, "PLN"),
                 Currency.EUR
@@ -60,16 +60,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - the same from and to`() = runTest {
-        hotestCtx {
-            `given there is a fake 'exchange rates' service`()
-            `given 'exchange rates' returns rates`(
-                ExchangeRate("EUR", "PLN", 4),
-                ExchangeRate("EUR", "CHF", 2),
-                ExchangeRate("EUR", "USD", 1)
-            )
-
-            `given there is real exchange calculator`()
-
+        hotestAsync(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.EUR
@@ -82,7 +73,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - but rate not found`() = runTest {
-        hotestCtx {
+        hotestAsync {
             `given there is a fake 'exchange rates' service`()
             `given 'exchange rates' returns rates`(
                 ExchangeRate("EUR", "PLN", 4),

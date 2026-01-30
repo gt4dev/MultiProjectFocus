@@ -22,15 +22,3 @@ class HOTestCtx {
         return items[key] as T
     }
 }
-
-fun hotestCtx(test: HOTestCtx.() -> Unit) {
-    val ctx = HOTestCtx()
-    ctx.test()
-}
-
-object Suspendable {
-    suspend fun hotestCtx(test: suspend HOTestCtx.() -> Unit) {
-        val ctx = HOTestCtx()
-        ctx.test()
-    }
-}
