@@ -1,4 +1,4 @@
-package gtr.mpfocus.domain.model
+package gtr.mpfocus.domain.model.core
 
 import kotlin.jvm.JvmInline
 
@@ -7,6 +7,7 @@ value class ProjectId(val id: String)
 
 class Project(
     val id: ProjectId
+    // ..
 )
 
 enum class ProjectKnownFiles {

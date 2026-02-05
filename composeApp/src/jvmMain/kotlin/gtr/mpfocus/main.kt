@@ -1,8 +1,8 @@
 package gtr.mpfocus
 
-import gtr.mpfocus.os_actions.MPFile
-import gtr.mpfocus.os_actions.MPFolder
-import gtr.mpfocus.os_actions.OperatingSystemActions
+import gtr.mpfocus.system_actions.MPFile
+import gtr.mpfocus.system_actions.MPFolder
+import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {

@@ -1,7 +1,7 @@
 package gtr.mpfocus.domain.model.repos
 
-import gtr.mpfocus.domain.model.Project
-import gtr.mpfocus.domain.model.ProjectId
+import gtr.mpfocus.domain.model.core.Project
+import gtr.mpfocus.domain.model.core.ProjectId
 import kotlinx.coroutines.flow.Flow
 
 interface ProjectsRepo {

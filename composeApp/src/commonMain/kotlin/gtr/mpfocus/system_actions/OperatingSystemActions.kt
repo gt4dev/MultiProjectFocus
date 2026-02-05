@@ -1,4 +1,4 @@
-package gtr.mpfocus.os_actions
+package gtr.mpfocus.system_actions
 
 class OperatingSystemActions {
     suspend fun openFile(f: MPFile) {
