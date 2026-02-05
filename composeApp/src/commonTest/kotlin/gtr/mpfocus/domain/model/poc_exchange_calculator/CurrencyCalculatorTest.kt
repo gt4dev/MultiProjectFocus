@@ -1,8 +1,8 @@
 package gtr.mpfocus.domain.model.poc_exchange_calculator
 
 import gtr.hotest.HOTestCtx
-import gtr.hotest.hotest
-import gtr.hotest.hotestAsync
+import gtr.hotest.hotest as hotestSync
+import gtr.hotest.Async.hotest
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.ExchangeRate
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.Money
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`given 'exchange rates' returns rates`
@@ -21,7 +21,7 @@ class CurrencyCalculatorTest {
 
     @BeforeTest
     fun setup() {
-        commonHotestCtx = hotest {
+        commonHotestCtx = hotestSync {
             `given there is a fake 'exchange rates' service`()
             `given 'exchange rates' returns rates`(
                 ExchangeRate("EUR", "PLN", 4),
@@ -34,7 +34,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - direct rate use`() = runTest {
-        hotestAsync(commonHotestCtx) {
+        hotest(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.PLN
@@ -47,7 +47,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - reversed rate use`() = runTest {
-        hotestAsync(commonHotestCtx) {
+        hotest(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(40, "PLN"),
                 Currency.EUR
@@ -60,7 +60,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - the same from and to`() = runTest {
-        hotestAsync(commonHotestCtx) {
+        hotest(commonHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.EUR
@@ -73,7 +73,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - but rate not found`() = runTest {
-        hotestAsync {
+        hotest {
             `given there is a fake 'exchange rates' service`()
             `given 'exchange rates' returns rates`(
                 ExchangeRate("EUR", "PLN", 4),
