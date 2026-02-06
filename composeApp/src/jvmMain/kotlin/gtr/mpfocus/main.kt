@@ -2,11 +2,11 @@ package gtr.mpfocus
 
 import gtr.mpfocus.system_actions.MPFile
 import gtr.mpfocus.system_actions.MPFolder
-import gtr.mpfocus.system_actions.OperatingSystemActions
+import gtr.mpfocus.system_actions.OperatingSystemActionsImpl
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
-    val m = OperatingSystemActions()
+    val m = OperatingSystemActionsImpl()
     m.openFile(MPFile("""C:\Users\gtr\Dropbox\wf67\projects\home\px\aps\test123.md"""))
     m.openFolder(MPFolder("""C:\Users\gtr\Dropbox\wf67\projects\home\px\"""))
 }
