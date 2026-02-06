@@ -1,8 +1,7 @@
 package gtr.mpfocus.domain.model.poc_exchange_calculator
 
-import gtr.hotest.HOTestCtx
-import gtr.hotest.hotest as hotestSync
 import gtr.hotest.Async.hotest
+import gtr.hotest.setupHotestCtx
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.ExchangeRate
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Models.Money
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`given 'exchange rates' returns rates`
@@ -12,16 +11,12 @@ import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`then exchange cal
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`then exchange calculator returns`
 import gtr.mpfocus.domain.model.poc_exchange_calculator.Steps.`when exchange calculator converts`
 import kotlinx.coroutines.test.runTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class CurrencyCalculatorTest {
 
-    lateinit var commonHotestCtx: HOTestCtx
-
-    @BeforeTest
-    fun setup() {
-        commonHotestCtx = hotestSync {
+    companion object {
+        fun prepareHotestCtx() = setupHotestCtx {
             `given there is a fake 'exchange rates' service`()
             `given 'exchange rates' returns rates`(
                 ExchangeRate("EUR", "PLN", 4),
@@ -34,7 +29,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - direct rate use`() = runTest {
-        hotest(commonHotestCtx) {
+        hotest(beforeTest = ::prepareHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.PLN
@@ -47,7 +42,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - reversed rate use`() = runTest {
-        hotest(commonHotestCtx) {
+        hotest(beforeTest = ::prepareHotestCtx) {
             `when exchange calculator converts`(
                 Money(40, "PLN"),
                 Currency.EUR
@@ -60,7 +55,7 @@ class CurrencyCalculatorTest {
 
     @Test
     fun `exchange currencies - the same from and to`() = runTest {
-        hotest(commonHotestCtx) {
+        hotest(beforeTest = ::prepareHotestCtx) {
             `when exchange calculator converts`(
                 Money(10, "EUR"),
                 Currency.EUR
