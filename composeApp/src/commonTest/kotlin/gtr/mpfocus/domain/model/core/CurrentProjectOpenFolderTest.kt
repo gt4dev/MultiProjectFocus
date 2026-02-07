@@ -7,8 +7,8 @@ import gtr.mpfocus.domain.model.core.Steps.`given action preference 'if no folde
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model' service`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns success`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in current project'`
-import gtr.mpfocus.system_actions.Steps.`given 'fake file system' always returns that folder doesn't exist`
-import gtr.mpfocus.system_actions.Steps.`given 'fake file system' always returns that folder is created successfully`
+import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder doesn't exist`
+import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder is created successfully`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake operating system'`
 import gtr.mpfocus.system_actions.Steps.`then 'fake file system' checks path exist'`
 import gtr.mpfocus.system_actions.Steps.`then 'fake file system' creates folder`
@@ -22,8 +22,8 @@ class CurrentProjectOpenFolderTest {
     fun `open current project folder - but folder doesn't exist`() = runTest {
         hotest {
 
-            `given 'fake file system' always returns that folder doesn't exist`()
-            `given 'fake file system' always returns that folder is created successfully`()
+            `given 'fake file system' returns that folder doesn't exist`()
+            `given 'fake file system' returns that folder is created successfully`()
             `given exists 'fake operating system'`()
             `given exists 'real model' service`()
 
@@ -31,7 +31,6 @@ class CurrentProjectOpenFolderTest {
 
                 variant("auto-create") {
                     `given action preference 'if no folder' is`("auto create")
-                    `then 'fake file system' checks path exist'`()
                     `when model executes command 'open folder in current project'`()
                     `then 'fake file system' checks path exist'`()
                     `then 'fake file system' creates folder`()

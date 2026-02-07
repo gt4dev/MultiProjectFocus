@@ -6,7 +6,7 @@ interface CoreActions {
 
     suspend fun openCurrentProjectFolder(
         actionPreferences: ActionPreferences = ActionPreferences()
-    )
+    ): ActionResult
 
     suspend fun openCurrentProjectFile(file: ProjectKnownFiles)
 
@@ -16,6 +16,13 @@ interface CoreActions {
     suspend fun openPinnedProjectFolder(pinPosition: Int)
 
     suspend fun openPinnedProjectFile(pinPosition: Int, file: ProjectKnownFiles)
+}
+
+
+sealed class ActionResult {
+    object Success : ActionResult()
+    object Failure : ActionResult()
+    object Cancel : ActionResult()
 }
 
 
