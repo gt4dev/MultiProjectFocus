@@ -1,5 +1,7 @@
 package gtr.mpfocus.system_actions
 
+// todo: remove MPFile i MPFolder, use directly okio.Path
+// todo: also use Path in userInstructor.createFolder etc...
 expect class MPFile(initPath: String) {
     val path: String
 }

@@ -1,14 +1,26 @@
 package gtr.mpfocus.system_actions
 
-// todo: replace with Path from 'kotlinx-io' or 'okio.Path'
-data class TmpPath(
-    val path: String
-)
+import okio.FileSystem
+import okio.Path
+import okio.SYSTEM
 
 interface FileSystemActions {
 
-    // check whether file or folder exists
-    fun pathExists(path: TmpPath): Boolean
+    // check whether file OR folder exists
+    fun pathExists(path: Path): Boolean
 
-    fun createFolder(path: TmpPath): Boolean
+    fun createFolder(path: Path): Boolean
+}
+
+class FileSystemActionsImpl : FileSystemActions {
+
+    override fun pathExists(path: Path): Boolean {
+        val exists = FileSystem.SYSTEM.exists(path)
+        return exists
+    }
+
+    override fun createFolder(path: Path): Boolean {
+        FileSystem.SYSTEM.createDirectories(path)
+        return true
+    }
 }

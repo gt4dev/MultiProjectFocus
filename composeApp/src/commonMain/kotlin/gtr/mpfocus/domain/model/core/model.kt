@@ -1,13 +1,10 @@
 package gtr.mpfocus.domain.model.core
 
-import kotlin.jvm.JvmInline
-
-@JvmInline
-value class ProjectId(val id: String)
+import okio.Path
 
 class Project(
-    val id: ProjectId
-    // ..
+    val projectId: Long = 0, // default Room's "new entity"
+    val folderPath: Path, // todo: using Path enforces to map it to 'SQLite's String'
 )
 
 enum class ProjectKnownFiles {

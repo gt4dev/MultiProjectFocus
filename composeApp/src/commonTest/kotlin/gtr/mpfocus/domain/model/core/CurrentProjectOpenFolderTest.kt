@@ -9,6 +9,7 @@ import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model instructs user to`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in current project'`
+import gtr.mpfocus.domain.model.repos.Steps.`given exists 'fake projects repo'`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder is created successfully`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake file system'`
@@ -27,6 +28,9 @@ class CurrentProjectOpenFolderTest {
             `given exists 'fake file system'`()
             `given exists 'fake operating system'`()
             `given exists 'fake user instructor'`()
+            `given exists 'fake projects repo'`(
+                "any/path/to/project"
+            )
             `given exists 'real model'`()
 
             variants("user preference if no folder") {

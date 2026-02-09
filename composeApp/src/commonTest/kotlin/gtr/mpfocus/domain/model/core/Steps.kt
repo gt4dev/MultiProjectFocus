@@ -6,6 +6,7 @@ import dev.mokkery.mock
 import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
 import kotlin.test.assertEquals
+import gtr.mpfocus.domain.model.repos.Steps as ProjectsRepoSteps
 import gtr.mpfocus.system_actions.Steps as FileSystemActionsSteps
 
 object Steps {
@@ -33,6 +34,7 @@ object Steps {
         this[KEY_CORE_ACTIONS] = CoreActionsImpl(
             this[FileSystemActionsSteps.KEY_OPERATING_SYSTEM_ACTIONS],
             this[FileSystemActionsSteps.KEY_FILE_SYSTEM_ACTIONS],
+            this[ProjectsRepoSteps.KEY_PROJECTS_REPO],
         )
     }
 
