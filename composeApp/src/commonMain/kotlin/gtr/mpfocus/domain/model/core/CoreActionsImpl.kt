@@ -10,7 +10,7 @@ class CoreActionsImpl(
     val fileSystemActions: FileSystemActions
 ) : CoreActions {
 
-    override suspend fun openCurrentProjectFolder(actionPreferences: ActionPreferences): ActionResult {
+    override suspend fun openCurrentProjectFolder(actionPreferences: ActionPreferences, userInstructor: UserInstructor): ActionResult {
         // TEMPORARY IMPL - ONLY FOR SATISFYING TEST
         val folderPath = TmpPath("current-project")
 
@@ -26,12 +26,20 @@ class CoreActionsImpl(
                     operatingSystemActions.openFolder(MPFolder(folderPath.path))
                     ActionResult.Success
                 } else {
-                    ActionResult.Failure
+                    ActionResult.Error("failed to create folder")
                 }
             }
 
-            ActionPreferences.IfNoFileOrFolder.ReportError -> ActionResult.Failure
-            ActionPreferences.IfNoFileOrFolder.AskUser -> ActionResult.Cancel
+            ActionPreferences.IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
+            ActionPreferences.IfNoFileOrFolder.InstructUser -> {
+                userInstructor.createFolder(folderPath.path)
+                if (fileSystemActions.pathExists(folderPath)) {
+                    operatingSystemActions.openFolder(MPFolder(folderPath.path))
+                    ActionResult.Success
+                } else {
+                    ActionResult.Error("folder doesn't exist")
+                }
+            }
         }
     }
 

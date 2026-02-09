@@ -1,20 +1,26 @@
 package gtr.mpfocus.domain.model.core
 
+import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
 import kotlin.test.assertEquals
+import gtr.mpfocus.system_actions.Steps as FileSystemActionsSteps
 
 object Steps {
 
     private const val KEY_ACTION_PREFERENCES = "KEY_ACTION_PREFERENCES"
     private const val KEY_CORE_ACTIONS = "KEY_CORE_ACTIONS"
     private const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
+    private const val KEY_USER_INSTRUCTOR = "KEY_USER_INSTRUCTOR"
 
     fun HOTestCtx.`given action preference 'if no folder' is`(pref: String) {
 
         val ifNoFolder: ActionPreferences.IfNoFileOrFolder = when (pref) {
             "auto create" -> ActionPreferences.IfNoFileOrFolder.AutoCreate
             "report error" -> ActionPreferences.IfNoFileOrFolder.ReportError
-            "ask user" -> ActionPreferences.IfNoFileOrFolder.AskUser
+            "instruct user" -> ActionPreferences.IfNoFileOrFolder.InstructUser
             else -> throw IllegalArgumentException("Unknown preference $pref")
         }
 
@@ -23,21 +29,53 @@ object Steps {
         )
     }
 
-    fun HOTestCtx.`given exists 'real model' service`() {
+    fun HOTestCtx.`given exists 'real model'`() {
         this[KEY_CORE_ACTIONS] = CoreActionsImpl(
-            this[gtr.mpfocus.system_actions.Steps.KEY_OPERATING_SYSTEM_ACTIONS],
-            this[gtr.mpfocus.system_actions.Steps.KEY_FILE_SYSTEM_ACTIONS],
+            this[FileSystemActionsSteps.KEY_OPERATING_SYSTEM_ACTIONS],
+            this[FileSystemActionsSteps.KEY_FILE_SYSTEM_ACTIONS],
         )
     }
 
     suspend fun HOTestCtx.`when model executes command 'open folder in current project'`() {
         val coreActions: CoreActions = this[KEY_CORE_ACTIONS]
         val aps: ActionPreferences = this[KEY_ACTION_PREFERENCES]
-        val result = coreActions.openCurrentProjectFolder(aps)
+        val ui: UserInstructor = this[KEY_USER_INSTRUCTOR]
+        val result = coreActions.openCurrentProjectFolder(aps, ui)
         this[KEY_CORE_ACTIONS_RESULT] = result
     }
 
-    fun HOTestCtx.`then model returns success`() {
-        assertEquals(ActionResult.Success, this[KEY_CORE_ACTIONS_RESULT])
+    fun HOTestCtx.`then model returns`(result: String) {
+        val expected = when {
+            result == "success" -> ActionResult.Success
+            result.startsWith("error: ") -> {
+                val msg = result.removePrefix("error: ")
+                ActionResult.Error(msg)
+            }
+
+            else -> throw IllegalArgumentException("Unknown result '$result'")
+        }
+        assertEquals(expected, this[KEY_CORE_ACTIONS_RESULT])
+    }
+
+    fun HOTestCtx.`given exists 'fake user instructor'`() {
+        if (this.containsKey(KEY_USER_INSTRUCTOR)) {
+            return this[KEY_USER_INSTRUCTOR]
+        }
+
+        val obj = mock<UserInstructor>(MockMode.autofill) // create default impl of interface
+        this[KEY_USER_INSTRUCTOR] = obj
+    }
+
+    fun HOTestCtx.`then model instructs user to`(what: String) {
+        val obj: UserInstructor = this[KEY_USER_INSTRUCTOR]
+        when (what) {
+            "create folder" -> {
+                verifySuspend {
+                    obj.createFolder(any())
+                }
+            }
+
+            else -> throw IllegalArgumentException("unknown option: $what")
+        }
     }
 }

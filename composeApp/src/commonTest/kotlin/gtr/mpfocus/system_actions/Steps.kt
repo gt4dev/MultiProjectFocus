@@ -2,17 +2,32 @@ package gtr.mpfocus.system_actions
 
 import dev.mokkery.*
 import dev.mokkery.answering.returns
+import dev.mokkery.answering.sequentiallyReturns
 import dev.mokkery.matcher.any
+import dev.mokkery.verify.VerifyMode
 import gtr.hotest.HOTestCtx
+import gtr.mpfocus.system_actions.Converters.exists
 
 object Steps {
 
     const val KEY_FILE_SYSTEM_ACTIONS = "KEY_FILE_SYSTEM_ACTIONS"
     const val KEY_OPERATING_SYSTEM_ACTIONS = "KEY_OPERATING_SYSTEM_ACTIONS"
 
-    fun HOTestCtx.`given 'fake file system' returns that folder doesn't exist`() {
+    fun HOTestCtx.`given exists 'fake file system'`() {
+        this.initMockFileSystemActions()
+    }
+
+    fun HOTestCtx.`given 'fake file system' returns that folder`(state: String) {
         val obj = this.initMockFileSystemActions()
-        every { obj.pathExists(any()) } returns false
+        every { obj.pathExists(any()) } returns state.exists()
+    }
+
+    fun HOTestCtx.`given 'fake file system' returns that folder`(
+        vararg subsequentReturns: String,
+    ) {
+        val returnsVals = subsequentReturns.map { it.exists() }
+        val obj = this.initMockFileSystemActions()
+        every { obj.pathExists(any()) } sequentiallyReturns returnsVals
     }
 
     fun HOTestCtx.`given 'fake file system' returns that folder is created successfully`() {
@@ -22,7 +37,7 @@ object Steps {
 
     fun HOTestCtx.`then 'fake file system' checks path exist'`() {
         val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
-        verify {
+        verify(mode = VerifyMode.order) { // each 'verify' counterparts each call
             obj.pathExists(any())
         }
     }
