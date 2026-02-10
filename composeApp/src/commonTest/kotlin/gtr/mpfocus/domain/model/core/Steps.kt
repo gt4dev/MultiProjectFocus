@@ -11,10 +11,10 @@ import gtr.mpfocus.system_actions.Steps as FileSystemActionsSteps
 
 object Steps {
 
-    private const val KEY_ACTION_PREFERENCES = "KEY_ACTION_PREFERENCES"
-    private const val KEY_CORE_ACTIONS = "KEY_CORE_ACTIONS"
-    private const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
-    private const val KEY_USER_INSTRUCTOR = "KEY_USER_INSTRUCTOR"
+    const val KEY_ACTION_PREFERENCES = "KEY_ACTION_PREFERENCES"
+    const val KEY_CORE_ACTIONS = "KEY_CORE_ACTIONS"
+    const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
+    const val KEY_USER_INSTRUCTOR = "KEY_USER_INSTRUCTOR"
 
     fun HOTestCtx.`given action preference 'if no folder' is`(pref: String) {
 
@@ -74,6 +74,12 @@ object Steps {
             "create folder" -> {
                 verifySuspend {
                     obj.createFolder(any())
+                }
+            }
+
+            "set current project" -> {
+                verifySuspend {
+                    obj.setCurrentProject()
                 }
             }
 

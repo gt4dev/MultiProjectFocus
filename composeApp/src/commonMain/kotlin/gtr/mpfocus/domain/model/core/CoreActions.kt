@@ -37,6 +37,7 @@ interface UserInstructor {
 }
 
 
+// todo: replace with TypedResult<Nothing>
 sealed class ActionResult {
     object Success : ActionResult()
     data class Error(val msg: String) : ActionResult()

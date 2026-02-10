@@ -1,5 +1,6 @@
 package gtr.mpfocus.domain.model.core
 
+import gtr.common.TypedResult
 import gtr.mpfocus.domain.model.repos.ProjectsRepo
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.OperatingSystemActions
@@ -10,6 +11,24 @@ class CoreActionsImpl(
     val fileSystemActions: FileSystemActions,
     val projectsRepo: ProjectsRepo,
 ) : CoreActions {
+
+    suspend fun assureCurrentProjectReady(
+        userInstructor: UserInstructor = UserInstructor.None
+    ): TypedResult<Project> {
+        val currentProject = projectsRepo.getCurrentProject().first()
+        if (currentProject != null) {
+            return TypedResult.Success(currentProject)
+        }
+
+        userInstructor.setCurrentProject()
+
+        val updatedProject = projectsRepo.getCurrentProject().first()
+        return if (updatedProject == null) {
+            TypedResult.Error("no current project")
+        } else {
+            TypedResult.Success(updatedProject)
+        }
+    }
 
     override suspend fun openCurrentProjectFolder(
         actionPreferences: ActionPreferences,
