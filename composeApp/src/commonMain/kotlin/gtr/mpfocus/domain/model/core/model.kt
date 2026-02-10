@@ -1,10 +1,10 @@
 package gtr.mpfocus.domain.model.core
 
-import okio.Path
+import gtr.mpfocus.system_actions.FolderPath
 
 class Project(
     val projectId: Long = 0, // default Room's "new entity"
-    val folderPath: Path, // todo: using Path enforces to map it to 'SQLite's String'
+    val folderPath: FolderPath, // todo: using FolderPath suggests use of separated Room entities
 )
 
 enum class ProjectKnownFiles {

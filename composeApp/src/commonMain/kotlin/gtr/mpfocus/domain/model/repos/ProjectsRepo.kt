@@ -1,6 +1,7 @@
 package gtr.mpfocus.domain.model.repos
 
 import gtr.mpfocus.domain.model.core.Project
+import gtr.mpfocus.system_actions.FolderPath
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.Path.Companion.toPath
@@ -24,7 +25,7 @@ class DevTimeProjectsRepoImpl(val hasCP: Boolean) : ProjectsRepo {
             emit(
                 Project(
                     123,
-                    "c:/hello123/bla/baa/123".toPath(),
+                    FolderPath("c:/hello123/bla/baa/123".toPath()),
                 )
             )
         } else {

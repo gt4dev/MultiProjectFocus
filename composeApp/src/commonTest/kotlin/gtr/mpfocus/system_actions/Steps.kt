@@ -19,7 +19,7 @@ object Steps {
 
     fun HOTestCtx.`given 'fake file system' returns that folder`(state: String) {
         val obj = this.initMockFileSystemActions()
-        every { obj.pathExists(any()) } returns state.exists()
+        every { obj.pathExists(any<FolderPath>()) } returns state.exists()
     }
 
     fun HOTestCtx.`given 'fake file system' returns that folder`(
@@ -27,7 +27,7 @@ object Steps {
     ) {
         val returnsVals = subsequentReturns.map { it.exists() }
         val obj = this.initMockFileSystemActions()
-        every { obj.pathExists(any()) } sequentiallyReturns returnsVals
+        every { obj.pathExists(any<FolderPath>()) } sequentiallyReturns returnsVals
     }
 
     fun HOTestCtx.`given 'fake file system' returns that folder is created successfully`() {
@@ -38,7 +38,7 @@ object Steps {
     fun HOTestCtx.`then 'fake file system' checks path exist'`() {
         val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
         verify(mode = VerifyMode.order) { // each 'verify' counterparts each call
-            obj.pathExists(any())
+            obj.pathExists(any<FolderPath>())
         }
     }
 

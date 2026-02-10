@@ -6,6 +6,7 @@ import dev.mokkery.every
 import dev.mokkery.mock
 import gtr.hotest.HOTestCtx
 import gtr.mpfocus.domain.model.core.Project
+import gtr.mpfocus.system_actions.FolderPath
 import kotlinx.coroutines.flow.flowOf
 import okio.Path.Companion.toPath
 
@@ -27,7 +28,12 @@ object Steps {
         this[KEY_PROJECTS_REPO] = obj
 
         if (currentProject != null) {
-            every { obj.getCurrentProject() } returns flowOf(Project(123, currentProject.toPath()))
+            every { obj.getCurrentProject() } returns flowOf(
+                Project(
+                    123,
+                    FolderPath(currentProject.toPath())
+                )
+            )
         }
     }
 }

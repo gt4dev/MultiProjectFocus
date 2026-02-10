@@ -6,21 +6,31 @@ import okio.SYSTEM
 
 interface FileSystemActions {
 
-    // check whether file OR folder exists
-    fun pathExists(path: Path): Boolean
+    fun pathExists(path: FilePath): Boolean
+    fun pathExists(path: FolderPath): Boolean
 
-    fun createFolder(path: Path): Boolean
+    fun createFolder(path: FolderPath): Boolean
 }
 
 class FileSystemActionsImpl : FileSystemActions {
 
-    override fun pathExists(path: Path): Boolean {
-        val exists = FileSystem.SYSTEM.exists(path)
-        return exists
+    override fun pathExists(path: FilePath): Boolean {
+        return pathExists(path.path)
     }
 
-    override fun createFolder(path: Path): Boolean {
-        FileSystem.SYSTEM.createDirectories(path)
+    override fun pathExists(path: FolderPath): Boolean {
+        return pathExists(path.path)
+    }
+
+    override fun createFolder(path: FolderPath): Boolean {
+        FileSystem.SYSTEM.createDirectories(path.path)
         return true
+    }
+
+    companion object {
+        private fun pathExists(path: Path): Boolean {
+            val exists = FileSystem.SYSTEM.exists(path)
+            return exists
+        }
     }
 }

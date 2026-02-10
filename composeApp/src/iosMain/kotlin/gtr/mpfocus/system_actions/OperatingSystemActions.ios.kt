@@ -1,20 +1,9 @@
 package gtr.mpfocus.system_actions
 
-actual class MPFile actual constructor(initPath: String) {
-    actual val path: String
-        get() = TODO()
-}
-
-actual class MPFolder actual constructor(initPath: String) {
-    actual val path: String
-        get() = TODO()
-}
-
-actual suspend fun realOpenFile(f: MPFile) {
+actual suspend fun realOpenFile(f: FilePath) {
     TODO()
 }
 
-
-actual suspend fun realOpenFolder(f: MPFolder) {
+actual suspend fun realOpenFolder(f: FolderPath) {
     TODO()
 }

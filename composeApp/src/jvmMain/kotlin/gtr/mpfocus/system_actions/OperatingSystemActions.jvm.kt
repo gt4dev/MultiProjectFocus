@@ -2,16 +2,8 @@ package gtr.mpfocus.system_actions
 
 import java.io.File
 
-actual class MPFile actual constructor(initPath: String) {
-    actual val path = initPath
-}
-
-actual class MPFolder actual constructor(initPath: String) {
-    actual val path = initPath
-}
-
-actual suspend fun realOpenFile(f: MPFile) {
-    val file = File(f.path)
+actual suspend fun realOpenFile(f: FilePath) {
+    val file = File(f.path.toString())
     require(file.exists()) { "File does not exist: ${file.absolutePath}" }
     require(file.isFile()) { "It's not file: ${file.absolutePath}" }
     val os = System.getProperty("os.name").lowercase()
@@ -24,8 +16,8 @@ actual suspend fun realOpenFile(f: MPFile) {
 }
 
 
-actual suspend fun realOpenFolder(f: MPFolder) {
-    val folder = File(f.path)
+actual suspend fun realOpenFolder(f: FolderPath) {
+    val folder = File(f.path.toString())
     require(folder.exists() && folder.isDirectory)
     val os = System.getProperty("os.name").lowercase()
     val path = folder.absolutePath

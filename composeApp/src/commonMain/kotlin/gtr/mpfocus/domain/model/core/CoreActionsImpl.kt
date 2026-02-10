@@ -2,7 +2,6 @@ package gtr.mpfocus.domain.model.core
 
 import gtr.mpfocus.domain.model.repos.ProjectsRepo
 import gtr.mpfocus.system_actions.FileSystemActions
-import gtr.mpfocus.system_actions.MPFolder
 import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
 
@@ -23,7 +22,7 @@ class CoreActionsImpl(
         val folderPath = currentProject.folderPath
 
         if (fileSystemActions.pathExists(folderPath)) {
-            operatingSystemActions.openFolder(MPFolder(folderPath.toString()))
+            operatingSystemActions.openFolder(folderPath)
             return ActionResult.Success
         }
 
@@ -31,7 +30,7 @@ class CoreActionsImpl(
             ActionPreferences.IfNoFileOrFolder.AutoCreate -> {
                 val created = fileSystemActions.createFolder(folderPath)
                 if (created) {
-                    operatingSystemActions.openFolder(MPFolder(folderPath.toString()))
+                    operatingSystemActions.openFolder(folderPath)
                     ActionResult.Success
                 } else {
                     ActionResult.Error("failed to create folder")
@@ -40,9 +39,9 @@ class CoreActionsImpl(
 
             ActionPreferences.IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
             ActionPreferences.IfNoFileOrFolder.InstructUser -> {
-                userInstructor.createFolder(folderPath.toString())
+                userInstructor.createFolder(folderPath.path.toString())
                 if (fileSystemActions.pathExists(folderPath)) {
-                    operatingSystemActions.openFolder(MPFolder(folderPath.toString()))
+                    operatingSystemActions.openFolder(folderPath)
                     ActionResult.Success
                 } else {
                     ActionResult.Error("folder doesn't exist")
