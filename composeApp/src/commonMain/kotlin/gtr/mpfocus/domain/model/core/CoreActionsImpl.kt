@@ -6,6 +6,7 @@ import gtr.mpfocus.domain.model.core.ActionPreferences.IfNoFileOrFolder
 import gtr.mpfocus.domain.model.repos.ProjectsRepo
 import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FileSystemActions
+import gtr.mpfocus.system_actions.FolderPath
 import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
 
@@ -70,6 +71,41 @@ class CoreActionsImpl(
                     Result.textFailure("no file exists")
                 }
             }
+        }
+    }
+
+    suspend fun ensureProjectFolderReady(
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): Result<FolderPath> {
+        val currentProject = requireNotNull(
+            projectsRepo.getCurrentProject().first()
+        ) { "current project must be set first" }
+
+        val folderPath = currentProject.folderPath
+
+        if (fileSystemActions.pathExists(folderPath)) {
+            return Result.success(folderPath)
+        }
+
+        when (actionPreferences.ifNoFileOrFolder) {
+            IfNoFileOrFolder.NotifyUser -> {
+                userNotifier.createFolder(folderPath.path.toString())
+            }
+
+            IfNoFileOrFolder.ReportError -> {
+                return Result.textFailure("no project folder")
+            }
+
+            IfNoFileOrFolder.AutoCreate -> {
+                fileSystemActions.createFolder(folderPath)
+            }
+        }
+
+        return if (fileSystemActions.pathExists(folderPath)) {
+            Result.success(folderPath)
+        } else {
+            Result.textFailure("no project folder")
         }
     }
 
