@@ -48,6 +48,18 @@ object Steps {
         this[KEY_CORE_ACTIONS_RESULT] = result
     }
 
+    suspend fun HOTestCtx.`when model executes command 'open file in current project'`(
+        file: ProjectFiles,
+    ) {
+        val coreActions: CoreActions = this[KEY_CORE_ACTIONS]
+        val aps: ActionPreferences = this[KEY_ACTION_PREFERENCES]
+        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+
+        val result = coreActions.openCurrentProjectFile(file, aps, ui)
+
+        this[KEY_CORE_ACTIONS_RESULT] = result
+    }
+
     fun HOTestCtx.`then model returns`(result: String) {
         val expected = when {
             result == "success" -> ActionResult.Success

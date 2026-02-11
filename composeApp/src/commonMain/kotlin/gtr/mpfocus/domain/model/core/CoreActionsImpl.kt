@@ -1,5 +1,6 @@
 package gtr.mpfocus.domain.model.core
 
+import gtr.common.distillText
 import gtr.common.textFailure
 import gtr.mpfocus.domain.model.config.ConfigService
 import gtr.mpfocus.domain.model.core.ActionPreferences.IfNoFileOrFolder
@@ -148,8 +149,23 @@ class CoreActionsImpl(
         }
     }
 
-    override suspend fun openCurrentProjectFile(file: ProjectFiles) {
-        TODO("Not yet implemented")
+
+    override suspend fun openCurrentProjectFile(
+        file: ProjectFiles,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): ActionResult {
+        assureCurrentProjectReady(userNotifier)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(actionPreferences, userNotifier)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        val projectFile = ensureProjectFileReady(file, actionPreferences, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFile(projectFile)
+        return ActionResult.Success
     }
 
     override suspend fun openPinnedProjectFolder(pinPosition: Int) {

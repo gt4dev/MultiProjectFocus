@@ -75,6 +75,13 @@ object Steps {
         every { obj.createFile(any()) } returns true
     }
 
+    fun HOTestCtx.`then 'fake file system' checks file path exist'`() {
+        val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
+        verify(mode = VerifyMode.order) {
+            obj.pathExists(any<FilePath>())
+        }
+    }
+
     fun HOTestCtx.`then 'fake file system' creates file`() {
         val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
         verify {
@@ -97,6 +104,13 @@ object Steps {
         val obj: OperatingSystemActions = this[KEY_OPERATING_SYSTEM_ACTIONS]
         verifySuspend {
             obj.openFolder(any())
+        }
+    }
+
+    fun HOTestCtx.`then 'fake operating system' opens file`() {
+        val obj: OperatingSystemActions = this[KEY_OPERATING_SYSTEM_ACTIONS]
+        verifySuspend {
+            obj.openFile(any())
         }
     }
 }

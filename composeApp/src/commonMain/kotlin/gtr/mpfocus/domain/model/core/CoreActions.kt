@@ -9,7 +9,11 @@ interface CoreActions {
         userNotifier: UserNotifier = UserNotifier.None
     ): ActionResult
 
-    suspend fun openCurrentProjectFile(file: ProjectFiles)
+    suspend fun openCurrentProjectFile(
+        file: ProjectFiles,
+        actionPreferences: ActionPreferences = ActionPreferences(),
+        userNotifier: UserNotifier = UserNotifier.None
+    ): ActionResult
 
 
     // pinned project actions

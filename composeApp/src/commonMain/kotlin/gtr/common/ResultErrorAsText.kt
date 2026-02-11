@@ -9,3 +9,8 @@ data class TextBearingException(val text: String) : Throwable()
 fun <T> Result.Companion.textFailure(text: String): Result<T> {
     return Result.failure(TextBearingException(text))
 }
+
+fun Throwable.distillText(): String = when (this) {
+    is TextBearingException -> text
+    else -> "[text not found]"
+}
