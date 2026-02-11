@@ -4,9 +4,9 @@ import gtr.hotest.Async.hotest
 import gtr.hotest.variants.Async.variant
 import gtr.hotest.variants.Async.variants
 import gtr.mpfocus.domain.model.core.Steps.`given action preference 'if no folder' is`
-import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user instructor'`
+import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user notifier'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
-import gtr.mpfocus.domain.model.core.Steps.`then model instructs user to`
+import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in current project'`
 import gtr.mpfocus.domain.model.repos.Steps.`given exists 'fake projects repo'`
@@ -27,7 +27,7 @@ class CurrentProjectOpenFolderTest {
         hotest {
             `given exists 'fake file system'`()
             `given exists 'fake operating system'`()
-            `given exists 'fake user instructor'`()
+            `given exists 'fake user notifier'`()
             `given exists 'fake projects repo'`(
                 "any/path/to/project"
             )
@@ -55,7 +55,7 @@ class CurrentProjectOpenFolderTest {
                 }
 
                 variant("notify user") {
-                    `given action preference 'if no folder' is`("instruct user")
+                    `given action preference 'if no folder' is`("notify user")
 
                     variants("user actions after notification") {
 
@@ -66,7 +66,7 @@ class CurrentProjectOpenFolderTest {
                             )
                             `when model executes command 'open folder in current project'`()
                             `then 'fake file system' checks path exist'`()
-                            `then model instructs user to`("create folder")
+                            `then model notify user to`("create folder")
                             `then 'fake file system' checks path exist'`()
                             `then 'fake operating system' opens folder`()
                             `then model returns`("success")
@@ -79,7 +79,7 @@ class CurrentProjectOpenFolderTest {
                             )
                             `when model executes command 'open folder in current project'`()
                             `then 'fake file system' checks path exist'`()
-                            `then model instructs user to`("create folder")
+                            `then model notify user to`("create folder")
                             `then 'fake file system' checks path exist'`()
                             `then model returns`("error: folder doesn't exist")
                         }

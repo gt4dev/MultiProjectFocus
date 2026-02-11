@@ -1,6 +1,6 @@
 package gtr.mpfocus.domain.model.core
 
-import gtr.common.TypedResult
+import gtr.common.textFailure
 import gtr.mpfocus.domain.model.repos.ProjectsRepo
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.OperatingSystemActions
@@ -13,26 +13,26 @@ class CoreActionsImpl(
 ) : CoreActions {
 
     suspend fun assureCurrentProjectReady(
-        userInstructor: UserInstructor = UserInstructor.None
-    ): TypedResult<Project> {
+        userNotifier: UserNotifier = UserNotifier.None
+    ): Result<Project> {
         val currentProject = projectsRepo.getCurrentProject().first()
         if (currentProject != null) {
-            return TypedResult.Success(currentProject)
+            return Result.success(currentProject)
         }
 
-        userInstructor.setCurrentProject()
+        userNotifier.setCurrentProject()
 
         val updatedProject = projectsRepo.getCurrentProject().first()
         return if (updatedProject == null) {
-            TypedResult.Error("no current project")
+            Result.textFailure("no current project")
         } else {
-            TypedResult.Success(updatedProject)
+            Result.success(updatedProject)
         }
     }
 
     override suspend fun openCurrentProjectFolder(
         actionPreferences: ActionPreferences,
-        userInstructor: UserInstructor
+        userNotifier: UserNotifier
     ): ActionResult {
         // todo: replace returning error with asking user 'set CP'
         val currentProject = projectsRepo.getCurrentProject().first()
@@ -45,7 +45,7 @@ class CoreActionsImpl(
             return ActionResult.Success
         }
 
-        return when (actionPreferences.ifNoFolder) {
+        return when (actionPreferences.ifNoFileOrFolder) {
             ActionPreferences.IfNoFileOrFolder.AutoCreate -> {
                 val created = fileSystemActions.createFolder(folderPath)
                 if (created) {
@@ -57,8 +57,8 @@ class CoreActionsImpl(
             }
 
             ActionPreferences.IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
-            ActionPreferences.IfNoFileOrFolder.InstructUser -> {
-                userInstructor.createFolder(folderPath.path.toString())
+            ActionPreferences.IfNoFileOrFolder.NotifyUser -> {
+                userNotifier.createFolder(folderPath.path.toString())
                 if (fileSystemActions.pathExists(folderPath)) {
                     operatingSystemActions.openFolder(folderPath)
                     ActionResult.Success

@@ -14,19 +14,19 @@ object Steps {
     const val KEY_ACTION_PREFERENCES = "KEY_ACTION_PREFERENCES"
     const val KEY_CORE_ACTIONS = "KEY_CORE_ACTIONS"
     const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
-    const val KEY_USER_INSTRUCTOR = "KEY_USER_INSTRUCTOR"
+    const val KEY_USER_NOTIFIER = "KEY_USER_NOTIFIER"
 
     fun HOTestCtx.`given action preference 'if no folder' is`(pref: String) {
 
         val ifNoFolder: ActionPreferences.IfNoFileOrFolder = when (pref) {
             "auto create" -> ActionPreferences.IfNoFileOrFolder.AutoCreate
             "report error" -> ActionPreferences.IfNoFileOrFolder.ReportError
-            "instruct user" -> ActionPreferences.IfNoFileOrFolder.InstructUser
+            "notify user" -> ActionPreferences.IfNoFileOrFolder.NotifyUser
             else -> throw IllegalArgumentException("Unknown preference $pref")
         }
 
         this[KEY_ACTION_PREFERENCES] = ActionPreferences(
-            ifNoFolder = ifNoFolder
+            ifNoFileOrFolder = ifNoFolder
         )
     }
 
@@ -41,7 +41,7 @@ object Steps {
     suspend fun HOTestCtx.`when model executes command 'open folder in current project'`() {
         val coreActions: CoreActions = this[KEY_CORE_ACTIONS]
         val aps: ActionPreferences = this[KEY_ACTION_PREFERENCES]
-        val ui: UserInstructor = this[KEY_USER_INSTRUCTOR]
+        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
         val result = coreActions.openCurrentProjectFolder(aps, ui)
         this[KEY_CORE_ACTIONS_RESULT] = result
     }
@@ -59,17 +59,17 @@ object Steps {
         assertEquals(expected, this[KEY_CORE_ACTIONS_RESULT])
     }
 
-    fun HOTestCtx.`given exists 'fake user instructor'`() {
-        if (this.containsKey(KEY_USER_INSTRUCTOR)) {
-            return this[KEY_USER_INSTRUCTOR]
+    fun HOTestCtx.`given exists 'fake user notifier'`() {
+        if (this.containsKey(KEY_USER_NOTIFIER)) {
+            return this[KEY_USER_NOTIFIER]
         }
 
-        val obj = mock<UserInstructor>(MockMode.autofill) // create default impl of interface
-        this[KEY_USER_INSTRUCTOR] = obj
+        val obj = mock<UserNotifier>(MockMode.autofill) // create default impl of interface
+        this[KEY_USER_NOTIFIER] = obj
     }
 
-    fun HOTestCtx.`then model instructs user to`(what: String) {
-        val obj: UserInstructor = this[KEY_USER_INSTRUCTOR]
+    fun HOTestCtx.`then model notify user to`(what: String) {
+        val obj: UserNotifier = this[KEY_USER_NOTIFIER]
         when (what) {
             "create folder" -> {
                 verifySuspend {

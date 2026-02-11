@@ -19,8 +19,7 @@ fun main(): Unit = runBlocking {
     )
     val result = m.openCurrentProjectFolder(
         ActionPreferences(
-            ifNoFolder = ActionPreferences.IfNoFileOrFolder.ReportError,
-            ifNoFile = ActionPreferences.IfNoFileOrFolder.ReportError,
+            ifNoFileOrFolder = ActionPreferences.IfNoFileOrFolder.ReportError,
         )
     )
     println(result)
