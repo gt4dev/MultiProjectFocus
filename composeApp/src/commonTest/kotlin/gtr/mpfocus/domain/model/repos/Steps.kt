@@ -16,24 +16,24 @@ object Steps {
     const val KEY_PROJECTS_REPO = "KEY_PROJECTS_REPO"
 
     fun HOTestCtx.`given exists 'fake projects repo'`(
-        currentProject: String? = null
+        withCurrentProject: String? = null
     ) {
         val obj = initMockProjectsRepo()
-        if (currentProject != null) {
+        if (withCurrentProject != null) {
             every { obj.getCurrentProject() } returns flowOf(
                 Project(
                     123,
-                    FolderPath(currentProject.toPath())
+                    FolderPath(withCurrentProject.toPath())
                 )
             )
         }
     }
 
-    fun HOTestCtx.`given 'fake projects repo' returns current project`(
-        vararg currentProjects: String?,
+    fun HOTestCtx.`given exists 'fake projects repo'`(
+        vararg withSequentialCurrentProject: String?,
     ) {
         val obj = initMockProjectsRepo()
-        val flows = currentProjects.map { currentProject ->
+        val flows = withSequentialCurrentProject.map { currentProject ->
             if (currentProject == null) {
                 flowOf(null)
             } else {

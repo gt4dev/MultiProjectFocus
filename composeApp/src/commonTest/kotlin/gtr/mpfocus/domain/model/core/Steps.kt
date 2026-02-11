@@ -6,6 +6,7 @@ import dev.mokkery.mock
 import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
 import kotlin.test.assertEquals
+import gtr.mpfocus.domain.model.config.Steps as ConfigSteps
 import gtr.mpfocus.domain.model.repos.Steps as ProjectsRepoSteps
 import gtr.mpfocus.system_actions.Steps as FileSystemActionsSteps
 
@@ -16,13 +17,13 @@ object Steps {
     const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
     const val KEY_USER_NOTIFIER = "KEY_USER_NOTIFIER"
 
-    fun HOTestCtx.`given action preference 'if no folder' is`(pref: String) {
+    fun HOTestCtx.`given exists 'action preferences'`(withIfNoFolder: String) {
 
-        val ifNoFolder: ActionPreferences.IfNoFileOrFolder = when (pref) {
+        val ifNoFolder: ActionPreferences.IfNoFileOrFolder = when (withIfNoFolder) {
             "auto create" -> ActionPreferences.IfNoFileOrFolder.AutoCreate
             "report error" -> ActionPreferences.IfNoFileOrFolder.ReportError
             "notify user" -> ActionPreferences.IfNoFileOrFolder.NotifyUser
-            else -> throw IllegalArgumentException("Unknown preference $pref")
+            else -> throw IllegalArgumentException("Unknown preference $withIfNoFolder")
         }
 
         this[KEY_ACTION_PREFERENCES] = ActionPreferences(
@@ -35,6 +36,7 @@ object Steps {
             this[FileSystemActionsSteps.KEY_OPERATING_SYSTEM_ACTIONS],
             this[FileSystemActionsSteps.KEY_FILE_SYSTEM_ACTIONS],
             this[ProjectsRepoSteps.KEY_PROJECTS_REPO],
+            this[ConfigSteps.KEY_CONFIG_SERVICE],
         )
     }
 
@@ -80,6 +82,12 @@ object Steps {
             "set current project" -> {
                 verifySuspend {
                     obj.setCurrentProject()
+                }
+            }
+
+            "create file" -> {
+                verifySuspend {
+                    obj.createFile(any())
                 }
             }
 

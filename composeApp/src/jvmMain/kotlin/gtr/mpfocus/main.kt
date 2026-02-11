@@ -1,5 +1,6 @@
 package gtr.mpfocus
 
+import gtr.mpfocus.domain.model.config.ConfigService
 import gtr.mpfocus.domain.model.core.ActionPreferences
 import gtr.mpfocus.domain.model.core.CoreActionsImpl
 import gtr.mpfocus.domain.model.repos.DevTimeProjectsRepoImpl
@@ -11,11 +12,13 @@ fun main(): Unit = runBlocking {
     val operatingSystemActions = OperatingSystemActionsImpl()
     val fileSystemActions = FileSystemActionsImpl()
     val projectsRepo = DevTimeProjectsRepoImpl(true)
+    val configService = ConfigService.Basic
 
     val m = CoreActionsImpl(
         operatingSystemActions,
         fileSystemActions,
         projectsRepo,
+        configService,
     )
     val result = m.openCurrentProjectFolder(
         ActionPreferences(

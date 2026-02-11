@@ -1,7 +1,10 @@
 package gtr.mpfocus.domain.model.core
 
 import gtr.common.textFailure
+import gtr.mpfocus.domain.model.config.ConfigService
+import gtr.mpfocus.domain.model.core.ActionPreferences.IfNoFileOrFolder
 import gtr.mpfocus.domain.model.repos.ProjectsRepo
+import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
@@ -10,6 +13,7 @@ class CoreActionsImpl(
     val operatingSystemActions: OperatingSystemActions,
     val fileSystemActions: FileSystemActions,
     val projectsRepo: ProjectsRepo,
+    val configService: ConfigService,
 ) : CoreActions {
 
     suspend fun assureCurrentProjectReady(
@@ -30,6 +34,45 @@ class CoreActionsImpl(
         }
     }
 
+    suspend fun ensureProjectFileReady(
+        file: ProjectFiles,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): Result<FilePath> {
+        val currentProject = requireNotNull(
+            projectsRepo.getCurrentProject().first()
+        ) { "current project must be set first" }
+
+        val projectConfig = configService.getProjectConfig()
+        val fileName = projectConfig.fileName(file)
+        val filePath = FilePath(currentProject.folderPath.path / fileName)
+
+        if (fileSystemActions.pathExists(filePath)) {
+            return Result.success(filePath)
+        }
+
+        return when (actionPreferences.ifNoFileOrFolder) {
+            IfNoFileOrFolder.NotifyUser -> {
+                userNotifier.createFile(filePath.path.toString())
+                if (fileSystemActions.pathExists(filePath)) {
+                    Result.success(filePath)
+                } else {
+                    Result.textFailure("no file exists")
+                }
+            }
+
+            IfNoFileOrFolder.ReportError -> Result.textFailure("no file exists")
+            IfNoFileOrFolder.AutoCreate -> {
+                fileSystemActions.createFile(filePath)
+                if (fileSystemActions.pathExists(filePath)) {
+                    Result.success(filePath)
+                } else {
+                    Result.textFailure("no file exists")
+                }
+            }
+        }
+    }
+
     override suspend fun openCurrentProjectFolder(
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
@@ -46,7 +89,7 @@ class CoreActionsImpl(
         }
 
         return when (actionPreferences.ifNoFileOrFolder) {
-            ActionPreferences.IfNoFileOrFolder.AutoCreate -> {
+            IfNoFileOrFolder.AutoCreate -> {
                 val created = fileSystemActions.createFolder(folderPath)
                 if (created) {
                     operatingSystemActions.openFolder(folderPath)
@@ -56,8 +99,8 @@ class CoreActionsImpl(
                 }
             }
 
-            ActionPreferences.IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
-            ActionPreferences.IfNoFileOrFolder.NotifyUser -> {
+            IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
+            IfNoFileOrFolder.NotifyUser -> {
                 userNotifier.createFolder(folderPath.path.toString())
                 if (fileSystemActions.pathExists(folderPath)) {
                     operatingSystemActions.openFolder(folderPath)
@@ -69,7 +112,7 @@ class CoreActionsImpl(
         }
     }
 
-    override suspend fun openCurrentProjectFile(file: ProjectKnownFiles) {
+    override suspend fun openCurrentProjectFile(file: ProjectFiles) {
         TODO("Not yet implemented")
     }
 
@@ -79,7 +122,7 @@ class CoreActionsImpl(
 
     override suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectKnownFiles
+        file: ProjectFiles
     ) {
         TODO("Not yet implemented")
     }

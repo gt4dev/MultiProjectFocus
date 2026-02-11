@@ -7,7 +7,7 @@ class Project(
     val folderPath: FolderPath, // todo: using FolderPath suggests use of separated Room entities
 )
 
-enum class ProjectKnownFiles {
+enum class ProjectFiles {
     File0,
     File1,
     File2,

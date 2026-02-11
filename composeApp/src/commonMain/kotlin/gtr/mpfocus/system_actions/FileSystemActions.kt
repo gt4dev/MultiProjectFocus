@@ -3,6 +3,7 @@ package gtr.mpfocus.system_actions
 import okio.FileSystem
 import okio.Path
 import okio.SYSTEM
+import okio.use
 
 interface FileSystemActions {
 
@@ -10,6 +11,7 @@ interface FileSystemActions {
     fun pathExists(path: FolderPath): Boolean
 
     fun createFolder(path: FolderPath): Boolean
+    fun createFile(path: FilePath): Boolean
 }
 
 class FileSystemActionsImpl : FileSystemActions {
@@ -24,6 +26,11 @@ class FileSystemActionsImpl : FileSystemActions {
 
     override fun createFolder(path: FolderPath): Boolean {
         FileSystem.SYSTEM.createDirectories(path.path)
+        return true
+    }
+
+    override fun createFile(path: FilePath): Boolean {
+        FileSystem.SYSTEM.sink(path.path).use { }
         return true
     }
 

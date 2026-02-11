@@ -9,14 +9,14 @@ interface CoreActions {
         userNotifier: UserNotifier = UserNotifier.None
     ): ActionResult
 
-    suspend fun openCurrentProjectFile(file: ProjectKnownFiles)
+    suspend fun openCurrentProjectFile(file: ProjectFiles)
 
 
     // pinned project actions
 
     suspend fun openPinnedProjectFolder(pinPosition: Int)
 
-    suspend fun openPinnedProjectFile(pinPosition: Int, file: ProjectKnownFiles)
+    suspend fun openPinnedProjectFile(pinPosition: Int, file: ProjectFiles)
 }
 
 interface UserNotifier {
