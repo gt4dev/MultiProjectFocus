@@ -23,11 +23,6 @@ object Steps {
 
     // folder steps
 
-//    fun HOTestCtx.`given 'fake file system' returns that each folder`(state: String) {
-//        val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
-//        every { obj.pathExists(any<FolderPath>()) } returns state.exists()
-//    }
-
     fun HOTestCtx.`given 'fake file system' returns that each folder`(
         vararg subsequentReturns: String,
     ) {
@@ -56,11 +51,6 @@ object Steps {
     }
 
     // file steps
-
-//    fun HOTestCtx.`given 'fake file system' returns that each file`(state: String) {
-//        val obj: FileSystemActions = this[KEY_FILE_SYSTEM_ACTIONS]
-//        every { obj.pathExists(any<FilePath>()) } returns state.exists()
-//    }
 
     fun HOTestCtx.`given 'fake file system' returns that each file`(
         vararg subsequentReturns: String,

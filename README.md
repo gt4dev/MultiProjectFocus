@@ -1,39 +1,39 @@
 # Multi Project Focus [MPF]
 
-**PROJECT IS UNDER DEVELOPMENT, AT AN EARLY STAGE**  
+**PROJECT IS UNDER DEVELOPMENT, IN AN EARLY STAGE**  
 
 New features are added regularly.  
 The first release is planned for the end of February 2026.
 
 # Core idea
 
-The app enables ultra-fast access to your project folders and files by using keyboard shortcuts.  
-Wherever you are, whatever you are doing - one shortcut brings you back to your project.
+The app enables ultra-fast access to your project folders and files using keyboard shortcuts.  
+Wherever you are and whatever you are doing - one shortcut brings you back to your project.
 
 For example:
 
-Assume someone / something interrupts your work. You engage in this interruption and pause works on the project.  
-In the meantime you completely lose focus on your original project.  
+Assume someone or something interrupts your work. You handle the interruption and pause work on the project.  
+In the meantime, you completely lose focus on your original project.  
 Then you press:
-- `Ctrl + Alt + F` - immediately open the **folder** of your current project
-- `Ctrl + Alt + 1` - immediately open the **main file** of your current project
-- `... or other shortcuts`
+- `Ctrl + Alt + F` - it immediately opens the **folder** of your current project
+- `Ctrl + Alt + 1` - it immediately opens the **main file** of your current project
+- `...or other shortcuts`
 
 *Notes:*
 
 - *The example above is for Windows, but MPF is designed to work on Linux and macOS too.*
-- *All is customizable: shortcuts, current project main file...*
+- *Everything is customizable: shortcuts, current project,  main file, etc.*
 
 
 # MPF dictionary
 
-At the start, let us define key terms:  
+At the start, let's define key terms:  
 
 - `project` - any folder on your disk.  
 It can be any regular folder that MPF can access.
 
 
-- `current project` - a `project` marked by you as "current".  
+- `current project` - a `project` that you mark as "current".  
 You can set any `project` as current at any time.
 
 
@@ -41,13 +41,13 @@ You can set any `project` as current at any time.
 You can access pinned projects very quickly from shortcuts.
 
 
-- `project file`  - a file in project folder known by MPF.  
-Of course in `project`, you can keep any files.
+- `project file` - a file in a project folder known by MPF.  
+Of course, in a `project` folder, you can keep any files.  
 But some files can be marked as `File1`, `File2`, `File3`, etc.  
 You can quickly open them from anywhere using shortcuts.
 
-For example, your folders on disk / projects can look like this:  
-*Note: example shows Windows format, but MPF works also on Linux, and macOS.*
+For example, your folders/projects on disk can look like this:  
+*Note: this example uses Windows path format, but MPF also works on Linux and macOS.*
 
 ```text
 c:\projects\
@@ -67,35 +67,36 @@ c:\cloud-drive\shared\
                       team-A\project-X
                       team-B\project-Y
 ```
-With MPF you can quickly switch between these projects / folders.  
-No more wasting time / energy / focus  on manual searching for projects.
+With MPF, you can quickly switch between these projects/folders.  
+No more wasting time, energy, or focus on manually searching for projects.
 
 
 # Typical use cases
 
-- Fast re-focus on a project after distraction  
+- Fast refocus on a project after a distraction  
 Example:  
-  - Something interrupts you (phone call, issue in another project, random thought, etc.).
-  - You handle distraction.
-  - Then you very quickly return your current project - by pressing `Ctrl + Alt + 1`
+  - Let's assume something interrupts your current project work: a phone call, an issue in another project, a random thought, etc.
+  - You handle the distraction.
+  - Then you can quickly refocus on your main project: by pressing `Ctrl + Alt + 1`, you open the `current project's main file`.
 
 
 - Fast temporary jump to another project
-  - Assume you are working simultaneously on projects:
-  ```text
-  [1] product-A-roadmap
-  [2] product-B\new-feature-abc
-  [3] product-B\bugfix-problem-123
-  ```
-  - Let's assume you set `1` as current and `2`, `3` as pinned.
-  - Most effort stays in project `1`, but when you need `2` or `3`, you jump into them in one click and return back.
+  - Let's assume:
+    - you are working simultaneously on projects:
+      ```text
+      [1] product-A-roadmap
+      [2] product-B\new-feature-abc
+      [3] product-B\bugfix-problem-123
+      ```
+    - you set `1` as current and `2`, `3` as pinned.
+  - Most effort stays in project `1`, but when you need `2` or `3`, you jump into them in one click and return to the current project.
 
 
 # How it works
 
 - MPF works on Windows, Linux, and macOS (thanks to Kotlin Multiplatform).
 - MPF works in two modes:
-  - no UI mode
+  - no-UI mode
   - UI mode
 - The mode is selected automatically by MPF.
 
@@ -113,10 +114,10 @@ For example:
   - `MultiProjectFocus.exe "ProjectPinned(pinPosition:1).OpenFile(fileNr:2)"`
 
 
-These commands are usually called by an external hotkey tool in your system (for example, AutoHotkey on Windows).
+These commands are usually called by an external hotkey tool on your system (for example, AutoHotkey on Windows).
 
 
-Usually, a command runs in the background without UI, but if user interaction is needed, UI appears automatically.  
+Usually, a command runs in the background without a UI, but if user interaction is needed, a UI appears automatically.  
 For example:  
-- If a user tries to open a `project folder` or `project file` that does not exist  
-- Then the app can ask whether to create it and continue.
+- If a user tries to open a `project folder` or `project file` that does not exist,  
+- then the app can ask whether to create it and continue.
