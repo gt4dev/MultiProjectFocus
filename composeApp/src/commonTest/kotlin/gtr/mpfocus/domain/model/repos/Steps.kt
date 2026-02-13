@@ -13,8 +13,6 @@ import okio.Path.Companion.toPath
 
 object Steps {
 
-    const val KEY_PROJECTS_REPO = "KEY_PROJECTS_REPO"
-
     fun HOTestCtx.`given exists 'fake projects repo'`(
         withCurrentProject: String? = null
     ) {
@@ -49,14 +47,17 @@ object Steps {
     }
 
     private fun HOTestCtx.initMockProjectsRepo(): ProjectsRepo {
-        if (this.containsKey(KEY_PROJECTS_REPO)) {
-            return this[KEY_PROJECTS_REPO]
+        val existing = runCatching { this.koin.get<ProjectsRepo>() }.getOrNull()
+        if (existing != null) {
+            return existing
         }
 
         val obj = mock<ProjectsRepo>(MockMode.autofill) {
             every { getCurrentProject() } returns flowOf(null)
         }
-        this[KEY_PROJECTS_REPO] = obj
+        this.addToKoinTestModule {
+            single { obj }
+        }
         return obj
     }
 }

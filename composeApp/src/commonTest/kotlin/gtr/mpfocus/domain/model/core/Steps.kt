@@ -6,16 +6,8 @@ import dev.mokkery.mock
 import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
 import kotlin.test.assertEquals
-import gtr.mpfocus.domain.model.config.Steps as ConfigSteps
-import gtr.mpfocus.domain.model.repos.Steps as ProjectsRepoSteps
-import gtr.mpfocus.system_actions.Steps as FileSystemActionsSteps
 
 object Steps {
-
-    const val KEY_ACTION_PREFERENCES = "KEY_ACTION_PREFERENCES"
-    const val KEY_CORE_ACTIONS = "KEY_CORE_ACTIONS"
-    const val KEY_CORE_ACTIONS_RESULT = "KEY_CORE_ACTIONS_RESULT"
-    const val KEY_USER_NOTIFIER = "KEY_USER_NOTIFIER"
 
     fun HOTestCtx.`given exists 'action preferences'`(withIfNoFolder: String) {
 
@@ -26,38 +18,51 @@ object Steps {
             else -> throw IllegalArgumentException("Unknown preference $withIfNoFolder")
         }
 
-        this[KEY_ACTION_PREFERENCES] = ActionPreferences(
-            ifNoFileOrFolder = ifNoFolder
-        )
+        this.addToKoinTestModule {
+            single {
+                ActionPreferences(
+                    ifNoFileOrFolder = ifNoFolder
+                )
+            }
+        }
     }
 
     fun HOTestCtx.`given exists 'real model'`() {
-        this[KEY_CORE_ACTIONS] = CoreActionsImpl(
-            this[FileSystemActionsSteps.KEY_OPERATING_SYSTEM_ACTIONS],
-            this[FileSystemActionsSteps.KEY_FILE_SYSTEM_ACTIONS],
-            this[ProjectsRepoSteps.KEY_PROJECTS_REPO],
-            this[ConfigSteps.KEY_CONFIG_SERVICE],
-        )
+        this.addToKoinTestModule {
+            single {
+                CoreActionsImpl(
+                    get(),
+                    get(),
+                    get(),
+                    get(),
+                )
+            }
+            single<CoreActions> { get<CoreActionsImpl>() }
+        }
     }
 
     suspend fun HOTestCtx.`when model executes command 'open folder in current project'`() {
-        val coreActions: CoreActions = this[KEY_CORE_ACTIONS]
-        val aps: ActionPreferences = this[KEY_ACTION_PREFERENCES]
-        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+        val coreActions: CoreActions = this.koin.get()
+        val aps: ActionPreferences = this.koin.get()
+        val ui: UserNotifier = this.koin.get()
         val result = coreActions.openCurrentProjectFolder(aps, ui)
-        this[KEY_CORE_ACTIONS_RESULT] = result
+        this.addToKoinTestModule {
+            single { result }
+        }
     }
 
     suspend fun HOTestCtx.`when model executes command 'open file in current project'`(
         file: ProjectFiles,
     ) {
-        val coreActions: CoreActions = this[KEY_CORE_ACTIONS]
-        val aps: ActionPreferences = this[KEY_ACTION_PREFERENCES]
-        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+        val coreActions: CoreActions = this.koin.get()
+        val aps: ActionPreferences = this.koin.get()
+        val ui: UserNotifier = this.koin.get()
 
         val result = coreActions.openCurrentProjectFile(file, aps, ui)
 
-        this[KEY_CORE_ACTIONS_RESULT] = result
+        this.addToKoinTestModule {
+            single { result }
+        }
     }
 
     fun HOTestCtx.`then model returns`(result: String) {
@@ -70,20 +75,19 @@ object Steps {
 
             else -> throw IllegalArgumentException("Unknown result '$result'")
         }
-        assertEquals(expected, this[KEY_CORE_ACTIONS_RESULT])
+        val actual: ActionResult = this.koin.get()
+        assertEquals(expected, actual)
     }
 
     fun HOTestCtx.`given exists 'fake user notifier'`() {
-        if (this.containsKey(KEY_USER_NOTIFIER)) {
-            return this[KEY_USER_NOTIFIER]
-        }
-
         val obj = mock<UserNotifier>(MockMode.autofill) // create default impl of interface
-        this[KEY_USER_NOTIFIER] = obj
+        this.addToKoinTestModule {
+            single { obj }
+        }
     }
 
     fun HOTestCtx.`then model notify user to`(what: String) {
-        val obj: UserNotifier = this[KEY_USER_NOTIFIER]
+        val obj: UserNotifier = this.koin.get()
         when (what) {
             "create folder" -> {
                 verifySuspend {

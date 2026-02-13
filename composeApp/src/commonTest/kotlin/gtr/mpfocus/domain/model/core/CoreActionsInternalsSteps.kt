@@ -2,8 +2,6 @@ package gtr.mpfocus.domain.model.core
 
 import gtr.common.textFailure
 import gtr.hotest.HOTestCtx
-import gtr.mpfocus.domain.model.core.Steps.KEY_CORE_ACTIONS
-import gtr.mpfocus.domain.model.core.Steps.KEY_USER_NOTIFIER
 import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FolderPath
 import kotlin.test.assertEquals
@@ -11,41 +9,45 @@ import kotlin.test.assertTrue
 
 object CoreActionsInternalsSteps {
 
-    private const val KEY_RESULT = "KEY_RESULT"
-
     suspend fun HOTestCtx.`when model executes 'assure current project ready'`() {
-        val coreActions: CoreActionsImpl = this[KEY_CORE_ACTIONS]
-        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+        val coreActions: CoreActionsImpl = this.koin.get()
+        val ui: UserNotifier = this.koin.get()
 
         val result = coreActions.assureCurrentProjectReady(ui)
 
-        this[KEY_RESULT] = result
+        this.addToKoinTestModule {
+            single { result }
+        }
     }
 
     suspend fun HOTestCtx.`when model executes 'ensure project file ready'`(
         file: ProjectFiles,
     ) {
-        val coreActions: CoreActionsImpl = this[KEY_CORE_ACTIONS]
-        val aps: ActionPreferences = this[Steps.KEY_ACTION_PREFERENCES]
-        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+        val coreActions: CoreActionsImpl = this.koin.get()
+        val aps: ActionPreferences = this.koin.get()
+        val ui: UserNotifier = this.koin.get()
 
         val result = coreActions.ensureProjectFileReady(file, aps, ui)
 
-        this[KEY_RESULT] = result
+        this.addToKoinTestModule {
+            single { result }
+        }
     }
 
     suspend fun HOTestCtx.`when model executes 'ensure project folder ready'`() {
-        val coreActions: CoreActionsImpl = this[KEY_CORE_ACTIONS]
-        val aps: ActionPreferences = this[Steps.KEY_ACTION_PREFERENCES]
-        val ui: UserNotifier = this[KEY_USER_NOTIFIER]
+        val coreActions: CoreActionsImpl = this.koin.get()
+        val aps: ActionPreferences = this.koin.get()
+        val ui: UserNotifier = this.koin.get()
 
         val result = coreActions.ensureProjectFolderReady(aps, ui)
 
-        this[KEY_RESULT] = result
+        this.addToKoinTestModule {
+            single { result }
+        }
     }
 
     fun HOTestCtx.`then model returns Result`(result: String) {
-        val actual: Result<Project> = this[KEY_RESULT]
+        val actual: Result<Project> = this.koin.get()
         when {
             result == "success" -> assertTrue(actual.isSuccess)
             result.startsWith("error: ") -> {
@@ -58,13 +60,13 @@ object CoreActionsInternalsSteps {
     }
 
     fun HOTestCtx.`then model returns file path`(path: String) {
-        val actual: Result<FilePath> = this[KEY_RESULT]
+        val actual: Result<FilePath> = this.koin.get()
         assertTrue(actual.isSuccess)
         assertEquals(path, actual.getOrNull()!!.path.toString())
     }
 
     fun HOTestCtx.`then model returns folder path`(path: String) {
-        val actual: Result<FolderPath> = this[KEY_RESULT]
+        val actual: Result<FolderPath> = this.koin.get()
         assertTrue(actual.isSuccess)
         assertEquals(path, actual.getOrNull()!!.path.toString())
     }
