@@ -38,12 +38,13 @@ class CurrentProjectOpenFolderTest {
             variants("user preference if no folder") {
 
                 variant("auto-create") {
-                    `given 'fake file system' returns that each folder`("doesn't exist")
+                    `given 'fake file system' returns that each folder`("doesn't exist", "exists")
                     `given exists 'action preferences'`("auto create")
                     `given 'fake file system' returns that folder is created successfully`()
                     `when model executes command 'open folder in current project'`()
                     `then 'fake file system' checks folder path exist'`()
                     `then 'fake file system' creates folder`()
+                    `then 'fake file system' checks folder path exist'`()
                     `then 'fake operating system' opens folder`()
                     `then model returns`("success")
                 }
@@ -53,7 +54,7 @@ class CurrentProjectOpenFolderTest {
                     `given exists 'action preferences'`("report error")
                     `when model executes command 'open folder in current project'`()
                     `then 'fake file system' checks folder path exist'`()
-                    `then model returns`("error: folder doesn't exist")
+                    `then model returns`("error: no project folder")
                 }
 
                 variant("notify user") {
@@ -77,7 +78,7 @@ class CurrentProjectOpenFolderTest {
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
                             `then 'fake file system' checks folder path exist'`()
-                            `then model returns`("error: folder doesn't exist")
+                            `then model returns`("error: no project folder")
                         }
                     }
                 }

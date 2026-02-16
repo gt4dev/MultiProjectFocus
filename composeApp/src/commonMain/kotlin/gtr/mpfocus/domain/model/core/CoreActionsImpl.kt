@@ -133,39 +133,14 @@ class CoreActionsImpl(
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult {
-        // todo: replace returning error with asking user 'set CP'
-        val currentProject = projectsRepo.getCurrentProject().first()
-            ?: return ActionResult.Error("no current project")
+        val project = ensureCurrentProjectReady(userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
 
-        val folderPath = currentProject.folderPath
+        val folderPath = ensureProjectFolderReady(project, actionPreferences, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
 
-        if (fileSystemActions.pathExists(folderPath)) {
-            operatingSystemActions.openFolder(folderPath)
-            return ActionResult.Success
-        }
-
-        return when (actionPreferences.ifNoFileOrFolder) {
-            IfNoFileOrFolder.AutoCreate -> {
-                val created = fileSystemActions.createFolder(folderPath)
-                if (created) {
-                    operatingSystemActions.openFolder(folderPath)
-                    ActionResult.Success
-                } else {
-                    ActionResult.Error("failed to create folder")
-                }
-            }
-
-            IfNoFileOrFolder.ReportError -> ActionResult.Error("folder doesn't exist")
-            IfNoFileOrFolder.NotifyUser -> {
-                userNotifier.createFolder(folderPath.path.toString())
-                if (fileSystemActions.pathExists(folderPath)) {
-                    operatingSystemActions.openFolder(folderPath)
-                    ActionResult.Success
-                } else {
-                    ActionResult.Error("folder doesn't exist")
-                }
-            }
-        }
+        operatingSystemActions.openFolder(folderPath)
+        return ActionResult.Success
     }
 
 
