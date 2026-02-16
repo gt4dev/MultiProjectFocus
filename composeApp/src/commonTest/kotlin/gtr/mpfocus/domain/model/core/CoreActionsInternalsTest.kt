@@ -7,10 +7,11 @@ import gtr.mpfocus.domain.model.config.Steps.`given exists 'basic config service
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`then model returns Result`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`then model returns file path`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`then model returns folder path`
-import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'assure current project ready'`
+import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure current project ready'`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure project file ready'`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure project folder ready'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
+import gtr.mpfocus.domain.model.core.Steps.`given 'sample project' has`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user notifier'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
@@ -42,20 +43,20 @@ class CoreActionsInternalsTest {
 
                 variant("already set") {
                     `given exists 'fake projects repo'`("any/path/to/project")
-                    `when model executes 'assure current project ready'`()
+                    `when model executes 'ensure current project ready'`()
                     `then model returns Result`("success")
                 }
 
                 variant("not set and user doesn't set") {
                     `given exists 'fake projects repo'`(null, null)
-                    `when model executes 'assure current project ready'`()
+                    `when model executes 'ensure current project ready'`()
                     `then model notify user to`("set current project")
                     `then model returns Result`("error: no current project")
                 }
 
                 variant("not set and user sets") {
                     `given exists 'fake projects repo'`(null, "any/path/to/project")
-                    `when model executes 'assure current project ready'`()
+                    `when model executes 'ensure current project ready'`()
                     `then model notify user to`("set current project")
                     `then model returns Result`("success")
                 }
@@ -70,7 +71,7 @@ class CoreActionsInternalsTest {
             `given exists 'fake operating system'`()
             `given exists 'fake user notifier'`()
             `given exists 'fake projects repo'`()
-            `given exists 'fake projects repo'`("any/path/to/project")
+            `given 'sample project' has`("any/path/to/project")
             `given exists 'basic config service'`()
             `given exists 'real model'`()
 
@@ -123,7 +124,8 @@ class CoreActionsInternalsTest {
             `given exists 'fake file system'`()
             `given exists 'fake operating system'`()
             `given exists 'fake user notifier'`()
-            `given exists 'fake projects repo'`("any/path/to/project")
+            `given exists 'fake projects repo'`()
+            `given 'sample project' has`("any/path/to/project")
             `given exists 'basic config service'`()
             `given exists 'real model'`()
 

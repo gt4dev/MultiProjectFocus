@@ -5,6 +5,7 @@ import gtr.mpfocus.system_actions.FolderPath
 class Project(
     val projectId: Long = 0, // default Room's "new entity"
     val folderPath: FolderPath, // todo: using FolderPath suggests use of separated Room entities
+    val pinPosition: Int? = null,
 )
 
 enum class ProjectFiles {

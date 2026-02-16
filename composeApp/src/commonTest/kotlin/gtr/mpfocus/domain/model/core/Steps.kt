@@ -5,6 +5,8 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
+import gtr.mpfocus.system_actions.FolderPath
+import okio.Path.Companion.toPath
 import kotlin.test.assertEquals
 
 object Steps {
@@ -18,7 +20,7 @@ object Steps {
             else -> throw IllegalArgumentException("Unknown preference $withIfNoFolder")
         }
 
-        this.addToKoinTestModule {
+        koinAdd {
             single {
                 ActionPreferences(
                     ifNoFileOrFolder = ifNoFolder
@@ -27,8 +29,19 @@ object Steps {
         }
     }
 
+    fun HOTestCtx.`given 'sample project' has`(folderPath: String) {
+        koinAdd {
+            single {
+                Project(
+                    projectId = 123,
+                    folderPath = FolderPath(folderPath.toPath())
+                )
+            }
+        }
+    }
+
     fun HOTestCtx.`given exists 'real model'`() {
-        this.addToKoinTestModule {
+        koinAdd {
             single {
                 CoreActionsImpl(
                     get(),
@@ -42,11 +55,13 @@ object Steps {
     }
 
     suspend fun HOTestCtx.`when model executes command 'open folder in current project'`() {
-        val coreActions: CoreActions = this.koin.get()
-        val aps: ActionPreferences = this.koin.get()
-        val ui: UserNotifier = this.koin.get()
+        val coreActions: CoreActions = koin.get()
+        val aps: ActionPreferences = koin.get()
+        val ui: UserNotifier = koin.get()
+
         val result = coreActions.openCurrentProjectFolder(aps, ui)
-        this.addToKoinTestModule {
+
+        koinAdd {
             single { result }
         }
     }
@@ -54,13 +69,27 @@ object Steps {
     suspend fun HOTestCtx.`when model executes command 'open file in current project'`(
         file: ProjectFiles,
     ) {
-        val coreActions: CoreActions = this.koin.get()
-        val aps: ActionPreferences = this.koin.get()
-        val ui: UserNotifier = this.koin.get()
+        val coreActions: CoreActions = koin.get()
+        val aps: ActionPreferences = koin.get()
+        val ui: UserNotifier = koin.get()
 
         val result = coreActions.openCurrentProjectFile(file, aps, ui)
 
-        this.addToKoinTestModule {
+        koinAdd {
+            single { result }
+        }
+    }
+
+    suspend fun HOTestCtx.`when model executes command 'open folder in pinned project'`(
+        pinPosition: Int,
+    ) {
+        val coreActions: CoreActions = koin.get()
+        val aps: ActionPreferences = koin.get()
+        val ui: UserNotifier = koin.get()
+
+        val result = coreActions.openPinnedProjectFolder(pinPosition, aps, ui)
+
+        koinAdd {
             single { result }
         }
     }
@@ -75,19 +104,19 @@ object Steps {
 
             else -> throw IllegalArgumentException("Unknown result '$result'")
         }
-        val actual: ActionResult = this.koin.get()
+        val actual: ActionResult = koin.get()
         assertEquals(expected, actual)
     }
 
     fun HOTestCtx.`given exists 'fake user notifier'`() {
         val obj = mock<UserNotifier>(MockMode.autofill) // create default impl of interface
-        this.addToKoinTestModule {
+        koinAdd {
             single { obj }
         }
     }
 
     fun HOTestCtx.`then model notify user to`(what: String) {
-        val obj: UserNotifier = this.koin.get()
+        val obj: UserNotifier = koin.get()
         when (what) {
             "create folder" -> {
                 verifySuspend {
@@ -98,6 +127,12 @@ object Steps {
             "set current project" -> {
                 verifySuspend {
                     obj.setCurrentProject()
+                }
+            }
+
+            "set pinned project" -> {
+                verifySuspend {
+                    obj.setPinnedProject(any())
                 }
             }
 

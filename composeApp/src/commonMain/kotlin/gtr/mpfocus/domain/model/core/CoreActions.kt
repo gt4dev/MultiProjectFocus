@@ -5,22 +5,31 @@ interface CoreActions {
     // current project actions
 
     suspend fun openCurrentProjectFolder(
-        actionPreferences: ActionPreferences = ActionPreferences(),
-        userNotifier: UserNotifier = UserNotifier.None
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
     ): ActionResult
 
     suspend fun openCurrentProjectFile(
         file: ProjectFiles,
-        actionPreferences: ActionPreferences = ActionPreferences(),
-        userNotifier: UserNotifier = UserNotifier.None
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
     ): ActionResult
 
 
     // pinned project actions
 
-    suspend fun openPinnedProjectFolder(pinPosition: Int)
+    suspend fun openPinnedProjectFolder(
+        pinPosition: Int,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): ActionResult
 
-    suspend fun openPinnedProjectFile(pinPosition: Int, file: ProjectFiles)
+    suspend fun openPinnedProjectFile(
+        pinPosition: Int,
+        file: ProjectFiles,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): ActionResult
 }
 
 interface UserNotifier {
@@ -32,11 +41,13 @@ interface UserNotifier {
     suspend fun createFolder(folderName: String)
     suspend fun createFile(folderName: String)
     suspend fun setCurrentProject()
+    suspend fun setPinnedProject(pinPosition: Int)
 
     object None : UserNotifier {
         override suspend fun createFolder(folderName: String) {}
         override suspend fun createFile(folderName: String) {}
         override suspend fun setCurrentProject() {}
+        override suspend fun setPinnedProject(pinPosition: Int) {}
     }
 }
 

@@ -18,7 +18,7 @@ class CoreActionsImpl(
     val configService: ConfigService,
 ) : CoreActions {
 
-    suspend fun assureCurrentProjectReady(
+    internal suspend fun ensureCurrentProjectReady(
         userNotifier: UserNotifier = UserNotifier.None
     ): Result<Project> {
         val currentProject = projectsRepo.getCurrentProject().first()
@@ -36,18 +36,40 @@ class CoreActionsImpl(
         }
     }
 
-    suspend fun ensureProjectFileReady(
+    internal suspend fun ensurePinedProjectReady(
+        pinPosition: Int,
+        userNotifier: UserNotifier = UserNotifier.None
+    ): Result<Project> {
+        val pinnedProject = projectsRepo.getPinnedProjects()
+            .first()
+            .firstOrNull { it.pinPosition == pinPosition }
+
+        if (pinnedProject != null) {
+            return Result.success(pinnedProject)
+        }
+
+        userNotifier.setPinnedProject(pinPosition)
+
+        val updatedPinnedProject = projectsRepo.getPinnedProjects()
+            .first()
+            .firstOrNull { it.pinPosition == pinPosition }
+
+        return if (updatedPinnedProject == null) {
+            Result.textFailure("no pinned project at position $pinPosition")
+        } else {
+            Result.success(updatedPinnedProject)
+        }
+    }
+
+    internal suspend fun ensureProjectFileReady(
+        project: Project,
         file: ProjectFiles,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): Result<FilePath> {
-        val currentProject = requireNotNull(
-            projectsRepo.getCurrentProject().first()
-        ) { "current project must be set first" }
-
         val projectConfig = configService.getProjectConfig()
         val fileName = projectConfig.fileName(file)
-        val filePath = FilePath(currentProject.folderPath.path / fileName)
+        val filePath = FilePath(project.folderPath.path / fileName)
 
         if (fileSystemActions.pathExists(filePath)) {
             return Result.success(filePath)
@@ -75,15 +97,12 @@ class CoreActionsImpl(
         }
     }
 
-    suspend fun ensureProjectFolderReady(
+    internal suspend fun ensureProjectFolderReady(
+        project: Project,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): Result<FolderPath> {
-        val currentProject = requireNotNull(
-            projectsRepo.getCurrentProject().first()
-        ) { "current project must be set first" }
-
-        val folderPath = currentProject.folderPath
+        val folderPath = project.folderPath
 
         if (fileSystemActions.pathExists(folderPath)) {
             return Result.success(folderPath)
@@ -155,27 +174,40 @@ class CoreActionsImpl(
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult {
-        assureCurrentProjectReady(userNotifier)
+        val project = ensureCurrentProjectReady(userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(project, actionPreferences, userNotifier)
             .onFailure { return ActionResult.Error(it.distillText()) }
 
-        ensureProjectFolderReady(actionPreferences, userNotifier)
-            .onFailure { return ActionResult.Error(it.distillText()) }
-
-        val projectFile = ensureProjectFileReady(file, actionPreferences, userNotifier)
+        val projectFile = ensureProjectFileReady(project, file, actionPreferences, userNotifier)
             .getOrElse { return ActionResult.Error(it.distillText()) }
 
         operatingSystemActions.openFile(projectFile)
         return ActionResult.Success
     }
 
-    override suspend fun openPinnedProjectFolder(pinPosition: Int) {
-        TODO("Not yet implemented")
+    override suspend fun openPinnedProjectFolder(
+        pinPosition: Int,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): ActionResult {
+        val project = ensurePinedProjectReady(pinPosition, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        val folderPath = ensureProjectFolderReady(project, actionPreferences, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFolder(folderPath)
+        return ActionResult.Success
     }
 
     override suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectFiles
-    ) {
+        file: ProjectFiles,
+        actionPreferences: ActionPreferences,
+        userNotifier: UserNotifier
+    ): ActionResult {
         TODO("Not yet implemented")
     }
 }
