@@ -208,6 +208,16 @@ class CoreActionsImpl(
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult {
-        TODO("Not yet implemented")
+        val project = ensurePinedProjectReady(pinPosition, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(project, actionPreferences, userNotifier)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        val projectFile = ensureProjectFileReady(project, file, actionPreferences, userNotifier)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFile(projectFile)
+        return ActionResult.Success
     }
 }

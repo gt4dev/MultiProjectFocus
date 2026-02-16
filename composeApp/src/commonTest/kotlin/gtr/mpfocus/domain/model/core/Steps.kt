@@ -94,6 +94,21 @@ object Steps {
         }
     }
 
+    suspend fun HOTestCtx.`when model executes command 'open file in pinned project'`(
+        pinPosition: Int,
+        file: ProjectFiles,
+    ) {
+        val coreActions: CoreActions = koin.get()
+        val aps: ActionPreferences = koin.get()
+        val ui: UserNotifier = koin.get()
+
+        val result = coreActions.openPinnedProjectFile(pinPosition, file, aps, ui)
+
+        koinAdd {
+            single { result }
+        }
+    }
+
     fun HOTestCtx.`then model returns`(result: String) {
         val expected = when {
             result == "success" -> ActionResult.Success

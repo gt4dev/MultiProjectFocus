@@ -10,8 +10,8 @@ import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`then model retur
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure current project ready'`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure project file ready'`
 import gtr.mpfocus.domain.model.core.CoreActionsInternalsSteps.`when model executes 'ensure project folder ready'`
-import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
 import gtr.mpfocus.domain.model.core.Steps.`given 'sample project' has`
+import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user notifier'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
