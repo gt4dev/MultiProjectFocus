@@ -8,6 +8,7 @@ import dev.mokkery.mock
 import gtr.hotest.HOTestCtx
 import gtr.mpfocus.domain.model.core.Models
 import gtr.mpfocus.domain.model.core.Project
+import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.system_actions.FolderPath
 import kotlinx.coroutines.flow.flowOf
 import okio.Path.Companion.toPath
@@ -86,13 +87,13 @@ object Steps {
         every { obj.getPinnedProjects() } sequentiallyReturns flows
     }
 
-    private fun HOTestCtx.initMockProjectsRepo(): ProjectsRepo {
-        val existing = runCatching { koin.get<ProjectsRepo>() }.getOrNull()
+    private fun HOTestCtx.initMockProjectsRepo(): ProjectRepository {
+        val existing = runCatching { koin.get<ProjectRepository>() }.getOrNull()
         if (existing != null) {
             return existing
         }
 
-        val obj = mock<ProjectsRepo>(MockMode.autofill) {
+        val obj = mock<ProjectRepository>(MockMode.autofill) {
             every { getCurrentProject() } returns flowOf(null)
             every { getPinnedProjects() } returns flowOf(emptyList())
         }

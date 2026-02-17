@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.mokkery)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room)
 }
 
 kotlin {
@@ -17,6 +19,7 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
+    @Suppress("DEPRECATION")
     androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -53,11 +56,17 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.okio)
+
+            implementation(libs.koin.core)
+
+            // room
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.koin.core)
             implementation("gtr.hotest:core:0.2.0-SNAPSHOT")
         }
         jvmMain.dependencies {
@@ -95,7 +104,16 @@ android {
 }
 
 dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspJvm", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+
     debugImplementation(libs.compose.uiTooling)
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 compose.desktop {

@@ -1,4 +1,4 @@
-package gtr.mpfocus.domain.model.repos
+package gtr.mpfocus.domain.repository
 
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.system_actions.FolderPath
@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.Path.Companion.toPath
 
-interface ProjectsRepo {
+interface ProjectRepository {
     fun getCurrentProject(): Flow<Project?>
     suspend fun setCurrentProject(projectId: Long)
 
@@ -18,7 +18,7 @@ interface ProjectsRepo {
 }
 
 
-class DevTimeProjectsRepoImpl(val hasCP: Boolean) : ProjectsRepo {
+class DevTimeProjectRepositoryImpl(val hasCP: Boolean) : ProjectRepository {
 
     override fun getCurrentProject(): Flow<Project?> = flow {
         if (hasCP) {

@@ -4,7 +4,8 @@ import gtr.common.distillText
 import gtr.common.textFailure
 import gtr.mpfocus.domain.model.config.ConfigService
 import gtr.mpfocus.domain.model.core.ActionPreferences.IfNoFileOrFolder
-import gtr.mpfocus.domain.model.repos.ProjectsRepo
+import gtr.mpfocus.domain.repository.PersonRepository
+import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.FolderPath
@@ -14,21 +15,22 @@ import kotlinx.coroutines.flow.first
 class CoreActionsImpl(
     val operatingSystemActions: OperatingSystemActions,
     val fileSystemActions: FileSystemActions,
-    val projectsRepo: ProjectsRepo,
+    val projectRepository: ProjectRepository,
     val configService: ConfigService,
+    val personRepository: PersonRepository, // todo: delete poc
 ) : CoreActions {
 
     internal suspend fun ensureCurrentProjectReady(
         userNotifier: UserNotifier = UserNotifier.None
     ): Result<Project> {
-        val currentProject = projectsRepo.getCurrentProject().first()
+        val currentProject = projectRepository.getCurrentProject().first()
         if (currentProject != null) {
             return Result.success(currentProject)
         }
 
         userNotifier.setCurrentProject()
 
-        val updatedProject = projectsRepo.getCurrentProject().first()
+        val updatedProject = projectRepository.getCurrentProject().first()
         return if (updatedProject == null) {
             Result.textFailure("no current project")
         } else {
@@ -40,7 +42,7 @@ class CoreActionsImpl(
         pinPosition: Int,
         userNotifier: UserNotifier = UserNotifier.None
     ): Result<Project> {
-        val pinnedProject = projectsRepo.getPinnedProjects()
+        val pinnedProject = projectRepository.getPinnedProjects()
             .first()
             .firstOrNull { it.pinPosition == pinPosition }
 
@@ -50,7 +52,7 @@ class CoreActionsImpl(
 
         userNotifier.setPinnedProject(pinPosition)
 
-        val updatedPinnedProject = projectsRepo.getPinnedProjects()
+        val updatedPinnedProject = projectRepository.getPinnedProjects()
             .first()
             .firstOrNull { it.pinPosition == pinPosition }
 

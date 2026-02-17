@@ -48,6 +48,7 @@ object Steps {
                     get(),
                     get(),
                     get(),
+                    mock(MockMode.autofill), // todo: delete poc
                 )
             }
             single<CoreActions> { get<CoreActionsImpl>() }
