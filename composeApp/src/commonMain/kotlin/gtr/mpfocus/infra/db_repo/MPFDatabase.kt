@@ -9,14 +9,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
 @Database(
-    entities = [PersonEntity::class],
+    entities = [ProjectEntity::class],
     version = 1,
     exportSchema = true
 )
 @ConstructedBy(MPFDatabaseConstructor::class)
 abstract class MPFDatabase : RoomDatabase() {
-    abstract fun personDao(): PersonDao // todo: create ProjectDao
+    abstract fun projectDao(): ProjectDao
 }
+
 
 // The Room compiler generates the `actual` implementations.
 @Suppress("KotlinNoActualForExpect")

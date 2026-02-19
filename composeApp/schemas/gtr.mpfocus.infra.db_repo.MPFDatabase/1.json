@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "74bcd72627c872ef03a5ee3604f31fab",
+    "identityHash": "44585c00da8c0fb067a4fda744946235",
     "entities": [
       {
-        "tableName": "people",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `age` INTEGER NOT NULL)",
+        "tableName": "projects",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `folderPath` TEXT NOT NULL, `isCurrent` INTEGER NOT NULL, `pinPosition` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,16 +15,21 @@
             "notNull": true
           },
           {
-            "fieldPath": "name",
-            "columnName": "name",
+            "fieldPath": "folderPath",
+            "columnName": "folderPath",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "age",
-            "columnName": "age",
+            "fieldPath": "isCurrent",
+            "columnName": "isCurrent",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "pinPosition",
+            "columnName": "pinPosition",
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -37,7 +42,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '74bcd72627c872ef03a5ee3604f31fab')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '44585c00da8c0fb067a4fda744946235')"
     ]
   }
 }

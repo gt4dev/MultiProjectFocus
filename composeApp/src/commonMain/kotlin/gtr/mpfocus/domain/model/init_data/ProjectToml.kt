@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProjectToml(
-    val currentProject: String,
+    val currentProject: String?,
     @SerialName("pinned-projects")
     val pinnedProjects: Map<String, String>,
     val projects: Map<String, String>,

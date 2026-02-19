@@ -3,10 +3,10 @@ package gtr.mpfocus.domain.repository
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.system_actions.FolderPath
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import okio.Path.Companion.toPath
 
 interface ProjectRepository {
+    suspend fun deleteAll()
+
     fun getCurrentProject(): Flow<Project?>
     suspend fun setCurrentProject(projectId: Long)
 
@@ -14,43 +14,7 @@ interface ProjectRepository {
     suspend fun clearAllPins()
     suspend fun pinProject(projectId: Long, pinPosition: Int)
 
-    fun getLastUsedProjects(): Flow<List<Project>>
-}
+    fun getAll(): Flow<List<Project>>
 
-
-class DevTimeProjectRepositoryImpl(val hasCP: Boolean) : ProjectRepository {
-
-    override fun getCurrentProject(): Flow<Project?> = flow {
-        if (hasCP) {
-            emit(
-                Project(
-                    123,
-                    FolderPath("c:/hello123/bla/baa/123".toPath()),
-                )
-            )
-        } else {
-            emit(null)
-        }
-    }
-
-    override suspend fun setCurrentProject(projectId: Long) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getPinnedProjects(): Flow<List<Project>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun clearAllPins() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun pinProject(projectId: Long, pinPosition: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getLastUsedProjects(): Flow<List<Project>> {
-        TODO("Not yet implemented")
-    }
-
+    suspend fun addProject(projectPath: FolderPath): Long
 }
