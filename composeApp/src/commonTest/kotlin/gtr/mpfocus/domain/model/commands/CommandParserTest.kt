@@ -1,6 +1,8 @@
 package gtr.mpfocus.domain.model.commands
 
 import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.system_actions.FilePath
+import okio.Path.Companion.toPath
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -55,7 +57,7 @@ class CommandParserTest {
                 file = ProjectFiles.File1
             ),
             CommandParser.parse(
-                """ProjectByPath(projectPath:c:\some path to\folder with\project123).OpenFile(file:F1)"""
+                """ProjectByPath(folder:c:\some path to\folder with\project123).OpenFile(file:F1)"""
             )
         )
     }
@@ -63,9 +65,13 @@ class CommandParserTest {
     @Test
     fun `parse load initial data`() {
         assertEquals(
-            LoadInitialData("""c:\path to\folder with\init-config.toml"""),
+            LoadInitialData(
+                FilePath(
+                    """c:\path to\folder with\init-config.toml""".toPath()
+                )
+            ),
             CommandParser.parse(
-                """LoadInitialData(tomlFilePath:c:\path to\folder with\init-config.toml)"""
+                """LoadInitialData(file:c:\path to\folder with\init-config.toml)"""
             )
         )
     }

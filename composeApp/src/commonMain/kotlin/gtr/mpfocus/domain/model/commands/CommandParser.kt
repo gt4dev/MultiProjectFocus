@@ -1,6 +1,8 @@
 package gtr.mpfocus.domain.model.commands
 
 import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.system_actions.FilePath
+import okio.Path.Companion.toPath
 
 object CommandParser {
 
@@ -10,8 +12,8 @@ object CommandParser {
     private val projectPinnedOpenFilePattern =
         Regex("""^ProjectPinned\(pinPosition:(\d+)\)\.OpenFile\(file:(F\d+)\)$""")
     private val projectByPathOpenFilePattern =
-        Regex("""^ProjectByPath\(projectPath:(.+)\)\.OpenFile\(file:(F\d+)\)$""")
-    private val loadInitialDataPattern = Regex("""^LoadInitialData\(tomlFilePath:(.+)\)$""")
+        Regex("""^ProjectByPath\(folder:(.+)\)\.OpenFile\(file:(F\d+)\)$""")
+    private val loadInitialDataPattern = Regex("""^LoadInitialData\(file:(.+)\)$""")
 
     fun parse(rawCommand: String): Command {
         val command = normalizeCommand(rawCommand)
@@ -47,8 +49,9 @@ object CommandParser {
         }
 
         loadInitialDataPattern.matchEntire(command)?.let { match ->
+            val path = match.groupValues[1]
             return LoadInitialData(
-                tomlFilePath = match.groupValues[1]
+                tomlFilePath = FilePath(path.toPath())
             )
         }
 

@@ -1,6 +1,7 @@
 package gtr.mpfocus.domain.model.commands
 
 import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.system_actions.FilePath
 
 sealed interface Command
 
@@ -18,6 +19,6 @@ object ProjectByPath {
     data class OpenFile(val projectPath: String, val file: ProjectFiles) : Command
 }
 
-data class LoadInitialData(val tomlFilePath: String) : Command
+data class LoadInitialData(val tomlFilePath: FilePath) : Command
 
 class CommandParseException(message: String) : IllegalArgumentException(message)

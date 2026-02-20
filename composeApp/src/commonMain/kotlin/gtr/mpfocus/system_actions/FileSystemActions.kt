@@ -12,6 +12,8 @@ interface FileSystemActions {
 
     fun createFolder(path: FolderPath): Boolean
     fun createFile(path: FilePath): Boolean
+
+    fun readFile(path: FilePath): String
 }
 
 class FileSystemActionsImpl : FileSystemActions {
@@ -32,6 +34,12 @@ class FileSystemActionsImpl : FileSystemActions {
     override fun createFile(path: FilePath): Boolean {
         FileSystem.SYSTEM.sink(path.path).use { }
         return true
+    }
+
+    override fun readFile(path: FilePath): String {
+        return FileSystem.SYSTEM.read(path.path) {
+            readUtf8()
+        }
     }
 
     companion object {

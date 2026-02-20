@@ -2,9 +2,9 @@ package gtr.mpfocus.system_actions
 
 import okio.Path
 
-class FilePath(val path: Path)
+data class FilePath(val path: Path)
 
-class FolderPath(val path: Path)
+data class FolderPath(val path: Path)
 
 
 interface OperatingSystemActions {

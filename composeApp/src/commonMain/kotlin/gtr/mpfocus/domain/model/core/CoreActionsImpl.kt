@@ -4,7 +4,6 @@ import gtr.common.distillText
 import gtr.common.textFailure
 import gtr.mpfocus.domain.model.config.ConfigService
 import gtr.mpfocus.domain.model.core.ActionPreferences.IfNoFileOrFolder
-import gtr.mpfocus.domain.repository.PersonRepository
 import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FileSystemActions
@@ -17,7 +16,6 @@ class CoreActionsImpl(
     val fileSystemActions: FileSystemActions,
     val projectRepository: ProjectRepository,
     val configService: ConfigService,
-    val personRepository: PersonRepository, // todo: delete poc
 ) : CoreActions {
 
     internal suspend fun ensureCurrentProjectReady(
