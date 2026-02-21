@@ -44,6 +44,10 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
         }
+        androidUnitTest.dependencies {
+            implementation(libs.junit)
+            implementation(libs.androidx.testExt.junit)
+        }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)

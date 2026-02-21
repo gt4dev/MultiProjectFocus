@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProjectDao {
 
-    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(project: ProjectEntity): Long
 
     @Query("DELETE FROM projects")
@@ -18,7 +18,7 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE isCurrent = 1 LIMIT 1")
     fun getCurrentProject(): Flow<ProjectEntity?>
 
-    @Query("UPDATE projects SET isCurrent = 0") // todo: moze lepiej false?
+    @Query("UPDATE projects SET isCurrent = false")
     suspend fun clearCurrentProject()
 
     @Query("UPDATE projects SET isCurrent = 1 WHERE id = :projectId")

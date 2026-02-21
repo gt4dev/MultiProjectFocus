@@ -23,10 +23,12 @@ internal class ProjectRepositoryRoomImpl(
         return projectDao.getCurrentProject().map { it?.toDomain() }
     }
 
-    override suspend fun setCurrentProject(projectId: Long) {
+    override suspend fun setCurrentProject(projectId: Long?) {
         withContext(Dispatchers.IO) {
             projectDao.clearCurrentProject()
-            projectDao.setCurrentProject(projectId)
+            if (projectId != null) {
+                projectDao.setCurrentProject(projectId)
+            }
         }
     }
 

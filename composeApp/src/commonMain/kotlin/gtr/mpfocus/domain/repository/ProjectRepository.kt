@@ -8,7 +8,7 @@ interface ProjectRepository {
     suspend fun deleteAll()
 
     fun getCurrentProject(): Flow<Project?>
-    suspend fun setCurrentProject(projectId: Long)
+    suspend fun setCurrentProject(projectId: Long?)
 
     fun getPinnedProjects(): Flow<List<Project>>
     suspend fun clearAllPins()
