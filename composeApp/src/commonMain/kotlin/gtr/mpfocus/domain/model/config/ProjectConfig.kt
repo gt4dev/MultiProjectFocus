@@ -19,9 +19,9 @@ interface ConfigService {
         override suspend fun getProjectConfig(): ProjectConfig {
             val filesNames = ProjectFiles.entries.associateWith { file ->
                 when (file) {
-                    ProjectFiles.File0 -> "main.md"
-                    ProjectFiles.File1 -> "dists.md"
-                    ProjectFiles.File2 -> "plan.md"
+                    ProjectFiles.File1 -> "main.md"
+                    ProjectFiles.File2 -> "dists.md"
+                    ProjectFiles.File3 -> "others.md"
                     else -> "file${file.ordinal}.md"
                 }
             }

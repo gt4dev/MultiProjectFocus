@@ -27,13 +27,13 @@ fun main(args: Array<String>): Unit = runBlocking {
         ActionResult.Success -> println("Command executed successfully")
         is ActionResult.Error -> println("Command failed: ${result.msg}")
     }
-}
 
-//fun main() = application {
-//    Window(
-//        onCloseRequest = ::exitApplication,
-//        title = "mpfocus",
-//    ) {
-//        App()
+//    application {
+//        Window(
+//            onCloseRequest = ::exitApplication,
+//            title = "mpfocus",
+//        ) {
+//            App()
+//        }
 //    }
-//}
+}

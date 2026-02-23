@@ -128,8 +128,10 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "gtr.mpfocus"
+            packageName = "MultiProjectFocus"
             packageVersion = "1.0.0"
+
+            outputBaseDir.set(rootProject.layout.projectDirectory.dir("appBin"))
         }
     }
 }

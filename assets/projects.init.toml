@@ -1,0 +1,27 @@
+# sample configuration of user projects
+# set here your real projects
+# and load to MPF with:
+# - either CLI: `MultiProjectFocus.exe "LoadInitialData(file:c:\path\to\real\file\with\projects.toml)"`
+# - predefinied AutoHotKey shortcut `CapsLock l`
+
+currentProject = 'jobProject3'
+
+[pinned-projects]
+pin1 = 'today'
+pin2 = 'jobProject1'
+pin2 = 'jobProject2'
+pin3 = 'homeProjectA'
+
+
+[projects]
+today =        'C:\real\path\to\project\today-plan'
+jobProject1 =  'C:\another\path\to\ProjectNr1'
+jobProject2 =  'C:\another\path\to\ProjectNr2'
+jobProject3 =  'C:\another\path\to\ProjectNr3'
+jobProject4 =  'C:\another\path\to\ProjectNr4'
+homeProjectA = 'C:\path\to\home\projects\projectA'
+homeProjectB = 'C:\path\to\home\projects\projectB'
+learnEn =      'C:\files\related\to\learning-en'
+anyProject =   'with any path'
+andAnother =   'with another path'
+yetAnother =   'numbers of projects is (almost) unlimited, limit only projects pinned to 10 and current to 1'

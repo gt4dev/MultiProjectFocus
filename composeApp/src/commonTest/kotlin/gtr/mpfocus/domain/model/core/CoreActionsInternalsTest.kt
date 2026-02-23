@@ -80,7 +80,7 @@ class CoreActionsInternalsTest {
                 variant("file already exists") {
                     `given exists 'action preferences'`("report error")
                     `given 'fake file system' returns that each file`("exists")
-                    `when model executes 'ensure project file ready'`(ProjectFiles.File0)
+                    `when model executes 'ensure project file ready'`(ProjectFiles.File1)
                     `then model returns Result`("success")
                     `then model returns file path`("any/path/to/project/main.md")
                 }
@@ -92,14 +92,14 @@ class CoreActionsInternalsTest {
                         variant("report error") {
                             `given exists 'action preferences'`("report error")
                             `given 'fake file system' returns that each file`("doesn't exist")
-                            `when model executes 'ensure project file ready'`(ProjectFiles.File0)
+                            `when model executes 'ensure project file ready'`(ProjectFiles.File1)
                             `then model returns Result`("error: no file exists")
                         }
 
                         variant("notify user") {
                             `given exists 'action preferences'`("notify user")
                             `given 'fake file system' returns that each file`("doesn't exist", "exists")
-                            `when model executes 'ensure project file ready'`(ProjectFiles.File0)
+                            `when model executes 'ensure project file ready'`(ProjectFiles.File1)
                             `then model notify user to`("create file")
                             `then model returns Result`("success")
                         }
@@ -108,7 +108,7 @@ class CoreActionsInternalsTest {
                             `given exists 'action preferences'`("auto create")
                             `given 'fake file system' returns that each file`("doesn't exist", "exists")
                             `given 'fake file system' returns that file is created successfully`()
-                            `when model executes 'ensure project file ready'`(ProjectFiles.File0)
+                            `when model executes 'ensure project file ready'`(ProjectFiles.File1)
                             `then 'fake file system' creates file`()
                             `then model returns Result`("success")
                         }
