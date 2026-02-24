@@ -4,6 +4,7 @@
 
 #SingleInstance Force
 
+
 mpfExePath := A_ScriptDir ".\..\appBin\main\app\MultiProjectFocus\MultiProjectFocus.exe"
 if !FileExist(mpfExePath) {
     MsgBox "Cannot find: " mpfExePath, "Error", 16
@@ -11,47 +12,71 @@ if !FileExist(mpfExePath) {
 }
 
 
-; CapsLock l -> load initial projects from file
+; ==================================
+; shortcuts for `projects.toml` file
+; ==================================
+
+; `CapsLock l` - loads initial projects from file
 CapsLock & l::
 {
     projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
-;    Loop Files projectsTomlPath
-;        projectsTomlPath := A_LoopFileFullPath
     RunMultiProjectFocus("LoadInitialData(file:" projectsTomlPath ")")
 }
 
-; CapsLock o -> open projects file in system default editor
+; `CapsLock o` - opens projects TOML file in system default editor
 CapsLock & o::
 {
     projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
-;    Loop Files projectsTomlPath
-;        projectsTomlPath := A_LoopFileFullPath
     Run projectsTomlPath
 }
 
 
-; CapsLock f -> opens: current project / folder
+; =========================================================
+; shortcuts for 'current project' (open folder, open files)
+; =========================================================
+
+; `CapsLock f` - opens current project folder
 CapsLock & f::
 {
     RunMultiProjectFocus("ProjectCurrent.OpenFolder")
 }
 
-; CapsLock 1 -> opens: current project / file1 (default = main.md)
-CapsLock & 1::
-{
-    RunMultiProjectFocus("ProjectCurrent.OpenFile(file:F1)")
+; `CapsLock+digit (1..9)` - opens current project files 1..9.
+Loop 9 {
+    digit := A_Index
+    Hotkey "CapsLock & " digit, OpenCurrentProjectFile.Bind(digit)
 }
 
-; CapsLock 2 -> opens: current project / file2 (default = dists.md)
-CapsLock & 2::
+
+; ========================================================
+; shortcuts for 'pinned project' (open folder, open files)
+; ========================================================
+
+; `CapsLock p, num_A, num_B` - opens pinned project num_A and its file num_B
+;    example: `CapsLock p, 2, 4` opens file nr 4 in pinned project nr 2
+;
+; `CapsLock p, num_A, f` - opens pinned project num_A and its folder
+;    example: `CapsLock p, 2, f` opens folder in pinned project nr 2
+CapsLock & p::
 {
-    RunMultiProjectFocus("ProjectCurrent.OpenFile(file:F2)")
+    keySequence := InputHook("L2 T2")
+    keySequence.Start()
+    keySequence.Wait()
+    if RegExMatch(keySequence.Input, "^\d[\dfF]$") {
+        keyA := SubStr(keySequence.Input, 1, 1)
+        keyB := SubStr(keySequence.Input, 2, 1)
+        if (StrLower(keyB) = "f") {
+            RunMultiProjectFocus("ProjectPinned(pinPosition:" keyA ").OpenFolder")
+        } else {
+            RunMultiProjectFocus("ProjectPinned(pinPosition:" keyA ").OpenFile(file:F" keyB ")")
+        }
+    }
 }
 
-; CapsLock 3 -> opens: current project / file3 (default = dists.md)
-CapsLock & 3::
+
+OpenCurrentProjectFile(fileNumber, *)
 {
-    RunMultiProjectFocus("ProjectCurrent.OpenFile(file:F3)")
+    RunMultiProjectFocus("ProjectCurrent.OpenFile(file:F" fileNumber ")")
 }
 
 
