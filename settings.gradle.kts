@@ -33,11 +33,3 @@ plugins {
 }
 
 include(":composeApp")
-
-// HOTest is under heavy and simultaneous development with MultiProjectFocus [MPF]
-// thus now - MPF depends directly on HOT sources, not built components like jars etc
-includeBuild("../HOTest")
-// includeBuild understands relative and absolut paths eg
-// """C:\workspace\myproject123\HOTest"""
-// """/home/users/user123/myprojects/HOTest"""
-

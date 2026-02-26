@@ -73,7 +73,7 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
-            implementation("gtr.hotest:core:0.2.0-SNAPSHOT")
+            implementation(libs.hotest)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

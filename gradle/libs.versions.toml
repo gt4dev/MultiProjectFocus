@@ -23,6 +23,7 @@ room = "2.8.4"
 sqlite = "2.6.2"
 ksp = "2.3.0"
 ktoml = "0.7.1"
+hotest = "0.3.0"
 
 
 [libraries]
@@ -57,6 +58,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 ktoml-core = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
+hotest = { module = "io.github.gt4dev:hotest", version.ref = "hotest" }
 
 
 [plugins]
