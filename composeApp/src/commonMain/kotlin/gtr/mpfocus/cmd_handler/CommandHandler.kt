@@ -6,6 +6,8 @@ import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.CoreActions
 import gtr.mpfocus.domain.model.core.UserNotifier
 import gtr.mpfocus.domain.model.init_data.DataLoader
+import gtr.mpfocus.ui.core.AppUi
+import gtr.mpfocus.ui.core.TextMessage
 
 /**
  * Lazy loading - notes:
@@ -15,11 +17,29 @@ import gtr.mpfocus.domain.model.init_data.DataLoader
 class CommandHandler(
     private val coreActions: Lazy<CoreActions>,
     private val dataLoader: Lazy<DataLoader>,
+    private val appUi: Lazy<AppUi>,
     private val actionPreferences: ActionPreferences = ActionPreferences(),
     private val userNotifier: UserNotifier = UserNotifier.None,
 ) {
     suspend fun handle(command: Command): ActionResult {
         return when (command) {
+            NoExplicitCommand -> {
+                appUi.value.showMessage(
+                    TextMessage(
+                        """
+                        You started MPF without parameters.
+                        MPF works best if started: 
+                        1/ with parameters 
+                        2/ from Key Manager (like AutoHotKey) 
+                        
+                        See guide for details.
+                        """.trimIndent()
+                    )
+                )
+
+                ActionResult.Success
+            }
+
             ProjectCurrent.OpenFolder -> coreActions.value.openCurrentProjectFolder(
                 actionPreferences = actionPreferences,
                 userNotifier = userNotifier
@@ -50,6 +70,13 @@ class CommandHandler(
 
             is LoadInitialData -> {
                 dataLoader.value.loadData(command.tomlFilePath)
+                appUi.value.showMessage(
+                    TextMessage(
+                        """
+                        Data from TOML file loaded.
+                        """.trimIndent()
+                    )
+                )
                 ActionResult.Success
             }
         }

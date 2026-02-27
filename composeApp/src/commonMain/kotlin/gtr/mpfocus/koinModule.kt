@@ -10,5 +10,11 @@ import org.koin.dsl.module
 fun appModule() = module {
     single<OperatingSystemActions> { OperatingSystemActionsImpl() }
     single<FileSystemActions> { FileSystemActionsImpl() }
-    single<CommandHandler> { CommandHandler(lazy { get() }, lazy { get() }) }
+    single<CommandHandler> {
+        CommandHandler(
+            lazy { get() },
+            lazy { get() },
+            lazy { get() },
+        )
+    }
 }

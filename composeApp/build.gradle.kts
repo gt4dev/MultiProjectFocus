@@ -63,6 +63,7 @@ kotlin {
             implementation(libs.okio)
 
             implementation(libs.koin.core)
+            implementation(libs.koin.core.coroutines)
 
             // room
             implementation(libs.androidx.room.runtime)

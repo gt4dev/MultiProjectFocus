@@ -5,6 +5,8 @@ import gtr.mpfocus.system_actions.FilePath
 
 sealed interface Command
 
+object NoExplicitCommand : Command
+
 object ProjectCurrent {
     data object OpenFolder : Command
     data class OpenFile(val file: ProjectFiles) : Command

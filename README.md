@@ -102,7 +102,7 @@ Example:
 
 # Installation
 
-## Build MPF
+## 1. Build MPF app
 
 The app is provided as source code to build yourself.  
 This helps you ensure the app **does not read** your files or any data, thus is **completely safe for your use**.
@@ -110,27 +110,29 @@ This helps you ensure the app **does not read** your files or any data, thus is 
 1. Download the source code.
 2. In the project root folder, run command:
 
-    `gradlew createDistribution`  
+    `gradlew createDistributable`  
 
     This compiles the sources and generates the app for your current platform.   
     For example: `.exe` for Windows, `.app` for macOS, and a binary file for Linux.
 3. The generated app file is placed in `./appBin`.
 
-## Install a hotkey manager
+## 2. Install a hotkey manager app
 
 Note: this section describes using MPF with AutoHotkey, but you can use any hotkey manager available on your OS.
 
 1. Install [AutoHotkey](https://www.autohotkey.com/).
 2. Run [the script for AutoHotKey](./AutoHotKey/MultiProjectFocus.ahk), that maps hot key shortcuts to MultiProjectFocus commands.  
-   Recommendation: run this script at system startup.  
+   Note: add this script at system startup.  
    In Windows: 1/ press `Win + R`, 2/ type `shell:startup` and 3/ create a shortcut to [MPF AutoHotkey config](./AutoHotKey/MultiProjectFocus.ahk).
 
 # Usage
 
-Using MPF boils down to calling the app with a proper parameter that says which project and which file or folder to open.
+Using MPF boils down to calling the app with a parameter that says which project and which file or folder to open.  
 
-Here is the list of currently supported commands.  
-Note: examples are for Windows, but any OS will work.
+Here is the list of currently supported commands.
+Note1: examples are for Windows, but any OS will work.
+Note2: this [script for AutoHotKey](./AutoHotKey/MultiProjectFocus.ahk) binds keyboard shortcuts with below MPF commands.
+
 
 - `ProjectCurrent.OpenFolder`  
   Opens the current project folder.  

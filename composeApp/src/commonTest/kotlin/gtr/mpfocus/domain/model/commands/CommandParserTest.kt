@@ -10,6 +10,18 @@ import kotlin.test.assertFailsWith
 class CommandParserTest {
 
     @Test
+    fun `parse empty command returns no command`() {
+        assertEquals(
+            NoExplicitCommand,
+            CommandParser.parse("")
+        )
+        assertEquals(
+            NoExplicitCommand,
+            CommandParser.parse("   ")
+        )
+    }
+
+    @Test
     fun `parse current project open folder`() {
         assertEquals(
             ProjectCurrent.OpenFolder,

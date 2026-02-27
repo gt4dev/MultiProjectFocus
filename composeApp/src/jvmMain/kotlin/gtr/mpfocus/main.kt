@@ -5,19 +5,23 @@ import gtr.mpfocus.domain.domainModule
 import gtr.mpfocus.domain.model.commands.CommandParser
 import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.infra.infraModule
+import gtr.mpfocus.ui.uiModule
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
+import org.koin.core.lazyModules
 
 fun main(args: Array<String>): Unit = runBlocking {
 
-    require(args.isNotEmpty()) { "Provide command to execute" }
-    val command = CommandParser.parse(args.first())
+    val command = CommandParser.parseArgs(args)
 
     val koinApp = startKoin {
         modules(
             infraModule(),
             domainModule(),
             appModule()
+        )
+        lazyModules(
+            uiModule()
         )
     }
     val koin = koinApp.koin

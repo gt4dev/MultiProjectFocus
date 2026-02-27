@@ -15,8 +15,20 @@ object CommandParser {
         Regex("""^ProjectByPath\(folder:(.+)\)\.OpenFile\(file:(F\d+)\)$""")
     private val loadInitialDataPattern = Regex("""^LoadInitialData\(file:(.+)\)$""")
 
+    fun parseArgs(args: Array<String>): Command {
+        return if (args.isEmpty()) {
+            NoExplicitCommand
+        } else {
+            parse(args.first())
+        }
+    }
+
     fun parse(rawCommand: String): Command {
         val command = normalizeCommand(rawCommand)
+
+        if (command.isEmpty()) {
+            return NoExplicitCommand
+        }
 
         if (command == "ProjectCurrent.OpenFolder") {
             return ProjectCurrent.OpenFolder
@@ -61,7 +73,7 @@ object CommandParser {
     private fun normalizeCommand(rawCommand: String): String {
         val trimmed = rawCommand.trim()
         if (trimmed.isEmpty()) {
-            throw CommandParseException("Command is empty")
+            return ""
         }
         return trimmed
     }
