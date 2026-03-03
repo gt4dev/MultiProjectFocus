@@ -1,48 +1,70 @@
 package gtr.mpfocus
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import mpfocus.composeapp.generated.resources.Res
-import mpfocus.composeapp.generated.resources.compose_multiplatform
-import org.jetbrains.compose.resources.painterResource
+import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.ui.composables.MessagePanelState
+import gtr.mpfocus.ui.composables.MessagePanelState.Tone
+import gtr.mpfocus.ui.composables.ProjectRowState
+import gtr.mpfocus.ui.main_screen.MainScreen
+import gtr.mpfocus.ui.main_screen.MainScreenState
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
-        }
+        MainScreen(
+            uiState = previewMainScreenState(),
+            onAction = {},
+        )
     }
+}
+
+private fun previewMainScreenState(): MainScreenState {
+    return MainScreenState(
+        message = MessagePanelState(
+            text = "Sample message panel. Use it for status, warnings, or next actions.",
+            tone = Tone.Info,
+        ),
+        currentProject = ProjectRowState(
+            projectId = 1,
+            pathText = "c:\\projects\\product-a\\feature-xyz",
+            selectedFile = ProjectFiles.File1,
+            isPinned = false,
+            canSetAsCurrent = false,
+        ),
+        pinnedProjects = listOf(
+            ProjectRowState(
+                projectId = 2,
+                pathText = "c:\\projects\\product-b\\bugfix-123",
+                selectedFile = ProjectFiles.File2,
+                isPinned = true,
+                canMovePinnedUp = false,
+                canMovePinnedDown = true,
+            ),
+            ProjectRowState(
+                projectId = 3,
+                pathText = "c:\\projects\\personal\\writing",
+                selectedFile = ProjectFiles.File1,
+                isPinned = true,
+                canMovePinnedUp = true,
+                canMovePinnedDown = false,
+            ),
+        ),
+        otherProjects = listOf(
+            ProjectRowState(
+                projectId = 4,
+                pathText = "c:\\projects\\ops\\maintenance",
+                selectedFile = ProjectFiles.File3,
+                isPinned = false,
+            ),
+            ProjectRowState(
+                projectId = 5,
+                pathText = "c:\\projects\\home\\garden-plans",
+                selectedFile = ProjectFiles.File1,
+                isPinned = false,
+            ),
+        ),
+    )
 }

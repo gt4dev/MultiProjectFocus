@@ -38,6 +38,12 @@ internal class ProjectRepositoryRoomImpl(
         }
     }
 
+    override fun getOtherProjects(): Flow<List<Project>> {
+        return projectDao.getOtherProjects().map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
     override suspend fun clearAllPins() {
         withContext(Dispatchers.IO) {
             projectDao.clearAllPins()

@@ -14,6 +14,8 @@ interface ProjectRepository {
     suspend fun clearAllPins()
     suspend fun pinProject(projectId: Long, pinPosition: Int)
 
+    fun getOtherProjects(): Flow<List<Project>>
+
     fun getAll(): Flow<List<Project>>
 
     suspend fun addProject(projectPath: FolderPath): Long

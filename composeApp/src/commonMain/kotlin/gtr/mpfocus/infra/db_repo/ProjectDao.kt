@@ -27,6 +27,9 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE pinPosition IS NOT NULL ORDER BY pinPosition ASC")
     fun getPinnedProjects(): Flow<List<ProjectEntity>>
 
+    @Query("SELECT * FROM projects WHERE pinPosition IS NULL ORDER BY id ASC")
+    fun getOtherProjects(): Flow<List<ProjectEntity>>
+
     @Query("UPDATE projects SET pinPosition = NULL")
     suspend fun clearAllPins()
 

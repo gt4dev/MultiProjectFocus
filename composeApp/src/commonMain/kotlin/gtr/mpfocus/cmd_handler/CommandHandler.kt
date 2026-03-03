@@ -27,12 +27,9 @@ class CommandHandler(
                 appUi.value.showMessage(
                     TextMessage(
                         """
-                        You started MPF without parameters.
-                        MPF works best if started: 
-                        1/ with parameters 
-                        2/ from Key Manager (like AutoHotKey) 
-                        
-                        See guide for details.
+                        You started Multi Project Focus (MPF) app without any parameters.
+                        That’s fine, but MPF works best when running in the background and opening your projects via keyboard shortcuts.
+                        Read the guide to learn how.
                         """.trimIndent()
                     )
                 )

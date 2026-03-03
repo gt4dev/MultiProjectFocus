@@ -1,38 +1,34 @@
 package gtr.mpfocus.ui.core
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import gtr.mpfocus.ui.composables.MessagePanelState
+import gtr.mpfocus.ui.main_screen.MainScreenWindowFactory
 
-class AppUiImpl : AppUi {
-    private val appWindowLauncher: AppWindowLauncher = createAppWindowLauncher()
+class AppUiImpl(
+    private val appWindowLauncher: AppWindowLauncher,
+    private val mainScreenWindowFactory: MainScreenWindowFactory,
+) : AppUi {
 
     override suspend fun showMessage(msg: Message) {
         when (msg) {
             is TextMessage -> {
-                appWindowLauncher.showWindow({
-                    MessageContent(messageText = msg.text)
-                })
+                appWindowLauncher.showWindow(
+                    mainScreenWindowFactory.create(
+                        initialMessage = MessagePanelState(text = msg.text)
+                    )
+                )
             }
         }
     }
 }
 
-@Composable
-fun MessageContent(messageText: String) {
-    MaterialTheme {
-        Text(
-            text = messageText,
-            modifier = Modifier.padding(16.dp),
-        )
-    }
-}
+data class AppWindowSpec(
+    val title: String,
+    val content: @Composable () -> Unit,
+)
 
 interface AppWindowLauncher {
-    suspend fun showWindow(content: @Composable (() -> Unit))
+    suspend fun showWindow(window: AppWindowSpec)
 }
 
 expect fun createAppWindowLauncher(): AppWindowLauncher
