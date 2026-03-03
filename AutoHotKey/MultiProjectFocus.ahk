@@ -12,22 +12,10 @@ if !FileExist(mpfExePath) {
 }
 
 
-; ==================================
-; shortcuts for `projects.toml` file
-; ==================================
-
-; `CapsLock l` - loads initial projects from file
-CapsLock & l::
+; `CapsLock u` - opens UI
+CapsLock & u::
 {
-    projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
-    RunMultiProjectFocus("LoadInitialData(file:" projectsTomlPath ")")
-}
-
-; `CapsLock o` - opens projects TOML file in system default editor
-CapsLock & o::
-{
-    projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
-    Run projectsTomlPath
+    RunMultiProjectFocus("ShowUI")
 }
 
 
@@ -85,3 +73,24 @@ RunMultiProjectFocus(arg)
     global mpfExePath
     Run '"' mpfExePath '" "' arg '"'
 }
+
+
+; ==================================
+; shortcuts for `projects.toml` file
+; ==================================
+
+; `CapsLock l` - loads initial projects from file
+CapsLock & l::
+{
+    projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
+    RunMultiProjectFocus("LoadInitialData(file:" projectsTomlPath ")")
+}
+
+; `CapsLock o` - opens projects TOML file in system default editor
+CapsLock & o::
+{
+    projectsTomlPath := A_ScriptDir "\..\assets\projects.real.toml"
+    Run projectsTomlPath
+}
+
+

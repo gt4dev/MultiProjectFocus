@@ -20,6 +20,12 @@ class AppUiImpl(
             }
         }
     }
+
+    override suspend fun showMainWindow() {
+        appWindowLauncher.showWindow(
+            mainScreenWindowFactory.create()
+        )
+    }
 }
 
 data class AppWindowSpec(

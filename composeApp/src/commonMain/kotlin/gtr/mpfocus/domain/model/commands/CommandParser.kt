@@ -34,6 +34,10 @@ object CommandParser {
             return ProjectCurrent.OpenFolder
         }
 
+        if (command == "ShowUI") {
+            return ShowUi
+        }
+
         projectCurrentOpenFilePattern.matchEntire(command)?.let { match ->
             return ProjectCurrent.OpenFile(
                 file = parseProjectFile(match.groupValues[1])

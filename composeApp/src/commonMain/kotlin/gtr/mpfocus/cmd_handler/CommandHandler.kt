@@ -23,6 +23,11 @@ class CommandHandler(
 ) {
     suspend fun handle(command: Command): ActionResult {
         return when (command) {
+            ShowUi -> {
+                appUi.value.showMainWindow()
+                ActionResult.Success
+            }
+
             NoExplicitCommand -> {
                 appUi.value.showMessage(
                     TextMessage(
@@ -33,7 +38,6 @@ class CommandHandler(
                         """.trimIndent()
                     )
                 )
-
                 ActionResult.Success
             }
 

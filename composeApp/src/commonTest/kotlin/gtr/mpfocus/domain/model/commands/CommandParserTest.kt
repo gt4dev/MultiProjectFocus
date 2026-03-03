@@ -30,6 +30,14 @@ class CommandParserTest {
     }
 
     @Test
+    fun `parse show ui`() {
+        assertEquals(
+            ShowUi,
+            CommandParser.parse("ShowUI")
+        )
+    }
+
+    @Test
     fun `parse current project open file`() {
         assertEquals(
             ProjectCurrent.OpenFile(ProjectFiles.File1),
