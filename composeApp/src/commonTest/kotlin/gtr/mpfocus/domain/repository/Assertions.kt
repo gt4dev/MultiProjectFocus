@@ -1,9 +1,9 @@
 package gtr.mpfocus.domain.repository
 
 import gtr.mpfocus.domain.model.core.Project
-
+import gtr.mpfocus.domain.model.core.Models.Project as MProject
 object Assertions {
-    fun isTheSameProject(actual: Project?, expected: Models.Project?): Boolean {
+    fun isTheSameProject(actual: Project?, expected: MProject?): Boolean {
         if (actual == null && expected == null) {
             return true
         }

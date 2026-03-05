@@ -4,16 +4,16 @@ import gtr.hotest.Async.hotest
 import gtr.hotest.variants.Async.variant
 import gtr.hotest.variants.Async.variants
 import gtr.mpfocus.domain.model.config.Steps.`given exists 'basic config service'`
-import gtr.mpfocus.domain.model.core.Models.PinnedProject
+import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user notifier'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in pinned project'`
-import gtr.mpfocus.domain.model.repos.Steps.`given 'fake projects repo' returns pinned project`
-import gtr.mpfocus.domain.model.repos.Steps.`given 'fake projects repo' returns sequential pinned project`
-import gtr.mpfocus.domain.model.repos.Steps.`given exists 'fake projects repo'`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns pinned projects`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns sequential pinned project`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given exists 'fake projects repo'`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that each folder`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder is created successfully`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake file system'`
@@ -55,8 +55,8 @@ class PinnedProjectOpenFolderTest {
             `given exists 'fake file system'`()
             `given exists 'fake operating system'`()
             `given exists 'fake user notifier'`()
-            `given 'fake projects repo' returns pinned project`(
-                PinnedProject(5, "any/path/to/project")
+            `given 'fake projects repo' returns pinned projects`(
+                Project(id = 111, path = "any/path/to/project", pinPosition = 5)
             )
             `given exists 'basic config service'`()
             `given exists 'real model'`()

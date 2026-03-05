@@ -1,7 +1,7 @@
 package gtr.mpfocus.infra.db_repo
 
 import gtr.hotest.HOTestCtx
-import gtr.mpfocus.domain.repository.Models
+import gtr.mpfocus.domain.model.core.Models
 
 object DBSteps {
     fun HOTestCtx.`'test database' sets up`() {
@@ -25,8 +25,8 @@ object DBSteps {
         for (d in data) {
             dao.insert(
                 ProjectEntity(
-                    id = d.id,
-                    folderPath = d.path,
+                    id = d.id!!,
+                    folderPath = d.path!!,
                     isCurrent = false,
                     pinPosition = null
                 )

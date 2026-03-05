@@ -75,6 +75,11 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.hotest)
+            implementation(libs.compose.uiTest)
+        }
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlin.testJunit)
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)

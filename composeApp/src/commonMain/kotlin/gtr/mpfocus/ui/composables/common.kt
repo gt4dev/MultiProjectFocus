@@ -14,11 +14,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun SectionCard(
     title: String,
+    modifier: Modifier = Modifier,
     headerActions: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     OutlinedCard(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Column(
             modifier = Modifier

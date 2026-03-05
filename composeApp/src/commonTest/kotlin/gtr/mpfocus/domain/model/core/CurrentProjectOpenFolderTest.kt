@@ -10,7 +10,7 @@ import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in current project'`
-import gtr.mpfocus.domain.model.repos.Steps.`given exists 'fake projects repo'`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given exists 'fake projects repo'`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that each folder`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder is created successfully`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake file system'`

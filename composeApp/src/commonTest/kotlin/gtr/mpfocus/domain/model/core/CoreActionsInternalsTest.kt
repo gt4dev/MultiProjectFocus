@@ -15,7 +15,7 @@ import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'fake user notifier'`
 import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
-import gtr.mpfocus.domain.model.repos.Steps.`given exists 'fake projects repo'`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given exists 'fake projects repo'`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that each file`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that each folder`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that file is created successfully`

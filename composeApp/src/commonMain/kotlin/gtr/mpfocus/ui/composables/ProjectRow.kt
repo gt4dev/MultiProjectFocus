@@ -13,6 +13,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import gtr.mpfocus.domain.model.core.ProjectFiles
@@ -59,7 +60,9 @@ fun ProjectRow(
     onAction: (ProjectRowUiActions) -> Unit,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(ProjectRowTestTags.row(uiState.projectId)),
     ) {
         Column(
             modifier = Modifier
@@ -75,6 +78,7 @@ fun ProjectRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(
+                    modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
                     onClick = { onAction(ProjectRowUiActions.SetCurrentClicked(uiState.projectId)) },
                     enabled = uiState.canSetAsCurrent,
                 ) {
@@ -148,6 +152,7 @@ fun ProjectRow(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag(ProjectRowTestTags.path(uiState.projectId))
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant,
                         shape = RoundedCornerShape(12.dp),
@@ -163,4 +168,10 @@ fun ProjectRow(
             }
         }
     }
+}
+
+object ProjectRowTestTags {
+    fun row(projectId: Long): String = "project-row-$projectId"
+    fun path(projectId: Long): String = "project-row-$projectId-path"
+    fun buttonSetCurrent(projectId: Long): String = "project-row-$projectId-set-current"
 }

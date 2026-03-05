@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import gtr.mpfocus.ui.composables.*
 import gtr.mpfocus.ui.core.UiActions
@@ -57,6 +58,7 @@ fun MainScreen(
         CurrentProjectSection(
             uiState = CurrentProjectSectionState(project = uiState.currentProject),
             onAction = { onAction(MainScreenUiActions.CurrentProjectSection(it)) },
+            modifier = Modifier.testTag(MainScreenTestTags.CURRENT_PROJECT_SECTION),
         )
 
         PinnedProjectsSection(
@@ -65,12 +67,20 @@ fun MainScreen(
                 isReorderMode = uiState.isPinnedProjectsReorderMode,
             ),
             onAction = { onAction(MainScreenUiActions.PinnedProjectsSection(it)) },
+            modifier = Modifier.testTag(MainScreenTestTags.PINNED_PROJECTS_SECTION),
         )
 
         OtherProjectsSection(
             uiState = OtherProjectsSectionState(projects = uiState.otherProjects),
             onAction = { onAction(MainScreenUiActions.OtherProjectsSection(it)) },
+            modifier = Modifier.testTag(MainScreenTestTags.OTHER_PROJECTS_SECTION),
         )
     }
+}
+
+object MainScreenTestTags {
+    const val CURRENT_PROJECT_SECTION = "current-project"
+    const val PINNED_PROJECTS_SECTION = "pinned-projects"
+    const val OTHER_PROJECTS_SECTION = "other-projects"
 }
 

@@ -26,9 +26,11 @@ sealed interface PinnedProjectsSectionUiActions : UiActions {
 fun PinnedProjectsSection(
     uiState: PinnedProjectsSectionState,
     onAction: (PinnedProjectsSectionUiActions) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     SectionCard(
         title = "Pinned projects",
+        modifier = modifier,
         headerActions = {
             if (uiState.projects.size > 1) {
                 OutlinedButton(
