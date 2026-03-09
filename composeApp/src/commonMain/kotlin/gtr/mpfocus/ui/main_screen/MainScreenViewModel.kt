@@ -6,7 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import gtr.mpfocus.domain.model.core.Project
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectActions
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.ui.composables.*
 import kotlinx.coroutines.flow.*
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
     private val projectRepository: ProjectRepository,
+    private val projectActions: ProjectActions,
     initialMessage: MessagePanelState? = null,
 ) : ViewModel() {
 
@@ -165,7 +167,7 @@ class MainScreenViewModel(
         showInfo("Not implemented yet.")
     }
 
-    private fun onOpenProjectFile(projectId: Long, file: ProjectFiles) {
+    private fun onOpenProjectFile(projectId: Long, file: ProjectFile) {
         showInfo("Not implemented yet.")
     }
 
@@ -182,7 +184,7 @@ class MainScreenViewModel(
     }
 
     // todo: handle in compo locally
-    private fun onSelectProjectFile(projectId: Long, file: ProjectFiles) {
+    private fun onSelectProjectFile(projectId: Long, file: ProjectFile) {
     }
 
     private fun onDeleteProject(projectId: Long) {
@@ -261,12 +263,14 @@ class MainScreenViewModel(
 
 class MainScreenViewModelFactory(
     private val projectRepository: ProjectRepository,
+    private val projectActions: ProjectActions,
 ) {
     fun create(initialMessage: MessagePanelState? = null): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
                 MainScreenViewModel(
                     projectRepository = projectRepository,
+                    projectActions = projectActions,
                     initialMessage = initialMessage,
                 )
             }

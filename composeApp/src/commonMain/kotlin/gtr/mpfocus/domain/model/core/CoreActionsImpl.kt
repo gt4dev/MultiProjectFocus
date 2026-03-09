@@ -63,7 +63,7 @@ class CoreActionsImpl(
 
     internal suspend fun ensureProjectFileReady(
         project: Project,
-        file: ProjectFiles,
+        file: ProjectFile,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): Result<FilePath> {
@@ -145,7 +145,7 @@ class CoreActionsImpl(
 
 
     override suspend fun openCurrentProjectFile(
-        file: ProjectFiles,
+        file: ProjectFile,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult {
@@ -179,7 +179,7 @@ class CoreActionsImpl(
 
     override suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectFiles,
+        file: ProjectFile,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult {

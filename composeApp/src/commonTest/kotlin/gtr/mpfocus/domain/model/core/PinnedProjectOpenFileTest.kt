@@ -49,7 +49,7 @@ class PinnedProjectOpenFileTest {
 
             `when model executes command 'open file in pinned project'`(
                 pinPosition = 7,
-                file = ProjectFiles.File3
+                file = ProjectFile.File3
             )
             `then model notify user to`("set pinned project")
             `then model returns`("error: no pinned project at position 7")
@@ -77,7 +77,7 @@ class PinnedProjectOpenFileTest {
                     `given 'fake file system' returns that folder is created successfully`()
                     `when model executes command 'open file in pinned project'`(
                         pinPosition = 5,
-                        file = ProjectFiles.File0
+                        file = ProjectFile.File0
                     )
                     `then 'fake file system' checks folder path exist'`()
                     `then 'fake file system' creates folder`()
@@ -92,7 +92,7 @@ class PinnedProjectOpenFileTest {
                     `given 'fake file system' returns that each folder`("doesn't exist")
                     `when model executes command 'open file in pinned project'`(
                         pinPosition = 5,
-                        file = ProjectFiles.File0
+                        file = ProjectFile.File0
                     )
                     `then 'fake file system' checks folder path exist'`()
                     `then model returns`("error: no project folder")
@@ -109,7 +109,7 @@ class PinnedProjectOpenFileTest {
                             `given 'fake file system' returns that each file`("exists")
                             `when model executes command 'open file in pinned project'`(
                                 pinPosition = 5,
-                                file = ProjectFiles.File0
+                                file = ProjectFile.File0
                             )
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
@@ -126,7 +126,7 @@ class PinnedProjectOpenFileTest {
                             )
                             `when model executes command 'open file in pinned project'`(
                                 pinPosition = 5,
-                                file = ProjectFiles.File0
+                                file = ProjectFile.File0
                             )
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
@@ -159,7 +159,7 @@ class PinnedProjectOpenFileTest {
                     `given 'fake file system' returns that each file`("exists")
                     `when model executes command 'open file in pinned project'`(
                         pinPosition = 5,
-                        file = ProjectFiles.File0
+                        file = ProjectFile.File0
                     )
                     `then 'fake file system' checks folder path exist'`()
                     `then 'fake file system' checks file path exist'`()
@@ -177,7 +177,7 @@ class PinnedProjectOpenFileTest {
                             `given 'fake file system' returns that each file`("doesn't exist")
                             `when model executes command 'open file in pinned project'`(
                                 pinPosition = 5,
-                                file = ProjectFiles.File0
+                                file = ProjectFile.File0
                             )
                             `then 'fake file system' checks folder path exist'`()
                             `then 'fake file system' checks file path exist'`()
@@ -195,7 +195,7 @@ class PinnedProjectOpenFileTest {
                                     `given 'fake file system' returns that each file`("doesn't exist", "exists")
                                     `when model executes command 'open file in pinned project'`(
                                         pinPosition = 5,
-                                        file = ProjectFiles.File0
+                                        file = ProjectFile.File0
                                     )
                                     `then 'fake file system' checks folder path exist'`()
                                     `then model notify user to`("create file")
@@ -210,7 +210,7 @@ class PinnedProjectOpenFileTest {
                                     `given 'fake file system' returns that each file`("doesn't exist", "doesn't exist")
                                     `when model executes command 'open file in pinned project'`(
                                         pinPosition = 5,
-                                        file = ProjectFiles.File0
+                                        file = ProjectFile.File0
                                     )
                                     `then 'fake file system' checks folder path exist'`()
                                     `then model notify user to`("create file")
@@ -228,7 +228,7 @@ class PinnedProjectOpenFileTest {
                             `given 'fake file system' returns that file is created successfully`()
                             `when model executes command 'open file in pinned project'`(
                                 pinPosition = 5,
-                                file = ProjectFiles.File0
+                                file = ProjectFile.File0
                             )
                             `then 'fake file system' checks folder path exist'`()
                             `then 'fake file system' checks file path exist'`()

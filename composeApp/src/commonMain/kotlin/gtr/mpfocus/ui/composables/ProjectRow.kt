@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.ui.core.UiActions
 
 data class ProjectRowState(
     val projectId: Long,
     val pathText: String,
-    val selectedFile: ProjectFiles = ProjectFiles.File1,
-    val availableFiles: List<ProjectFiles> = ProjectFiles.entries,
+    val selectedFile: ProjectFile = ProjectFile.File1,
+    val availableFiles: List<ProjectFile> = ProjectFile.entries,
     val isPinned: Boolean = false,
     val canSetAsCurrent: Boolean = true,
     val canMovePinnedUp: Boolean = false,
@@ -38,7 +38,7 @@ sealed interface ProjectRowUiActions : UiActions {
     data class OpenFolderClicked(val projectId: Long) : ProjectRowUiActions
     data class OpenFileClicked(
         val projectId: Long,
-        val file: ProjectFiles,
+        val file: ProjectFile,
     ) : ProjectRowUiActions
 
     data class TogglePinnedClicked(val projectId: Long) : ProjectRowUiActions
@@ -46,7 +46,7 @@ sealed interface ProjectRowUiActions : UiActions {
     data class MovePinnedDownClicked(val projectId: Long) : ProjectRowUiActions
     data class FileSelected(
         val projectId: Long,
-        val file: ProjectFiles,
+        val file: ProjectFile,
     ) : ProjectRowUiActions
 
     data class DeleteClicked(val projectId: Long) : ProjectRowUiActions

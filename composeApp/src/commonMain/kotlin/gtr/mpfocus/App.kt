@@ -3,7 +3,7 @@ package gtr.mpfocus
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.composables.MessagePanelState.Tone
 import gtr.mpfocus.ui.composables.ProjectRowState
@@ -30,7 +30,7 @@ private fun previewMainScreenState(): MainScreenState {
         currentProject = ProjectRowState(
             projectId = 1,
             pathText = "c:\\projects\\product-a\\feature-xyz",
-            selectedFile = ProjectFiles.File1,
+            selectedFile = ProjectFile.File1,
             isPinned = false,
             canSetAsCurrent = false,
         ),
@@ -38,7 +38,7 @@ private fun previewMainScreenState(): MainScreenState {
             ProjectRowState(
                 projectId = 2,
                 pathText = "c:\\projects\\product-b\\bugfix-123",
-                selectedFile = ProjectFiles.File2,
+                selectedFile = ProjectFile.File2,
                 isPinned = true,
                 canMovePinnedUp = false,
                 canMovePinnedDown = true,
@@ -46,7 +46,7 @@ private fun previewMainScreenState(): MainScreenState {
             ProjectRowState(
                 projectId = 3,
                 pathText = "c:\\projects\\personal\\writing",
-                selectedFile = ProjectFiles.File1,
+                selectedFile = ProjectFile.File1,
                 isPinned = true,
                 canMovePinnedUp = true,
                 canMovePinnedDown = false,
@@ -56,13 +56,13 @@ private fun previewMainScreenState(): MainScreenState {
             ProjectRowState(
                 projectId = 4,
                 pathText = "c:\\projects\\ops\\maintenance",
-                selectedFile = ProjectFiles.File3,
+                selectedFile = ProjectFile.File3,
                 isPinned = false,
             ),
             ProjectRowState(
                 projectId = 5,
                 pathText = "c:\\projects\\home\\garden-plans",
-                selectedFile = ProjectFiles.File1,
+                selectedFile = ProjectFile.File1,
                 isPinned = false,
             ),
         ),

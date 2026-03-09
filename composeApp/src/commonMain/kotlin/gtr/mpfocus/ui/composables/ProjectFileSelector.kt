@@ -10,16 +10,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.ui.core.UiActions
 
 data class ProjectFileSelectorState(
-    val selectedFile: ProjectFiles = ProjectFiles.File1,
-    val availableFiles: List<ProjectFiles> = ProjectFiles.entries,
+    val selectedFile: ProjectFile = ProjectFile.File1,
+    val availableFiles: List<ProjectFile> = ProjectFile.entries,
 )
 
 sealed interface ProjectFileSelectorUiActions : UiActions {
-    data class FileSelected(val file: ProjectFiles) : ProjectFileSelectorUiActions
+    data class FileSelected(val file: ProjectFile) : ProjectFileSelectorUiActions
 }
 
 @Composable

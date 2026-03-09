@@ -3,8 +3,12 @@ package gtr.mpfocus.ui.main_screen
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
+import dev.mokkery.matcher.any
+import dev.mokkery.verifySuspend
 import gtr.hotest.HOTestCtx
 import gtr.mpfocus.domain.model.core.Models
+import gtr.mpfocus.domain.model.core.ProjectActions
+import gtr.mpfocus.hotest.CucumberExpressionMatcher
 import gtr.mpfocus.ui.composables.ProjectRowTestTags
 
 @OptIn(ExperimentalTestApi::class)
@@ -16,7 +20,8 @@ object MainScreenSteps {
             MaterialTheme {
                 MainScreenContainer(
                     viewModelFactory = MainScreenViewModelFactory(
-                        koin.get()
+                        koin.get(),
+                        koin.get(),
                     ).create(),
                 )
             }
@@ -72,7 +77,45 @@ object MainScreenSteps {
         }
     }
 
-    // todo: gdzie to wrzucic? pp na razie zostawic w ui tests
+    fun HOTestCtx.`when 'open folder' is clicked on project`(project: String) {
+        val m = CucumberExpressionMatcher(project)
+        val (section, position) = when {
+            m.matches("section {string}, position {int}") -> {
+                m.getString(0) to m.getInt(1)
+            }
+
+            m.matches("section {string}") -> {
+                m.getString(0) to 1
+            }
+
+            else -> error("Unknown project selector: $project")
+        }
+
+        val sectionMatcher = hasTestTag(section)
+        val rowInSectionMatcher = hasProjectRowTag() and hasAnyAncestor(sectionMatcher)
+
+        val cut: ComposeUiTest = koin.get()
+        with(cut) {
+            waitForIdle()
+            onNode(sectionMatcher).assertExists()
+
+            val rows = onAllNodes(rowInSectionMatcher, useUnmergedTree = true)
+                .fetchSemanticsNodes(atLeastOneRootRequired = false)
+
+            val rowNodeId = rows[position - 1].id
+            val selectedRowMatcher = SemanticsMatcher("project row node id: $rowNodeId") { node ->
+                node.id == rowNodeId
+            }
+            onNode(
+                hasText("Open folder") and hasAnyAncestor(selectedRowMatcher),
+                useUnmergedTree = true,
+            ).assertExists().performClick()
+
+            waitForIdle()
+        }
+    }
+
+    // it matches only nodes whose TestTag is exactly project-row-<number>
     private fun hasProjectRowTag(): SemanticsMatcher {
         val rowTagRegex = Regex("""^project-row-\d+$""")
         return SemanticsMatcher("project row tag matcher") { node ->
@@ -84,4 +127,32 @@ object MainScreenSteps {
         }
     }
 
+    fun HOTestCtx.`then is executed 'project actions' command`(command: String) {
+        val projectActions: ProjectActions = koin.get()
+        val m = CucumberExpressionMatcher(command)
+        when {
+
+            m.matches("open folder in current project") -> {
+                verifySuspend {
+                    projectActions.openCurrentProjectFolder(any(), any())
+                }
+            }
+
+            m.matches("open folder in pinned project, pin: {int}") -> {
+                val pin = m.getInt(0)
+                verifySuspend {
+                    projectActions.openPinnedProjectFolder(pin, any(), any())
+                }
+            }
+
+            m.matches("open folder in regular project, id: {int}") -> {
+                val id = m.getInt(0)
+                verifySuspend {
+                    projectActions.openRegularProjectFolder(id.toLong(), any(), any())
+                }
+            }
+
+            else -> error("Unknown command: $command")
+        }
+    }
 }

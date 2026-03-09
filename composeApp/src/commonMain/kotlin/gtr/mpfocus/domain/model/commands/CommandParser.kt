@@ -1,6 +1,6 @@
 package gtr.mpfocus.domain.model.commands
 
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.system_actions.FilePath
 import okio.Path.Companion.toPath
 
@@ -91,7 +91,7 @@ object CommandParser {
         return pinPosition
     }
 
-    private fun parseProjectFile(rawFile: String): ProjectFiles {
+    private fun parseProjectFile(rawFile: String): ProjectFile {
         if (!rawFile.startsWith("F")) {
             throw CommandParseException("Invalid file token: $rawFile")
         }
@@ -99,9 +99,9 @@ object CommandParser {
         val fileIndex = rawFile.removePrefix("F").toIntOrNull()
             ?: throw CommandParseException("Invalid file token: $rawFile")
 
-        return ProjectFiles.entries.getOrNull(fileIndex)
+        return ProjectFile.entries.getOrNull(fileIndex)
             ?: throw CommandParseException(
-                "File token out of range: $rawFile (supported F0..F${ProjectFiles.entries.lastIndex})"
+                "File token out of range: $rawFile (supported F0..F${ProjectFile.entries.lastIndex})"
             )
     }
 }

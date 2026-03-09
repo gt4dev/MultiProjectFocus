@@ -38,7 +38,7 @@ class CurrentProjectOpenFileTest {
             `given exists 'real model'`()
 
             `given exists 'action preferences'`("report error")
-            `when model executes command 'open file in current project'`(ProjectFiles.File0)
+            `when model executes command 'open file in current project'`(ProjectFile.File0)
             `then model notify user to`("set current project")
             `then model returns`("error: no current project")
         }
@@ -61,7 +61,7 @@ class CurrentProjectOpenFileTest {
                     `given 'fake file system' returns that each folder`("doesn't exist", "exists")
                     `given 'fake file system' returns that each file`("exists")
                     `given 'fake file system' returns that folder is created successfully`()
-                    `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                    `when model executes command 'open file in current project'`(ProjectFile.File0)
                     `then 'fake file system' checks folder path exist'`()
                     `then 'fake file system' creates folder`()
                     // todo: rename to ..exists
@@ -74,7 +74,7 @@ class CurrentProjectOpenFileTest {
                 variant("report error") {
                     `given exists 'action preferences'`("report error")
                     `given 'fake file system' returns that each folder`("doesn't exist")
-                    `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                    `when model executes command 'open file in current project'`(ProjectFile.File0)
                     `then 'fake file system' checks folder path exist'`()
                     `then model returns`("error: no project folder")
                 }
@@ -88,7 +88,7 @@ class CurrentProjectOpenFileTest {
                         variant("user creates folder") {
                             `given 'fake file system' returns that each folder`("doesn't exist", "exists")
                             `given 'fake file system' returns that each file`("exists")
-                            `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                            `when model executes command 'open file in current project'`(ProjectFile.File0)
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
                             `then 'fake file system' checks folder path exist'`()
@@ -102,7 +102,7 @@ class CurrentProjectOpenFileTest {
                                 "doesn't exist",
                                 "doesn't exist"
                             )
-                            `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                            `when model executes command 'open file in current project'`(ProjectFile.File0)
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
                             `then 'fake file system' checks folder path exist'`()
@@ -130,7 +130,7 @@ class CurrentProjectOpenFileTest {
                     `given exists 'action preferences'`("report error")
                     `given 'fake file system' returns that each folder`("exists")
                     `given 'fake file system' returns that each file`("exists")
-                    `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                    `when model executes command 'open file in current project'`(ProjectFile.File0)
                     `then 'fake file system' checks folder path exist'`()
                     `then 'fake file system' checks file path exist'`()
                     `then 'fake operating system' opens file`()
@@ -145,7 +145,7 @@ class CurrentProjectOpenFileTest {
                             `given exists 'action preferences'`("report error")
                             `given 'fake file system' returns that each folder`("exists")
                             `given 'fake file system' returns that each file`("doesn't exist")
-                            `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                            `when model executes command 'open file in current project'`(ProjectFile.File0)
                             `then 'fake file system' checks folder path exist'`()
                             `then 'fake file system' checks file path exist'`()
                             `then model returns`("error: no file exists")
@@ -160,7 +160,7 @@ class CurrentProjectOpenFileTest {
                                 variant("user creates file") {
                                     `given 'fake file system' returns that each folder`("exists")
                                     `given 'fake file system' returns that each file`("doesn't exist", "exists")
-                                    `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                                    `when model executes command 'open file in current project'`(ProjectFile.File0)
                                     `then 'fake file system' checks folder path exist'`()
                                     `then model notify user to`("create file")
                                     `then 'fake file system' checks file path exist'`()
@@ -172,7 +172,7 @@ class CurrentProjectOpenFileTest {
                                 variant("user doesn't create file") {
                                     `given 'fake file system' returns that each folder`("exists")
                                     `given 'fake file system' returns that each file`("doesn't exist", "doesn't exist")
-                                    `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                                    `when model executes command 'open file in current project'`(ProjectFile.File0)
                                     `then 'fake file system' checks folder path exist'`()
                                     `then model notify user to`("create file")
                                     `then 'fake file system' checks file path exist'`()
@@ -187,7 +187,7 @@ class CurrentProjectOpenFileTest {
                             `given 'fake file system' returns that each folder`("exists")
                             `given 'fake file system' returns that each file`("doesn't exist", "exists")
                             `given 'fake file system' returns that file is created successfully`()
-                            `when model executes command 'open file in current project'`(ProjectFiles.File0)
+                            `when model executes command 'open file in current project'`(ProjectFile.File0)
                             `then 'fake file system' checks folder path exist'`()
                             `then 'fake file system' checks file path exist'`()
                             `then 'fake file system' creates file`()

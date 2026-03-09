@@ -1,11 +1,11 @@
 package gtr.mpfocus.domain.model.config
 
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 
 data class ProjectConfig(
-    private val fileNames: Map<ProjectFiles, String>
+    private val fileNames: Map<ProjectFile, String>
 ) {
-    fun fileName(file: ProjectFiles): String {
+    fun fileName(file: ProjectFile): String {
         return fileNames[file] ?: throw IllegalStateException("option $file has no file name")
     }
 }
@@ -17,11 +17,11 @@ interface ConfigService {
     // temporary, basic implementation with 'hard coded' settings
     object Basic : ConfigService {
         override suspend fun getProjectConfig(): ProjectConfig {
-            val filesNames = ProjectFiles.entries.associateWith { file ->
+            val filesNames = ProjectFile.entries.associateWith { file ->
                 when (file) {
-                    ProjectFiles.File1 -> "main.md"
-                    ProjectFiles.File2 -> "dists.md"
-                    ProjectFiles.File3 -> "others.md"
+                    ProjectFile.File1 -> "main.md"
+                    ProjectFile.File2 -> "dists.md"
+                    ProjectFile.File3 -> "others.md"
                     else -> "file${file.ordinal}.md"
                 }
             }

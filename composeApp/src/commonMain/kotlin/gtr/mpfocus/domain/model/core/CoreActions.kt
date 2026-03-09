@@ -10,7 +10,7 @@ interface CoreActions {
     ): ActionResult
 
     suspend fun openCurrentProjectFile(
-        file: ProjectFiles,
+        file: ProjectFile,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult
@@ -26,7 +26,7 @@ interface CoreActions {
 
     suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectFiles,
+        file: ProjectFile,
         actionPreferences: ActionPreferences,
         userNotifier: UserNotifier
     ): ActionResult
@@ -62,4 +62,77 @@ data class ActionPreferences(
     val ifNoFileOrFolder: IfNoFileOrFolder = IfNoFileOrFolder.ReportError,
 ) {
     enum class IfNoFileOrFolder { AutoCreate, ReportError, NotifyUser }
+}
+
+
+interface ProjectActions {
+
+    suspend fun openCurrentProjectFolder(
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    suspend fun openCurrentProjectFile(
+        file: ProjectFile,
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    suspend fun openPinnedProjectFolder(
+        pinPosition: Int,
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    suspend fun openPinnedProjectFile(
+        pinPosition: Int,
+        file: ProjectFile,
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    suspend fun openRegularProjectFolder(
+        projectId: Long,
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    suspend fun openRegularProjectFile(
+        projectId: Long,
+        file: ProjectFile,
+        actionPreferences: Preferences,
+        callback: Callback
+    ): ActionResult
+
+    interface Callback {
+        suspend fun noFolder(folderName: String): ActionNextStep
+        suspend fun noFile(fileName: String): ActionNextStep
+        suspend fun noCurrentProject(): ActionNextStep
+        suspend fun noPinnedProject(pinPosition: Int): ActionNextStep
+
+        object CancelAll : Callback {
+            override suspend fun noFolder(folderName: String) = ActionNextStep.Cancel
+
+            override suspend fun noFile(fileName: String) = ActionNextStep.Cancel
+
+            override suspend fun noCurrentProject() = ActionNextStep.Cancel
+
+            override suspend fun noPinnedProject(pinPosition: Int) = ActionNextStep.Cancel
+        }
+
+        enum class ActionNextStep { Continue, Cancel }
+    }
+
+    data class Preferences(
+        val ifNoFileOrFolder: PrefValue,
+        val ifNoCP: PrefValue,
+        val ifNoPinned: PrefValue,
+    ) {
+        enum class PrefValue { NotifyProblem, ReturnError }
+
+        companion object {
+            val UI = Preferences(PrefValue.NotifyProblem, PrefValue.ReturnError, PrefValue.ReturnError)
+            val CLI = Preferences(PrefValue.ReturnError, PrefValue.ReturnError, PrefValue.ReturnError)
+        }
+    }
 }

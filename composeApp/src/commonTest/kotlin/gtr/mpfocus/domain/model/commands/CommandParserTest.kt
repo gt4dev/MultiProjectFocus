@@ -1,6 +1,6 @@
 package gtr.mpfocus.domain.model.commands
 
-import gtr.mpfocus.domain.model.core.ProjectFiles
+import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.system_actions.FilePath
 import okio.Path.Companion.toPath
 import kotlin.test.Test
@@ -40,11 +40,11 @@ class CommandParserTest {
     @Test
     fun `parse current project open file`() {
         assertEquals(
-            ProjectCurrent.OpenFile(ProjectFiles.File1),
+            ProjectCurrent.OpenFile(ProjectFile.File1),
             CommandParser.parse("ProjectCurrent.OpenFile(file:F1)")
         )
         assertEquals(
-            ProjectCurrent.OpenFile(ProjectFiles.File5),
+            ProjectCurrent.OpenFile(ProjectFile.File5),
             CommandParser.parse("ProjectCurrent.OpenFile(file:F5)")
         )
     }
@@ -60,11 +60,11 @@ class CommandParserTest {
     @Test
     fun `parse pinned project open file`() {
         assertEquals(
-            ProjectPinned.OpenFile(pinPosition = 1, file = ProjectFiles.File2),
+            ProjectPinned.OpenFile(pinPosition = 1, file = ProjectFile.File2),
             CommandParser.parse("ProjectPinned(pinPosition:1).OpenFile(file:F2)")
         )
         assertEquals(
-            ProjectPinned.OpenFile(pinPosition = 3, file = ProjectFiles.File7),
+            ProjectPinned.OpenFile(pinPosition = 3, file = ProjectFile.File7),
             CommandParser.parse("ProjectPinned(pinPosition:3).OpenFile(file:F7)")
         )
     }
@@ -74,7 +74,7 @@ class CommandParserTest {
         assertEquals(
             ProjectByPath.OpenFile(
                 projectPath = """c:\some path to\folder with\project123""",
-                file = ProjectFiles.File1
+                file = ProjectFile.File1
             ),
             CommandParser.parse(
                 """ProjectByPath(folder:c:\some path to\folder with\project123).OpenFile(file:F1)"""

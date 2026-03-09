@@ -140,6 +140,7 @@ object RepositorySteps {
         val obj = mock<ProjectRepository>(MockMode.autofill) {
             every { getCurrentProject() } returns flowOf(null)
             every { getPinnedProjects() } returns flowOf(emptyList())
+            every { getOtherProjects() } returns flowOf(emptyList())
         }
         koinAdd {
             single { obj }

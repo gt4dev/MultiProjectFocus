@@ -67,7 +67,7 @@ object Steps {
     }
 
     suspend fun HOTestCtx.`when model executes command 'open file in current project'`(
-        file: ProjectFiles,
+        file: ProjectFile,
     ) {
         val coreActions: CoreActions = koin.get()
         val aps: ActionPreferences = koin.get()
@@ -96,7 +96,7 @@ object Steps {
 
     suspend fun HOTestCtx.`when model executes command 'open file in pinned project'`(
         pinPosition: Int,
-        file: ProjectFiles,
+        file: ProjectFile,
     ) {
         val coreActions: CoreActions = koin.get()
         val aps: ActionPreferences = koin.get()

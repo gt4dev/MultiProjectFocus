@@ -5,6 +5,7 @@ import androidx.compose.ui.test.runComposeUiTest
 import gtr.hotest.HOTestCtx
 import gtr.hotest.hotest
 import gtr.mpfocus.domain.model.core.Models.Project
+import gtr.mpfocus.domain.model.core.ProjectActionsMockSteps.`given 'fake project actions' exists`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns current project`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns other projects`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns pinned projects`
@@ -18,7 +19,7 @@ import kotlin.test.Test
 
 
 @OptIn(ExperimentalTestApi::class)
-class MainScreenTest {
+class MainScreenBasicFeaturesTest {
 
     @Test
     fun `ui correctly show projects`() {
@@ -65,6 +66,9 @@ class MainScreenTest {
 
 
 fun HOTestCtx.`set up test data`() {
+
+    `given 'fake project actions' exists`()
+
     `given 'fake projects repo' returns current project`(
         Project(1000, "proj 000")
     )

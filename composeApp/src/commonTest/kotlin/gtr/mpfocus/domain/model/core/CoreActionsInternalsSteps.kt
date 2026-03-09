@@ -21,7 +21,7 @@ object CoreActionsInternalsSteps {
     }
 
     suspend fun HOTestCtx.`when model executes 'ensure project file ready'`(
-        file: ProjectFiles,
+        file: ProjectFile,
     ) {
         val coreActions: CoreActionsImpl = koin.get()
         val project: Project = koin.get()

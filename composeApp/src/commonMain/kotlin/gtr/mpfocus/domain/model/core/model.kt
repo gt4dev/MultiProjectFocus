@@ -9,8 +9,7 @@ class Project(
     // todo: expose isCurrent
 )
 
-// todo: rename to ProjectFile
-enum class ProjectFiles {
+enum class ProjectFile {
     File0,
     File1,
     File2,
