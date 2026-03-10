@@ -31,7 +31,6 @@ private fun previewMainScreenState(): MainScreenState {
             projectId = 1,
             pathText = "c:\\projects\\product-a\\feature-xyz",
             selectedFile = ProjectFile.File1,
-            isPinned = false,
             canSetAsCurrent = false,
         ),
         pinnedProjects = listOf(
@@ -39,7 +38,6 @@ private fun previewMainScreenState(): MainScreenState {
                 projectId = 2,
                 pathText = "c:\\projects\\product-b\\bugfix-123",
                 selectedFile = ProjectFile.File2,
-                isPinned = true,
                 canMovePinnedUp = false,
                 canMovePinnedDown = true,
             ),
@@ -47,7 +45,6 @@ private fun previewMainScreenState(): MainScreenState {
                 projectId = 3,
                 pathText = "c:\\projects\\personal\\writing",
                 selectedFile = ProjectFile.File1,
-                isPinned = true,
                 canMovePinnedUp = true,
                 canMovePinnedDown = false,
             ),
@@ -57,13 +54,11 @@ private fun previewMainScreenState(): MainScreenState {
                 projectId = 4,
                 pathText = "c:\\projects\\ops\\maintenance",
                 selectedFile = ProjectFile.File3,
-                isPinned = false,
             ),
             ProjectRowState(
                 projectId = 5,
                 pathText = "c:\\projects\\home\\garden-plans",
                 selectedFile = ProjectFile.File1,
-                isPinned = false,
             ),
         ),
     )

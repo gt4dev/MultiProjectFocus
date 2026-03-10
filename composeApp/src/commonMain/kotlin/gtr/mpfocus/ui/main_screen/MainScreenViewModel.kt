@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.domain.model.core.ProjectActions
 import gtr.mpfocus.domain.model.core.ProjectFile
@@ -17,6 +18,9 @@ class MainScreenViewModel(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     initialMessage: MessagePanelState? = null,
+    // todo-soon: replace with 'VM defaults specialized for VM'
+    private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
+    private val projectActionCallback: ProjectActions.Callback = ProjectActions.Callback.CancelAll,
 ) : ViewModel() {
 
     private val messageState = MutableStateFlow(initialMessage)
@@ -52,27 +56,26 @@ class MainScreenViewModel(
     ) { current: Project?, pinned: List<Project>, other: List<Project>, message: MessagePanelState?, reorderMode: Boolean ->
         MainScreenState(
             message = message,
-            currentProject = current?.toRowState(
-                canSetAsCurrent = false,
-                isPinned = current.pinPosition != null,
-                canMovePinnedUp = false,
-                canMovePinnedDown = false,
-            ),
+            currentProject = current
+                ?.toRowState()
+                ?.copy(
+                    canSetAsCurrent = false,
+                ),
             pinnedProjects = pinned.mapIndexed { index, project ->
-                project.toRowState(
-                    canSetAsCurrent = current?.projectId != project.projectId,
-                    isPinned = true,
-                    canMovePinnedUp = index > 0,
-                    canMovePinnedDown = index < pinned.lastIndex,
-                )
+                project
+                    .toRowState()
+                    .copy(
+                        canSetAsCurrent = current?.projectId != project.projectId,
+                        canMovePinnedUp = index > 0,
+                        canMovePinnedDown = index < pinned.lastIndex,
+                    )
             },
             otherProjects = other.map { project ->
-                project.toRowState(
-                    canSetAsCurrent = current?.projectId != project.projectId,
-                    isPinned = false,
-                    canMovePinnedUp = false,
-                    canMovePinnedDown = false,
-                )
+                project
+                    .toRowState()
+                    .copy(
+                        canSetAsCurrent = current?.projectId != project.projectId,
+                    )
             },
             isPinnedProjectsReorderMode = reorderMode,
         )
@@ -106,21 +109,39 @@ class MainScreenViewModel(
 
     private fun onCurrentProjectSectionAction(action: CurrentProjectSectionUiActions) {
         when (action) {
-            is CurrentProjectSectionUiActions.ProjectRowActions -> onProjectRowAction(action.action)
+            is CurrentProjectSectionUiActions.ProjectRowActions -> {
+                when (val projectRowAction = action.action) {
+                    is ProjectRowUiActions.OpenFolderClicked -> onOpenCurrentProjectFolder()
+                    else -> onProjectRowAction(projectRowAction)
+                }
+            }
+
             is CurrentProjectSectionUiActions.UnsetCurrentProjectClicked -> onUnsetCurrentProject()
         }
     }
 
     private fun onPinnedProjectsSectionAction(action: PinnedProjectsSectionUiActions) {
         when (action) {
-            is PinnedProjectsSectionUiActions.ProjectRowActions -> onProjectRowAction(action.action)
+            is PinnedProjectsSectionUiActions.ProjectRowActions -> {
+                when (val projectRowAction = action.action) {
+                    is ProjectRowUiActions.OpenFolderClicked -> onOpenPinnedProjectFolder(action.pinPosition)
+
+                    else -> onProjectRowAction(projectRowAction)
+                }
+            }
+
             PinnedProjectsSectionUiActions.ToggleReorderModeClicked -> onTogglePinnedProjectsReorderMode()
         }
     }
 
     private fun onOtherProjectsSectionAction(action: OtherProjectsSectionUiActions) {
         when (action) {
-            is OtherProjectsSectionUiActions.ProjectRowActions -> onProjectRowAction(action.action)
+            is OtherProjectsSectionUiActions.ProjectRowActions -> {
+                when (val projectRowAction = action.action) {
+                    is ProjectRowUiActions.OpenFolderClicked -> onOpenRegularProjectFolder(projectRowAction.projectId)
+                    else -> onProjectRowAction(projectRowAction)
+                }
+            }
         }
     }
 
@@ -132,9 +153,9 @@ class MainScreenViewModel(
             is ProjectRowUiActions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
             is ProjectRowUiActions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
             is ProjectRowUiActions.OpenFileClicked -> onOpenProjectFile(action.projectId, action.file)
-            is ProjectRowUiActions.OpenFolderClicked -> onOpenProjectFolder(action.projectId)
             is ProjectRowUiActions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
             is ProjectRowUiActions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
+            is ProjectRowUiActions.OpenFolderClicked -> Unit
         }
     }
 
@@ -163,12 +184,46 @@ class MainScreenViewModel(
         }
     }
 
-    private fun onOpenProjectFolder(projectId: Long) {
-        showInfo("Not implemented yet.")
+    private fun onOpenCurrentProjectFolder() {
+        executeProjectAction {
+            projectActions.openCurrentProjectFolder(
+                actionPreferences = projectActionPreferences,
+                callback = projectActionCallback,
+            )
+        }
+    }
+
+    private fun onOpenPinnedProjectFolder(pinPosition: Int) {
+        executeProjectAction {
+            projectActions.openPinnedProjectFolder(
+                pinPosition = pinPosition,
+                actionPreferences = projectActionPreferences,
+                callback = projectActionCallback,
+            )
+        }
+    }
+
+    private fun onOpenRegularProjectFolder(projectId: Long) {
+        executeProjectAction {
+            projectActions.openRegularProjectFolder(
+                projectId = projectId,
+                actionPreferences = projectActionPreferences,
+                callback = projectActionCallback,
+            )
+        }
     }
 
     private fun onOpenProjectFile(projectId: Long, file: ProjectFile) {
         showInfo("Not implemented yet.")
+    }
+
+    private fun executeProjectAction(action: suspend () -> ActionResult) {
+        viewModelScope.launch {
+            when (val result = action()) {
+                ActionResult.Success -> Unit
+                is ActionResult.Error -> showInfo(result.msg)
+            }
+        }
     }
 
     private fun onTogglePinnedProject(projectId: Long) {
@@ -240,19 +295,11 @@ class MainScreenViewModel(
         messageState.value = MessagePanelState(text = text)
     }
 
-    private fun Project.toRowState(
-        canSetAsCurrent: Boolean,
-        isPinned: Boolean,
-        canMovePinnedUp: Boolean,
-        canMovePinnedDown: Boolean,
-    ): ProjectRowState {
+    private fun Project.toRowState(): ProjectRowState {
         return ProjectRowState(
             projectId = projectId,
             pathText = folderPath.path.toString(),
-            isPinned = isPinned,
-            canSetAsCurrent = canSetAsCurrent,
-            canMovePinnedUp = canMovePinnedUp,
-            canMovePinnedDown = canMovePinnedDown,
+            pinPosition = pinPosition,
         )
     }
 
@@ -264,6 +311,8 @@ class MainScreenViewModel(
 class MainScreenViewModelFactory(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
+    private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
+    private val projectActionCallback: ProjectActions.Callback = ProjectActions.Callback.CancelAll,
 ) {
     fun create(initialMessage: MessagePanelState? = null): ViewModelProvider.Factory {
         return viewModelFactory {
@@ -272,6 +321,8 @@ class MainScreenViewModelFactory(
                     projectRepository = projectRepository,
                     projectActions = projectActions,
                     initialMessage = initialMessage,
+                    projectActionPreferences = projectActionPreferences,
+                    projectActionCallback = projectActionCallback,
                 )
             }
         }

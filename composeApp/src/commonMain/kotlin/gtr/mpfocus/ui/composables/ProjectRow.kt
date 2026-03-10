@@ -24,11 +24,15 @@ data class ProjectRowState(
     val pathText: String,
     val selectedFile: ProjectFile = ProjectFile.File1,
     val availableFiles: List<ProjectFile> = ProjectFile.entries,
-    val isPinned: Boolean = false,
+    val pinPosition: Int? = null,
     val canSetAsCurrent: Boolean = true,
     val canMovePinnedUp: Boolean = false,
     val canMovePinnedDown: Boolean = false,
-)
+) {
+    val isPinned: Boolean
+        get() = (pinPosition != null)
+}
+
 
 val ProjectRowState.pinActionLabel: String
     get() = if (isPinned) "Unpin" else "Pin"

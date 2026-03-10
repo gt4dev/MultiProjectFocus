@@ -1,6 +1,8 @@
 package gtr.mpfocus.hotest
 
-// todo: 1/ move to commonTest, then to hotest lib [+ add tests] or 2/ best use original CucumberExpression matcher [after translating it to KMP]
+import kotlin.reflect.KClass
+
+// todo: move to hotest lib [+ add tests]
 
 class CucumberExpressionMatcher(private val input: String) {
     private var lastValues: List<Any> = emptyList()
@@ -22,7 +24,7 @@ class CucumberExpressionMatcher(private val input: String) {
 
     fun getString(index: Int): String = get(index, String::class)
 
-    private fun <T : Any> get(index: Int, expected: kotlin.reflect.KClass<T>): T {
+    private fun <T : Any> get(index: Int, expected: KClass<T>): T {
         require(index in lastValues.indices) {
             "No argument at index $index. Available: ${lastValues.size}."
         }

@@ -88,7 +88,7 @@ object RepositorySteps {
         val obj = initMockProjectsRepo()
         val projects = pinnedProjects.map {
             Project(
-                it.id!!,
+                requireNotNull(it.id),
                 FolderPath(it.path!!.toPath()),
                 pinPosition = it.pinPosition,
             )
@@ -102,7 +102,7 @@ object RepositorySteps {
         val obj = initMockProjectsRepo()
         val projects = otherProjects.map {
             Project(
-                123,
+                requireNotNull(it.id),
                 FolderPath(it.path!!.toPath()),
             )
         }

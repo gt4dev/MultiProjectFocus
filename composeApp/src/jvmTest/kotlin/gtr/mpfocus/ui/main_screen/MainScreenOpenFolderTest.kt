@@ -16,7 +16,7 @@ import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when 'open folder' is clicked
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
-class OpenFolderTest {
+class MainScreenOpenFolderTest {
 
     @Test
     fun `click button 'open folder' in current project`() {
