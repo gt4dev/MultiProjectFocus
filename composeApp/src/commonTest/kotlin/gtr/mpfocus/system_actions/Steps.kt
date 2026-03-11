@@ -7,6 +7,7 @@ import dev.mokkery.matcher.any
 import dev.mokkery.verify.VerifyMode
 import gtr.hotest.HOTestCtx
 import gtr.mpfocus.system_actions.Converters.exists
+import okio.Path.Companion.toPath
 
 object Steps {
 
@@ -21,11 +22,18 @@ object Steps {
 
     // folder steps
 
-    fun HOTestCtx.`given 'fake file system' returns that each folder`(
-        vararg subsequentReturns: String,
+    fun HOTestCtx.`given 'fake file system' returns that folder`(
+        status: String,
     ) {
         val obj: FileSystemActions = koin.get()
-        val returnsVals = subsequentReturns.map { it.exists() }
+        every { obj.pathExists(any<FolderPath>()) } returns status.exists()
+    }
+
+    fun HOTestCtx.`given 'fake file system' sequentially returns that folder`(
+        vararg statuses: String,
+    ) {
+        val obj: FileSystemActions = koin.get()
+        val returnsVals = statuses.map { it.exists() }
         every { obj.pathExists(any<FolderPath>()) } sequentiallyReturns returnsVals
     }
 
@@ -50,11 +58,18 @@ object Steps {
 
     // file steps
 
-    fun HOTestCtx.`given 'fake file system' returns that each file`(
-        vararg subsequentReturns: String,
+    fun HOTestCtx.`given 'fake file system' returns that file`(
+        status: String,
     ) {
         val obj: FileSystemActions = koin.get()
-        val returnsVals = subsequentReturns.map { it.exists() }
+        every { obj.pathExists(any<FilePath>()) } returns status.exists()
+    }
+
+    fun HOTestCtx.`given 'fake file system' sequentially returns that file`(
+        vararg statuses: String,
+    ) {
+        val obj: FileSystemActions = koin.get()
+        val returnsVals = statuses.map { it.exists() }
         every { obj.pathExists(any<FilePath>()) } sequentiallyReturns returnsVals
     }
 
@@ -90,10 +105,16 @@ object Steps {
         everySuspend { obj.openFile(any()) } returns Unit
     }
 
-    fun HOTestCtx.`then 'fake operating system' opens folder`() {
+    fun HOTestCtx.`then 'fake operating system' opens folder`(path: String? = null) {
         val obj: OperatingSystemActions = koin.get()
-        verifySuspend {
-            obj.openFolder(any())
+        if (path == null) {
+            verifySuspend {
+                obj.openFolder(any())
+            }
+        } else {
+            verifySuspend {
+                obj.openFolder(FolderPath(path.toPath()))
+            }
         }
     }
 

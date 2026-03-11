@@ -20,7 +20,7 @@ class MainScreenViewModel(
     initialMessage: MessagePanelState? = null,
     // todo-soon: replace with 'VM defaults specialized for VM'
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
-    private val projectActionCallback: ProjectActions.Callback = ProjectActions.Callback.CancelAll,
+    private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) : ViewModel() {
 
     private val messageState = MutableStateFlow(initialMessage)
@@ -188,7 +188,7 @@ class MainScreenViewModel(
         executeProjectAction {
             projectActions.openCurrentProjectFolder(
                 actionPreferences = projectActionPreferences,
-                callback = projectActionCallback,
+                callerNotification = projectActionCallerNotification,
             )
         }
     }
@@ -198,7 +198,7 @@ class MainScreenViewModel(
             projectActions.openPinnedProjectFolder(
                 pinPosition = pinPosition,
                 actionPreferences = projectActionPreferences,
-                callback = projectActionCallback,
+                callerNotification = projectActionCallerNotification,
             )
         }
     }
@@ -208,7 +208,7 @@ class MainScreenViewModel(
             projectActions.openRegularProjectFolder(
                 projectId = projectId,
                 actionPreferences = projectActionPreferences,
-                callback = projectActionCallback,
+                callerNotification = projectActionCallerNotification,
             )
         }
     }
@@ -312,7 +312,7 @@ class MainScreenViewModelFactory(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
-    private val projectActionCallback: ProjectActions.Callback = ProjectActions.Callback.CancelAll,
+    private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) {
     fun create(initialMessage: MessagePanelState? = null): ViewModelProvider.Factory {
         return viewModelFactory {
@@ -322,7 +322,7 @@ class MainScreenViewModelFactory(
                     projectActions = projectActions,
                     initialMessage = initialMessage,
                     projectActionPreferences = projectActionPreferences,
-                    projectActionCallback = projectActionCallback,
+                    projectActionCallerNotification = projectActionCallerNotification,
                 )
             }
         }

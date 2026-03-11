@@ -5,8 +5,8 @@ import androidx.compose.ui.test.runComposeUiTest
 import gtr.hotest.HOTestCtx
 import gtr.hotest.hotest
 import gtr.mpfocus.domain.model.core.Models.Project
-import gtr.mpfocus.domain.model.core.ProjectActionsMockSteps.`given 'fake project actions' exists`
-import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns current project`
+import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'fake project actions' exists`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake project repository' returns current project`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns other projects`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns pinned projects`
 import gtr.mpfocus.hotest.koinAddObject
@@ -26,7 +26,7 @@ class MainScreenOpenFolderTest {
             runComposeUiTest {
                 koinAddObject(this)
 
-                `given 'fake projects repo' returns current project`(
+                `given 'fake project repository' returns current project`(
                     Project(111, "proj 111")
                 )
                 `when 'main screen' is started`()

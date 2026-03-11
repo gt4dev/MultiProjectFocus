@@ -69,58 +69,58 @@ interface ProjectActions {
 
     suspend fun openCurrentProjectFolder(
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
     suspend fun openCurrentProjectFile(
         file: ProjectFile,
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
     suspend fun openPinnedProjectFolder(
         pinPosition: Int,
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
     suspend fun openPinnedProjectFile(
         pinPosition: Int,
         file: ProjectFile,
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
     suspend fun openRegularProjectFolder(
         projectId: Long,
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
     suspend fun openRegularProjectFile(
         projectId: Long,
         file: ProjectFile,
         actionPreferences: Preferences,
-        callback: Callback
+        callerNotification: CallerNotification
     ): ActionResult
 
-    interface Callback {
-        suspend fun noFolder(folderName: String): ActionNextStep
-        suspend fun noFile(fileName: String): ActionNextStep
-        suspend fun noCurrentProject(): ActionNextStep
-        suspend fun noPinnedProject(pinPosition: Int): ActionNextStep
+    interface CallerNotification {
+        suspend fun noFolder(folderName: String): NextStep
+        suspend fun noFile(fileName: String): NextStep
+        suspend fun noCurrentProject(): NextStep
+        suspend fun noPinnedProject(pinPosition: Int): NextStep
 
-        object CancelAll : Callback {
-            override suspend fun noFolder(folderName: String) = ActionNextStep.Cancel
+        object CancelAll : CallerNotification {
+            override suspend fun noFolder(folderName: String) = NextStep.Cancel
 
-            override suspend fun noFile(fileName: String) = ActionNextStep.Cancel
+            override suspend fun noFile(fileName: String) = NextStep.Cancel
 
-            override suspend fun noCurrentProject() = ActionNextStep.Cancel
+            override suspend fun noCurrentProject() = NextStep.Cancel
 
-            override suspend fun noPinnedProject(pinPosition: Int) = ActionNextStep.Cancel
+            override suspend fun noPinnedProject(pinPosition: Int) = NextStep.Cancel
         }
 
-        enum class ActionNextStep { Continue, Cancel }
+        enum class NextStep { Continue, Cancel }
     }
 
     data class Preferences(
@@ -128,10 +128,10 @@ interface ProjectActions {
         val ifNoCP: PrefValue,
         val ifNoPinned: PrefValue,
     ) {
-        enum class PrefValue { NotifyProblem, ReturnError }
+        enum class PrefValue { NotifyCaller, ReturnError }
 
         companion object {
-            val UI = Preferences(PrefValue.NotifyProblem, PrefValue.ReturnError, PrefValue.ReturnError)
+            val UI = Preferences(PrefValue.NotifyCaller, PrefValue.ReturnError, PrefValue.ReturnError)
             val CLI = Preferences(PrefValue.ReturnError, PrefValue.ReturnError, PrefValue.ReturnError)
         }
     }

@@ -10,9 +10,10 @@ import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
 import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
 import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open folder in current project'`
-import gtr.mpfocus.domain.repository.RepositorySteps.`given exists 'fake projects repo'`
-import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that each folder`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake project repository' sequentially returns current project`
+import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder`
 import gtr.mpfocus.system_actions.Steps.`given 'fake file system' returns that folder is created successfully`
+import gtr.mpfocus.system_actions.Steps.`given 'fake file system' sequentially returns that folder`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake file system'`
 import gtr.mpfocus.system_actions.Steps.`given exists 'fake operating system'`
 import gtr.mpfocus.system_actions.Steps.`then 'fake file system' checks folder path exist'`
@@ -29,7 +30,7 @@ class CurrentProjectOpenFolderTest {
             `given exists 'fake file system'`()
             `given exists 'fake operating system'`()
             `given exists 'fake user notifier'`()
-            `given exists 'fake projects repo'`(
+            `given 'fake project repository' sequentially returns current project`(
                 "any/path/to/project"
             )
             `given exists 'basic config service'`()
@@ -38,7 +39,7 @@ class CurrentProjectOpenFolderTest {
             variants("user preference if no folder") {
 
                 variant("auto-create") {
-                    `given 'fake file system' returns that each folder`("doesn't exist", "exists")
+                    `given 'fake file system' sequentially returns that folder`("doesn't exist", "exists")
                     `given exists 'action preferences'`("auto create")
                     `given 'fake file system' returns that folder is created successfully`()
                     `when model executes command 'open folder in current project'`()
@@ -50,7 +51,7 @@ class CurrentProjectOpenFolderTest {
                 }
 
                 variant("report error") {
-                    `given 'fake file system' returns that each folder`("doesn't exist")
+                    `given 'fake file system' returns that folder`("doesn't exist")
                     `given exists 'action preferences'`("report error")
                     `when model executes command 'open folder in current project'`()
                     `then 'fake file system' checks folder path exist'`()
@@ -63,7 +64,7 @@ class CurrentProjectOpenFolderTest {
                     variants("user actions after notification") {
 
                         variant("user creates folder") {
-                            `given 'fake file system' returns that each folder`("doesn't exist", "exists")
+                            `given 'fake file system' sequentially returns that folder`("doesn't exist", "exists")
                             `when model executes command 'open folder in current project'`()
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")
@@ -73,7 +74,10 @@ class CurrentProjectOpenFolderTest {
                         }
 
                         variant("user doesn't create folder") {
-                            `given 'fake file system' returns that each folder`("doesn't exist", "doesn't exist")
+                            `given 'fake file system' sequentially returns that folder`(
+                                "doesn't exist",
+                                "doesn't exist"
+                            )
                             `when model executes command 'open folder in current project'`()
                             `then 'fake file system' checks folder path exist'`()
                             `then model notify user to`("create folder")

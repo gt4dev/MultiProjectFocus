@@ -49,7 +49,7 @@ object RepositorySteps {
     }
 
 
-    fun HOTestCtx.`given 'fake projects repo' returns current project`(
+    fun HOTestCtx.`given 'fake project repository' returns current project`(
         currentProject: Models.Project? = null
     ) {
         val obj = initMockProjectsRepo()
@@ -63,7 +63,7 @@ object RepositorySteps {
         every { obj.getCurrentProject() } returns flowOf(proj)
     }
 
-    fun HOTestCtx.`given exists 'fake projects repo'`(
+    fun HOTestCtx.`given 'fake project repository' sequentially returns current project`(
         vararg withSequentialCurrentProject: String?,
     ) {
         val obj = initMockProjectsRepo()
