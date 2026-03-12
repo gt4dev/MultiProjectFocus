@@ -21,8 +21,8 @@ import androidx.compose.ui.semantics.stateDescription
 object OptionsSplitButtonTestTags {
     private const val PREFIX = "options_split_button"
     const val LEADING_BUTTON = "${PREFIX}_leading_button"
-    const val TRAILING_BUTTON = "{PREFIX}_trailing_button"
-    const val DROPDOWN_ROW = "{PREFIX}_dropdown_row"
+    const val TRAILING_BUTTON = "${PREFIX}_trailing_button"
+    const val DROPDOWN_ROW = "${PREFIX}_dropdown_row"
 }
 
 @Composable
@@ -74,7 +74,7 @@ private fun OptionsSplitButtonScaffold(
     Box(modifier = modifier) {
         SplitButtonLayout(
             leadingButton = {
-                SplitButtonDefaults.LeadingButton(
+                SplitButtonDefaults.OutlinedLeadingButton(
                     onClick = onLeadingClick,
                     modifier = leadingButtonModifier,
                 ) {
@@ -90,7 +90,7 @@ private fun OptionsSplitButtonScaffold(
                     tooltip = { PlainTooltip { Text(trailingButtonDescription) } },
                     state = rememberTooltipState(),
                 ) {
-                    SplitButtonDefaults.TrailingButton(
+                    SplitButtonDefaults.OutlinedTrailingButton(
                         checked = expanded,
                         onCheckedChange = onExpandedChange,
                         modifier =

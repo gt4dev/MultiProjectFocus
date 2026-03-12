@@ -8,9 +8,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -81,49 +81,43 @@ fun ProjectRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(
+                OutlinedButton(
                     modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
                     onClick = { onAction(ProjectRowUiActions.SetCurrentClicked(uiState.projectId)) },
                     enabled = uiState.canSetAsCurrent,
                 ) {
                     Text("Set current")
                 }
-                TextButton(onClick = { onAction(ProjectRowUiActions.OpenFolderClicked(uiState.projectId)) }) {
+                OutlinedButton(onClick = { onAction(ProjectRowUiActions.OpenFolderClicked(uiState.projectId)) }) {
                     Text("Open folder")
                 }
-                TextButton(
-                    onClick = {
-                        onAction(
-                            ProjectRowUiActions.OpenFileClicked(
-                                projectId = uiState.projectId,
-                                file = uiState.selectedFile,
-                            )
-                        )
-                    },
-                ) {
-                    Text("Open file")
+
+                val availableFiles = remember { uiState.availableFiles }
+                var selectedFileIdx by remember {
+                    val selectedFileIdx = availableFiles.indexOf(uiState.selectedFile)
+                    mutableStateOf(selectedFileIdx)
                 }
-                TextButton(onClick = { onAction(ProjectRowUiActions.TogglePinnedClicked(uiState.projectId)) }) {
+
+                OptionsSplitButton(
+                    options = availableFiles.map { it.name },
+                    currentOptionIdx = selectedFileIdx,
+                    onOptionClicked = { optionIdx ->
+                        if (optionIdx != null) {
+                            selectedFileIdx = optionIdx
+                            val clickedFile = availableFiles[optionIdx]
+                            onAction(
+                                ProjectRowUiActions.OpenFileClicked(
+                                    projectId = uiState.projectId,
+                                    file = clickedFile,
+                                )
+                            )
+                        }
+                    }
+                )
+
+                OutlinedButton(onClick = { onAction(ProjectRowUiActions.TogglePinnedClicked(uiState.projectId)) }) {
                     Text(uiState.pinActionLabel)
                 }
-                ProjectFileSelector(
-                    uiState = ProjectFileSelectorState(
-                        selectedFile = uiState.selectedFile,
-                        availableFiles = uiState.availableFiles,
-                    ),
-                    onAction = { action ->
-                        when (action) {
-                            is ProjectFileSelectorUiActions.FileSelected -> {
-                                onAction(
-                                    ProjectRowUiActions.FileSelected(
-                                        projectId = uiState.projectId,
-                                        file = action.file,
-                                    )
-                                )
-                            }
-                        }
-                    },
-                )
                 ProjectContextMenu(
                     uiState = ProjectContextMenuState(projectId = uiState.projectId),
                     onAction = { action ->
@@ -139,13 +133,13 @@ fun ProjectRow(
                     },
                 )
                 if (showPinnedReorderControls) {
-                    TextButton(
+                    OutlinedButton(
                         onClick = { onAction(ProjectRowUiActions.MovePinnedUpClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedUp,
                     ) {
                         Text("Up")
                     }
-                    TextButton(
+                    OutlinedButton(
                         onClick = { onAction(ProjectRowUiActions.MovePinnedDownClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedDown,
                     ) {

@@ -214,7 +214,7 @@ class MainScreenViewModel(
     }
 
     private fun onOpenProjectFile(projectId: Long, file: ProjectFile) {
-        showInfo("Not implemented yet.")
+        showInfo("Not implemented yet.\nonOpenProjectFile(projectId: $projectId, file: $file)")
     }
 
     private fun executeProjectAction(action: suspend () -> ActionResult) {
