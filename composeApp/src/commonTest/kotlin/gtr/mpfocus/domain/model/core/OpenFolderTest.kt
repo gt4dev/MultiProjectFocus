@@ -3,20 +3,20 @@ package gtr.mpfocus.domain.model.core
 import gtr.hotest.Async.hotest
 import gtr.hotest.variants.Async.variant
 import gtr.hotest.variants.Async.variants
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'real project actions' exists`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in current project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in pinned project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in regular project'`
-import gtr.mpfocus.domain.model.core.Steps.`then model returns`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns current project`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns other projects`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns pinned projects`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' sequentially returns current project`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' exists`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' returns that folder`
-import gtr.mpfocus.system_actions.Steps.`given 'operating system mock' exists`
-import gtr.mpfocus.system_actions.Steps.`then 'operating system mock' opens folder`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' exists`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' returns that folder`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'operating system mock' exists`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'operating system mock' opens folder`
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 

@@ -9,7 +9,7 @@ import gtr.mpfocus.system_actions.FolderPath
 import okio.Path.Companion.toPath
 import kotlin.test.assertEquals
 
-object Steps {
+object CoreActionsSteps {
 
     fun HOTestCtx.`given exists 'action preferences'`(withIfNoFolder: String) {
 

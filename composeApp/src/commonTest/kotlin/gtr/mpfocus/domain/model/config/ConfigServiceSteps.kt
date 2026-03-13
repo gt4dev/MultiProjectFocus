@@ -2,9 +2,9 @@ package gtr.mpfocus.domain.model.config
 
 import gtr.hotest.HOTestCtx
 
-object Steps {
+object ConfigServiceSteps {
 
-    fun HOTestCtx.`given exists 'basic config service'`() {
+    fun HOTestCtx.`given 'basic config service' exists`() {
         koinAdd {
             single<ConfigService> { ConfigService.Basic }
         }

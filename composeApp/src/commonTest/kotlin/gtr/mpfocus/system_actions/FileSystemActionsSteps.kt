@@ -9,7 +9,7 @@ import gtr.hotest.HOTestCtx
 import gtr.mpfocus.system_actions.Converters.exists
 import okio.Path.Companion.toPath
 
-object Steps {
+object FileSystemActionsSteps {
 
     // file system steps
 

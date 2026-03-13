@@ -3,27 +3,27 @@ package gtr.mpfocus.domain.model.core
 import gtr.hotest.Async.hotest
 import gtr.hotest.variants.Async.variant
 import gtr.hotest.variants.Async.variants
-import gtr.mpfocus.domain.model.config.Steps.`given exists 'basic config service'`
-import gtr.mpfocus.domain.model.core.Steps.`given 'user notifier mock' exists`
-import gtr.mpfocus.domain.model.core.Steps.`given exists 'action preferences'`
-import gtr.mpfocus.domain.model.core.Steps.`given exists 'real model'`
-import gtr.mpfocus.domain.model.core.Steps.`then model notify user to`
-import gtr.mpfocus.domain.model.core.Steps.`then model returns`
-import gtr.mpfocus.domain.model.core.Steps.`when model executes command 'open file in current project'`
+import gtr.mpfocus.domain.model.config.ConfigServiceSteps.`given 'basic config service' exists`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`given 'user notifier mock' exists`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`given exists 'action preferences'`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`given exists 'real model'`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model notify user to`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
+import gtr.mpfocus.domain.model.core.CoreActionsSteps.`when model executes command 'open file in current project'`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' sequentially returns current project`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' exists`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' returns that file`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' returns that file is created successfully`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' returns that folder`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' returns that folder is created successfully`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' sequentially returns that file`
-import gtr.mpfocus.system_actions.Steps.`given 'file system mock' sequentially returns that folder`
-import gtr.mpfocus.system_actions.Steps.`given 'operating system mock' exists`
-import gtr.mpfocus.system_actions.Steps.`then 'file system mock' checks file path exist'`
-import gtr.mpfocus.system_actions.Steps.`then 'file system mock' checks folder path exist'`
-import gtr.mpfocus.system_actions.Steps.`then 'file system mock' creates file`
-import gtr.mpfocus.system_actions.Steps.`then 'file system mock' creates folder`
-import gtr.mpfocus.system_actions.Steps.`then 'operating system mock' opens file`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' exists`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' returns that file`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' returns that file is created successfully`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' returns that folder`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' returns that folder is created successfully`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' sequentially returns that file`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'file system mock' sequentially returns that folder`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`given 'operating system mock' exists`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'file system mock' checks file path exist'`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'file system mock' checks folder path exist'`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'file system mock' creates file`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'file system mock' creates folder`
+import gtr.mpfocus.system_actions.FileSystemActionsSteps.`then 'operating system mock' opens file`
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 
@@ -36,7 +36,7 @@ class CurrentProjectOpenFileTest {
             `given 'operating system mock' exists`()
             `given 'user notifier mock' exists`()
             `given 'project repository mock' sequentially returns current project`(null, null)
-            `given exists 'basic config service'`()
+            `given 'basic config service' exists`()
             `given exists 'real model'`()
 
             `given exists 'action preferences'`("report error")
@@ -53,7 +53,7 @@ class CurrentProjectOpenFileTest {
             `given 'operating system mock' exists`()
             `given 'user notifier mock' exists`()
             `given 'project repository mock' sequentially returns current project`("any/path/to/project")
-            `given exists 'basic config service'`()
+            `given 'basic config service' exists`()
             `given exists 'real model'`()
 
             variants("user preference if no folder") {
@@ -123,7 +123,7 @@ class CurrentProjectOpenFileTest {
             `given 'operating system mock' exists`()
             `given 'user notifier mock' exists`()
             `given 'project repository mock' sequentially returns current project`("any/path/to/project")
-            `given exists 'basic config service'`()
+            `given 'basic config service' exists`()
             `given exists 'real model'`()
 
             variants("file state") {
