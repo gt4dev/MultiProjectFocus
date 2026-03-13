@@ -32,31 +32,31 @@ data class ProjectRowState(
     val isPinned: Boolean
         get() = (pinPosition != null)
 }
-sealed interface ProjectRowUiActions : UiActions {
-    data class SetCurrentClicked(val projectId: Long) : ProjectRowUiActions
-    data class OpenFolderClicked(val projectId: Long) : ProjectRowUiActions
+sealed interface ProjectRowActions : UiActions {
+    data class SetCurrentClicked(val projectId: Long) : ProjectRowActions
+    data class OpenFolderClicked(val projectId: Long) : ProjectRowActions
     data class OpenFileClicked(
         val projectId: Long,
         val file: ProjectFile,
-    ) : ProjectRowUiActions
+    ) : ProjectRowActions
 
-    data class TogglePinnedClicked(val projectId: Long) : ProjectRowUiActions
-    data class MovePinnedUpClicked(val projectId: Long) : ProjectRowUiActions
-    data class MovePinnedDownClicked(val projectId: Long) : ProjectRowUiActions
+    data class TogglePinnedClicked(val projectId: Long) : ProjectRowActions
+    data class MovePinnedUpClicked(val projectId: Long) : ProjectRowActions
+    data class MovePinnedDownClicked(val projectId: Long) : ProjectRowActions
     data class FileSelected(
         val projectId: Long,
         val file: ProjectFile,
-    ) : ProjectRowUiActions
+    ) : ProjectRowActions
 
-    data class DeleteClicked(val projectId: Long) : ProjectRowUiActions
-    data class AddSubProjectClicked(val projectId: Long) : ProjectRowUiActions
+    data class DeleteClicked(val projectId: Long) : ProjectRowActions
+    data class AddSubProjectClicked(val projectId: Long) : ProjectRowActions
 }
 
 @Composable
 fun ProjectRow(
     uiState: ProjectRowState,
     showPinnedReorderControls: Boolean,
-    onAction: (ProjectRowUiActions) -> Unit,
+    onAction: (ProjectRowActions) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -78,12 +78,12 @@ fun ProjectRow(
             ) {
                 OutlinedButton(
                     modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
-                    onClick = { onAction(ProjectRowUiActions.SetCurrentClicked(uiState.projectId)) },
+                    onClick = { onAction(ProjectRowActions.SetCurrentClicked(uiState.projectId)) },
                     enabled = uiState.canSetAsCurrent,
                 ) {
                     Text("Set current")
                 }
-                OutlinedButton(onClick = { onAction(ProjectRowUiActions.OpenFolderClicked(uiState.projectId)) }) {
+                OutlinedButton(onClick = { onAction(ProjectRowActions.OpenFolderClicked(uiState.projectId)) }) {
                     Text("Open folder")
                 }
 
@@ -101,7 +101,7 @@ fun ProjectRow(
                             selectedFileIdx = optionIdx
                             val clickedFile = availableFiles[optionIdx]
                             onAction(
-                                ProjectRowUiActions.OpenFileClicked(
+                                ProjectRowActions.OpenFileClicked(
                                     projectId = uiState.projectId,
                                     file = clickedFile,
                                 )
@@ -113,7 +113,7 @@ fun ProjectRow(
                 PinButton(
                     uiState.isPinned,
                     onPinSwitch = {
-                        onAction(ProjectRowUiActions.TogglePinnedClicked(uiState.projectId))
+                        onAction(ProjectRowActions.TogglePinnedClicked(uiState.projectId))
                     },
                 )
 
@@ -122,24 +122,24 @@ fun ProjectRow(
                     onAction = { action ->
                         when (action) {
                             ProjectContextMenuUiActions.AddSubProjectClicked -> {
-                                onAction(ProjectRowUiActions.AddSubProjectClicked(uiState.projectId))
+                                onAction(ProjectRowActions.AddSubProjectClicked(uiState.projectId))
                             }
 
                             ProjectContextMenuUiActions.DeleteClicked -> {
-                                onAction(ProjectRowUiActions.DeleteClicked(uiState.projectId))
+                                onAction(ProjectRowActions.DeleteClicked(uiState.projectId))
                             }
                         }
                     },
                 )
                 if (showPinnedReorderControls) {
                     OutlinedButton(
-                        onClick = { onAction(ProjectRowUiActions.MovePinnedUpClicked(uiState.projectId)) },
+                        onClick = { onAction(ProjectRowActions.MovePinnedUpClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedUp,
                     ) {
                         Text("Up")
                     }
                     OutlinedButton(
-                        onClick = { onAction(ProjectRowUiActions.MovePinnedDownClicked(uiState.projectId)) },
+                        onClick = { onAction(ProjectRowActions.MovePinnedDownClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedDown,
                     ) {
                         Text("Down")

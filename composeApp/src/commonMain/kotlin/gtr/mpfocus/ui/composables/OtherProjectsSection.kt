@@ -12,7 +12,7 @@ data class OtherProjectsSectionState(
 )
 
 sealed interface OtherProjectsSectionUiActions : UiActions {
-    data class ProjectRowActions(val action: ProjectRowUiActions) : OtherProjectsSectionUiActions
+    data class OtherProjectRowActions(val action: ProjectRowActions) : OtherProjectsSectionUiActions
 }
 
 @Composable
@@ -33,7 +33,7 @@ fun OtherProjectsSection(
                     ProjectRow(
                         uiState = project,
                         showPinnedReorderControls = false,
-                        onAction = { action -> onAction(OtherProjectsSectionUiActions.ProjectRowActions(action)) },
+                        onAction = { action -> onAction(OtherProjectsSectionUiActions.OtherProjectRowActions(action)) },
                     )
                 }
             }

@@ -17,8 +17,8 @@ data class PinnedProjectsSectionState(
 
 sealed interface PinnedProjectsSectionUiActions : UiActions {
     data object ToggleReorderModeClicked : PinnedProjectsSectionUiActions
-    data class ProjectRowActions(
-        val action: ProjectRowUiActions,
+    data class PinnedProjectRowActions(
+        val action: ProjectRowActions,
         val pinPosition: Int,
     ) : PinnedProjectsSectionUiActions
 }
@@ -52,7 +52,7 @@ fun PinnedProjectsSection(
                         showPinnedReorderControls = uiState.isReorderMode,
                         onAction = { action ->
                             onAction(
-                                PinnedProjectsSectionUiActions.ProjectRowActions(
+                                PinnedProjectsSectionUiActions.PinnedProjectRowActions(
                                     action = action,
                                     pinPosition = requireNotNull(project.pinPosition),
                                 )

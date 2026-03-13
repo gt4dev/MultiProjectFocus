@@ -109,9 +109,10 @@ class MainScreenViewModel(
 
     private fun onCurrentProjectSectionAction(action: CurrentProjectSectionUiActions) {
         when (action) {
-            is CurrentProjectSectionUiActions.ProjectRowActions -> {
+            is CurrentProjectSectionUiActions.CurrentProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowUiActions.OpenFolderClicked -> onOpenCurrentProjectFolder()
+                    is ProjectRowActions.OpenFolderClicked -> onOpenCurrentProjectFolder()
+                    is ProjectRowActions.OpenFileClicked -> onOpenCurrentProjectFile(projectRowAction.file)
                     else -> onProjectRowAction(projectRowAction)
                 }
             }
@@ -122,9 +123,13 @@ class MainScreenViewModel(
 
     private fun onPinnedProjectsSectionAction(action: PinnedProjectsSectionUiActions) {
         when (action) {
-            is PinnedProjectsSectionUiActions.ProjectRowActions -> {
+            is PinnedProjectsSectionUiActions.PinnedProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowUiActions.OpenFolderClicked -> onOpenPinnedProjectFolder(action.pinPosition)
+                    is ProjectRowActions.OpenFolderClicked -> onOpenPinnedProjectFolder(action.pinPosition)
+                    is ProjectRowActions.OpenFileClicked -> onOpenPinnedProjectFile(
+                        pinPosition = action.pinPosition,
+                        file = projectRowAction.file,
+                    )
 
                     else -> onProjectRowAction(projectRowAction)
                 }
@@ -136,26 +141,30 @@ class MainScreenViewModel(
 
     private fun onOtherProjectsSectionAction(action: OtherProjectsSectionUiActions) {
         when (action) {
-            is OtherProjectsSectionUiActions.ProjectRowActions -> {
+            is OtherProjectsSectionUiActions.OtherProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowUiActions.OpenFolderClicked -> onOpenRegularProjectFolder(projectRowAction.projectId)
+                    is ProjectRowActions.OpenFolderClicked -> onOpenRegularProjectFolder(projectRowAction.projectId)
+                    is ProjectRowActions.OpenFileClicked -> onOpenRegularProjectFile(
+                        projectId = projectRowAction.projectId,
+                        file = projectRowAction.file,
+                    )
                     else -> onProjectRowAction(projectRowAction)
                 }
             }
         }
     }
 
-    private fun onProjectRowAction(action: ProjectRowUiActions) {
+    private fun onProjectRowAction(action: ProjectRowActions) {
         when (action) {
-            is ProjectRowUiActions.AddSubProjectClicked -> onAddSubProject(action.projectId)
-            is ProjectRowUiActions.DeleteClicked -> onDeleteProject(action.projectId)
-            is ProjectRowUiActions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
-            is ProjectRowUiActions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
-            is ProjectRowUiActions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
-            is ProjectRowUiActions.OpenFileClicked -> onOpenProjectFile(action.projectId, action.file)
-            is ProjectRowUiActions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
-            is ProjectRowUiActions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
-            is ProjectRowUiActions.OpenFolderClicked -> Unit
+            is ProjectRowActions.AddSubProjectClicked -> onAddSubProject(action.projectId)
+            is ProjectRowActions.DeleteClicked -> onDeleteProject(action.projectId)
+            is ProjectRowActions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
+            is ProjectRowActions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
+            is ProjectRowActions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
+            is ProjectRowActions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
+            is ProjectRowActions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
+            is ProjectRowActions.OpenFileClicked -> Unit
+            is ProjectRowActions.OpenFolderClicked -> Unit
         }
     }
 
@@ -218,8 +227,36 @@ class MainScreenViewModel(
         }
     }
 
-    private fun onOpenProjectFile(projectId: Long, file: ProjectFile) {
-        showInfo("Not implemented yet.\nonOpenProjectFile(projectId: $projectId, file: $file)")
+    private fun onOpenCurrentProjectFile(file: ProjectFile) {
+        executeProjectAction {
+            projectActions.openCurrentProjectFile(
+                file = file,
+                actionPreferences = projectActionPreferences,
+                callerNotification = projectActionCallerNotification,
+            )
+        }
+    }
+
+    private fun onOpenPinnedProjectFile(pinPosition: Int, file: ProjectFile) {
+        executeProjectAction {
+            projectActions.openPinnedProjectFile(
+                pinPosition = pinPosition,
+                file = file,
+                actionPreferences = projectActionPreferences,
+                callerNotification = projectActionCallerNotification,
+            )
+        }
+    }
+
+    private fun onOpenRegularProjectFile(projectId: Long, file: ProjectFile) {
+        executeProjectAction {
+            projectActions.openRegularProjectFile(
+                projectId = projectId,
+                file = file,
+                actionPreferences = projectActionPreferences,
+                callerNotification = projectActionCallerNotification,
+            )
+        }
     }
 
     private fun executeProjectAction(action: suspend () -> ActionResult) {

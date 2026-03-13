@@ -12,7 +12,7 @@ data class CurrentProjectSectionState(
 
 sealed interface CurrentProjectSectionUiActions : UiActions {
     data object UnsetCurrentProjectClicked : CurrentProjectSectionUiActions
-    data class ProjectRowActions(val action: ProjectRowUiActions) :
+    data class CurrentProjectRowActions(val action: ProjectRowActions) :
         CurrentProjectSectionUiActions
 }
 
@@ -41,7 +41,7 @@ fun CurrentProjectSection(
             ProjectRow(
                 uiState = uiState.project,
                 showPinnedReorderControls = false,
-                onAction = { action -> onAction(CurrentProjectSectionUiActions.ProjectRowActions(action)) },
+                onAction = { action -> onAction(CurrentProjectSectionUiActions.CurrentProjectRowActions(action)) },
             )
         }
     }
