@@ -32,11 +32,6 @@ data class ProjectRowState(
     val isPinned: Boolean
         get() = (pinPosition != null)
 }
-
-
-val ProjectRowState.pinActionLabel: String
-    get() = if (isPinned) "Unpin" else "Pin"
-
 sealed interface ProjectRowUiActions : UiActions {
     data class SetCurrentClicked(val projectId: Long) : ProjectRowUiActions
     data class OpenFolderClicked(val projectId: Long) : ProjectRowUiActions
@@ -115,9 +110,13 @@ fun ProjectRow(
                     }
                 )
 
-                OutlinedButton(onClick = { onAction(ProjectRowUiActions.TogglePinnedClicked(uiState.projectId)) }) {
-                    Text(uiState.pinActionLabel)
-                }
+                PinButton(
+                    uiState.isPinned,
+                    onPinSwitch = {
+                        onAction(ProjectRowUiActions.TogglePinnedClicked(uiState.projectId))
+                    },
+                )
+
                 ProjectContextMenu(
                     uiState = ProjectContextMenuState(projectId = uiState.projectId),
                     onAction = { action ->

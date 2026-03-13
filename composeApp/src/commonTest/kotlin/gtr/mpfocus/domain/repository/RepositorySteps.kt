@@ -49,7 +49,7 @@ object RepositorySteps {
     }
 
 
-    fun HOTestCtx.`given 'fake project repository' returns current project`(
+    fun HOTestCtx.`given 'project repository mock' returns current project`(
         currentProject: Models.Project? = null
     ) {
         val obj = initMockProjectsRepo()
@@ -63,7 +63,7 @@ object RepositorySteps {
         every { obj.getCurrentProject() } returns flowOf(proj)
     }
 
-    fun HOTestCtx.`given 'fake project repository' sequentially returns current project`(
+    fun HOTestCtx.`given 'project repository mock' sequentially returns current project`(
         vararg withSequentialCurrentProject: String?,
     ) {
         val obj = initMockProjectsRepo()
@@ -82,7 +82,7 @@ object RepositorySteps {
         every { obj.getCurrentProject() } sequentiallyReturns flows
     }
 
-    fun HOTestCtx.`given 'fake projects repo' returns pinned projects`(
+    fun HOTestCtx.`given 'project repository mock' returns pinned projects`(
         vararg pinnedProjects: Models.Project
     ) {
         val obj = initMockProjectsRepo()
@@ -96,7 +96,7 @@ object RepositorySteps {
         every { obj.getPinnedProjects() } returns flowOf(projects)
     }
 
-    fun HOTestCtx.`given 'fake projects repo' returns other projects`(
+    fun HOTestCtx.`given 'project repository mock' returns other projects`(
         vararg otherProjects: Models.Project
     ) {
         val obj = initMockProjectsRepo()
@@ -109,7 +109,7 @@ object RepositorySteps {
         every { obj.getOtherProjects() } returns flowOf(projects)
     }
 
-    fun HOTestCtx.`given 'fake projects repo' returns sequential pinned project`(
+    fun HOTestCtx.`given 'project repository mock' returns sequential pinned project`(
         vararg sequentialPinnedProject: Models.Project?,
     ) {
         val obj = initMockProjectsRepo()

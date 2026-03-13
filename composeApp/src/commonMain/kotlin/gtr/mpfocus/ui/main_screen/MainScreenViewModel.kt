@@ -165,7 +165,12 @@ class MainScreenViewModel(
     }
 
     private fun onAddProject() {
-        showInfo("Add project is not implemented yet.")
+        showInfo(
+            """
+            Add project is not implemented yet.
+            Check README.md to learn how to add projects from a TOML file.
+            """.trimIndent()
+        )
     }
 
     private fun onUnsetCurrentProject() {

@@ -1,10 +1,10 @@
 package gtr.mpfocus.ui.composables
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,4 +56,26 @@ internal fun EmptySectionText(
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
+
+@Composable
+internal fun PinButton(
+    isPinned: Boolean,
+    onPinSwitch: () -> Unit,
+) {
+    FilledTonalIconButton(
+        onClick = onPinSwitch,
+    ) {
+        if (isPinned) {
+            Icon(
+                imageVector = Icons.Filled.PushPin,
+                contentDescription = "Unpin project",
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Outlined.PushPin,
+                contentDescription = "Pin project",
+            )
+        }
+    }
 }

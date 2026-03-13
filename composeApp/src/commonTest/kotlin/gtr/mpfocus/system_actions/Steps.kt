@@ -13,7 +13,7 @@ object Steps {
 
     // file system steps
 
-    fun HOTestCtx.`given exists 'fake file system'`() {
+    fun HOTestCtx.`given 'file system mock' exists`() {
         val obj = mock<FileSystemActions>()
         koinAdd {
             single { obj }
@@ -22,14 +22,14 @@ object Steps {
 
     // folder steps
 
-    fun HOTestCtx.`given 'fake file system' returns that folder`(
+    fun HOTestCtx.`given 'file system mock' returns that folder`(
         status: String,
     ) {
         val obj: FileSystemActions = koin.get()
         every { obj.pathExists(any<FolderPath>()) } returns status.exists()
     }
 
-    fun HOTestCtx.`given 'fake file system' sequentially returns that folder`(
+    fun HOTestCtx.`given 'file system mock' sequentially returns that folder`(
         vararg statuses: String,
     ) {
         val obj: FileSystemActions = koin.get()
@@ -37,19 +37,19 @@ object Steps {
         every { obj.pathExists(any<FolderPath>()) } sequentiallyReturns returnsVals
     }
 
-    fun HOTestCtx.`given 'fake file system' returns that folder is created successfully`() {
+    fun HOTestCtx.`given 'file system mock' returns that folder is created successfully`() {
         val obj: FileSystemActions = koin.get()
         every { obj.createFolder(any()) } returns true
     }
 
-    fun HOTestCtx.`then 'fake file system' checks folder path exist'`() {
+    fun HOTestCtx.`then 'file system mock' checks folder path exist'`() {
         val obj: FileSystemActions = koin.get()
         verify(mode = VerifyMode.order) { // each 'verify' counterparts each call
             obj.pathExists(any<FolderPath>())
         }
     }
 
-    fun HOTestCtx.`then 'fake file system' creates folder`() {
+    fun HOTestCtx.`then 'file system mock' creates folder`() {
         val obj: FileSystemActions = koin.get()
         verify {
             obj.createFolder(any())
@@ -58,14 +58,14 @@ object Steps {
 
     // file steps
 
-    fun HOTestCtx.`given 'fake file system' returns that file`(
+    fun HOTestCtx.`given 'file system mock' returns that file`(
         status: String,
     ) {
         val obj: FileSystemActions = koin.get()
         every { obj.pathExists(any<FilePath>()) } returns status.exists()
     }
 
-    fun HOTestCtx.`given 'fake file system' sequentially returns that file`(
+    fun HOTestCtx.`given 'file system mock' sequentially returns that file`(
         vararg statuses: String,
     ) {
         val obj: FileSystemActions = koin.get()
@@ -73,19 +73,19 @@ object Steps {
         every { obj.pathExists(any<FilePath>()) } sequentiallyReturns returnsVals
     }
 
-    fun HOTestCtx.`given 'fake file system' returns that file is created successfully`() {
+    fun HOTestCtx.`given 'file system mock' returns that file is created successfully`() {
         val obj: FileSystemActions = koin.get()
         every { obj.createFile(any()) } returns true
     }
 
-    fun HOTestCtx.`then 'fake file system' checks file path exist'`() {
+    fun HOTestCtx.`then 'file system mock' checks file path exist'`() {
         val obj: FileSystemActions = koin.get()
         verify(mode = VerifyMode.order) {
             obj.pathExists(any<FilePath>())
         }
     }
 
-    fun HOTestCtx.`then 'fake file system' creates file`() {
+    fun HOTestCtx.`then 'file system mock' creates file`() {
         val obj: FileSystemActions = koin.get()
         verify {
             obj.createFile(any())
@@ -95,7 +95,7 @@ object Steps {
 
     // operating system steps
 
-    fun HOTestCtx.`given exists 'fake operating system'`() {
+    fun HOTestCtx.`given 'operating system mock' exists`() {
         val obj = mock<OperatingSystemActions>()
         koinAdd {
             single { obj }
@@ -105,7 +105,7 @@ object Steps {
         everySuspend { obj.openFile(any()) } returns Unit
     }
 
-    fun HOTestCtx.`then 'fake operating system' opens folder`(path: String? = null) {
+    fun HOTestCtx.`then 'operating system mock' opens folder`(path: String? = null) {
         val obj: OperatingSystemActions = koin.get()
         if (path == null) {
             verifySuspend {
@@ -118,7 +118,7 @@ object Steps {
         }
     }
 
-    fun HOTestCtx.`then 'fake operating system' opens file`() {
+    fun HOTestCtx.`then 'operating system mock' opens file`() {
         val obj: OperatingSystemActions = koin.get()
         verifySuspend {
             obj.openFile(any())

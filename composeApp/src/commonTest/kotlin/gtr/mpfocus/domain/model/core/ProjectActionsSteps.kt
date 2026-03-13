@@ -9,7 +9,7 @@ import gtr.hotest.HOTestCtx
 
 object ProjectActionsSteps {
 
-    fun HOTestCtx.`given 'fake project actions' exists`() {
+    fun HOTestCtx.`given 'project actions mock' exists`() {
         val obj = mock<ProjectActions>(MockMode.autofill)
 
         everySuspend { obj.openCurrentProjectFolder(any(), any()) } returns ActionResult.Success

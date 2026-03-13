@@ -1,7 +1,7 @@
 package gtr.mpfocus.ui.composables
 
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import gtr.mpfocus.ui.core.UiActions
@@ -27,7 +27,7 @@ fun CurrentProjectSection(
         modifier = modifier,
         headerActions = {
             if (uiState.project != null) {
-                TextButton(
+                OutlinedButton(
                     onClick = { onAction(CurrentProjectSectionUiActions.UnsetCurrentProjectClicked) },
                 ) {
                     Text("Unset current")

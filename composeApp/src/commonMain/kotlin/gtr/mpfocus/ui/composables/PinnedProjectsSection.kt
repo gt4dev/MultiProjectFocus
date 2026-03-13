@@ -3,8 +3,6 @@ package gtr.mpfocus.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,14 +45,6 @@ fun PinnedProjectsSection(
         if (uiState.projects.isEmpty()) {
             EmptySectionText("no pinned projects")
         } else {
-            if (uiState.isReorderMode) {
-                Text(
-                    text = "Reorder mode keeps movement explicit and predictable. Use Up and Down to change pin order.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(bottom = 12.dp),
-                )
-            }
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 uiState.projects.forEach { project ->
                     ProjectRow(

@@ -123,7 +123,7 @@ object Steps {
         assertEquals(expected, actual)
     }
 
-    fun HOTestCtx.`given exists 'fake user notifier'`() {
+    fun HOTestCtx.`given 'user notifier mock' exists`() {
         val obj = mock<UserNotifier>(MockMode.autofill) // create default impl of interface
         koinAdd {
             single { obj }

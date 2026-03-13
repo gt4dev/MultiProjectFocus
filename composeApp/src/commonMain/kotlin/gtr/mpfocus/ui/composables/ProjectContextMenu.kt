@@ -2,10 +2,9 @@ package gtr.mpfocus.ui.composables
 
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import gtr.mpfocus.ui.core.UiActions
 
@@ -26,8 +25,11 @@ fun ProjectContextMenu(
     var expanded by remember { mutableStateOf(false) }
 
     Box {
-        OutlinedButton(onClick = { expanded = true }) {
-            Text("More")
+        FilledTonalIconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = "More actions",
+            )
         }
         DropdownMenu(
             expanded = expanded,

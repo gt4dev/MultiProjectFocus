@@ -5,10 +5,10 @@ import androidx.compose.ui.test.runComposeUiTest
 import gtr.hotest.HOTestCtx
 import gtr.hotest.hotest
 import gtr.mpfocus.domain.model.core.Models.Project
-import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'fake project actions' exists`
-import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake project repository' returns current project`
-import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns other projects`
-import gtr.mpfocus.domain.repository.RepositorySteps.`given 'fake projects repo' returns pinned projects`
+import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'project actions mock' exists`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns current project`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns other projects`
+import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns pinned projects`
 import gtr.mpfocus.hotest.koinAddObject
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`then is executed 'project actions' command`
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when 'main screen' is started`
@@ -26,7 +26,7 @@ class MainScreenOpenFolderTest {
             runComposeUiTest {
                 koinAddObject(this)
 
-                `given 'fake project repository' returns current project`(
+                `given 'project repository mock' returns current project`(
                     Project(111, "proj 111")
                 )
                 `when 'main screen' is started`()
@@ -44,7 +44,7 @@ class MainScreenOpenFolderTest {
             runComposeUiTest {
                 koinAddObject(this)
 
-                `given 'fake projects repo' returns pinned projects`(
+                `given 'project repository mock' returns pinned projects`(
                     Project(111, "proj 111", 1),
                     Project(222, "proj 222", 2),
                     Project(333, "proj 333", 3),
@@ -64,7 +64,7 @@ class MainScreenOpenFolderTest {
             runComposeUiTest {
                 koinAddObject(this)
 
-                `given 'fake projects repo' returns other projects`(
+                `given 'project repository mock' returns other projects`(
                     Project(111, "proj 111"),
                     Project(222, "proj 222"),
                     Project(333, "proj 333"),
@@ -78,5 +78,5 @@ class MainScreenOpenFolderTest {
 }
 
 fun HOTestCtx.`set up test background`() {
-    `given 'fake project actions' exists`()
+    `given 'project actions mock' exists`()
 }
