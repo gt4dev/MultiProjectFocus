@@ -105,34 +105,42 @@ interface ProjectActions {
     ): ActionResult
 
     interface CallerNotification {
-        suspend fun noFolder(folderName: String): NextStep
-        suspend fun noFile(fileName: String): NextStep
-        suspend fun noCurrentProject(): NextStep
-        suspend fun noPinnedProject(pinPosition: Int): NextStep
+        suspend fun noFolder(folderName: String): CallerDecision
+        suspend fun noFile(fileName: String): CallerDecision
+        suspend fun noCurrentProject(): CallerDecision
+        suspend fun noPinnedProject(pinPosition: Int): CallerDecision
 
         object CancelAll : CallerNotification {
-            override suspend fun noFolder(folderName: String) = NextStep.Cancel
+            override suspend fun noFolder(folderName: String) = CallerDecision.Cancel
 
-            override suspend fun noFile(fileName: String) = NextStep.Cancel
+            override suspend fun noFile(fileName: String) = CallerDecision.Cancel
 
-            override suspend fun noCurrentProject() = NextStep.Cancel
+            override suspend fun noCurrentProject() = CallerDecision.Cancel
 
-            override suspend fun noPinnedProject(pinPosition: Int) = NextStep.Cancel
+            override suspend fun noPinnedProject(pinPosition: Int) = CallerDecision.Cancel
         }
 
-        enum class NextStep { Continue, Cancel }
+        enum class CallerDecision { Continue, Cancel }
     }
 
     data class Preferences(
         val ifNoFileOrFolder: PrefValue,
-        val ifNoCP: PrefValue,
-        val ifNoPinned: PrefValue,
+        val ifNoCurrentProject: PrefValue,
+        val ifNoPinnedProject: PrefValue,
     ) {
         enum class PrefValue { NotifyCaller, ReturnError }
 
         companion object {
-            val UI = Preferences(PrefValue.NotifyCaller, PrefValue.ReturnError, PrefValue.ReturnError)
-            val CLI = Preferences(PrefValue.ReturnError, PrefValue.ReturnError, PrefValue.ReturnError)
+            val UI = Preferences(
+                PrefValue.NotifyCaller,
+                PrefValue.ReturnError,
+                PrefValue.ReturnError
+            )
+            val CLI = Preferences(
+                PrefValue.ReturnError,
+                PrefValue.ReturnError,
+                PrefValue.ReturnError
+            )
         }
     }
 }

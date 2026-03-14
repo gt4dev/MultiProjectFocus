@@ -3,6 +3,7 @@ package gtr.mpfocus.domain.model.core
 import gtr.hotest.Async.hotest
 import gtr.hotest.variants.Async.variant
 import gtr.hotest.variants.Async.variants
+import gtr.mpfocus.domain.model.config.ConfigServiceSteps.`given 'basic config service' exists`
 import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'real project actions' exists`
@@ -28,6 +29,7 @@ class OpenFolderTest {
             `given 'file system mock' exists`()
             `given 'operating system mock' exists`()
             `given 'project repository mock' sequentially returns current project`()
+            `given 'basic config service' exists`()
             `given 'real project actions' exists`()
 
             variants("project type") {

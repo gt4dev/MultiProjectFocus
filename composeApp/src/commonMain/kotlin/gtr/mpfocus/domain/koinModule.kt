@@ -12,7 +12,7 @@ fun domainModule() = module {
     single<ConfigService> { ConfigService.Basic }
     single { CoreActionsImpl(get(), get(), get(), get()) }
     single<CoreActions> { get<CoreActionsImpl>() }
-    single { ProjectActionsImpl(get(), get(), get()) }
+    single { ProjectActionsImpl(get(), get(), get(), get()) }
     single<ProjectActions> { get<ProjectActionsImpl>() }
     single { DataLoader(get(), get()) }
 }

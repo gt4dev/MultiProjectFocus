@@ -118,10 +118,16 @@ object FileSystemActionsSteps {
         }
     }
 
-    fun HOTestCtx.`then 'operating system mock' opens file`() {
+    fun HOTestCtx.`then 'operating system mock' opens file`(path: String? = null) {
         val obj: OperatingSystemActions = koin.get()
-        verifySuspend {
-            obj.openFile(any())
+        if (path == null) {
+            verifySuspend {
+                obj.openFile(any())
+            }
+        } else {
+            verifySuspend {
+                obj.openFile(FilePath(path.toPath()))
+            }
         }
     }
 }

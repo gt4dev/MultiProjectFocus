@@ -2,20 +2,24 @@ package gtr.mpfocus.domain.model.core
 
 import gtr.common.distillText
 import gtr.common.textFailure
+import gtr.mpfocus.domain.model.config.ConfigService
 import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification
-import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification.NextStep
+import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification.CallerDecision
 import gtr.mpfocus.domain.model.core.ProjectActions.Preferences
 import gtr.mpfocus.domain.model.core.ProjectActions.Preferences.PrefValue
 import gtr.mpfocus.domain.repository.ProjectRepository
+import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.FolderPath
 import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
+import okio.Path.Companion.toPath
 
 class ProjectActionsImpl(
     private val operatingSystemActions: OperatingSystemActions,
     private val fileSystemActions: FileSystemActions,
     private val projectRepository: ProjectRepository,
+    private val configService: ConfigService,
 ) : ProjectActions {
 
     internal suspend fun ensureCurrentProjectReady(
@@ -27,12 +31,12 @@ class ProjectActionsImpl(
             return Result.success(currentProject)
         }
 
-        return when (actionPreferences.ifNoCP) {
+        return when (actionPreferences.ifNoCurrentProject) {
             PrefValue.ReturnError -> Result.textFailure("no current project")
             PrefValue.NotifyCaller -> {
                 when (callerNotification.noCurrentProject()) {
-                    NextStep.Cancel -> Result.textFailure("no current project")
-                    NextStep.Continue -> {
+                    CallerDecision.Cancel -> Result.textFailure("no current project")
+                    CallerDecision.Continue -> {
                         val updatedProject = projectRepository.getCurrentProject().first()
                         if (updatedProject == null) {
                             Result.textFailure("no current project")
@@ -59,8 +63,8 @@ class ProjectActionsImpl(
             PrefValue.ReturnError -> return Result.textFailure("no project folder")
             PrefValue.NotifyCaller -> {
                 when (callerNotification.noFolder(folderPath.path.toString())) {
-                    NextStep.Cancel -> return Result.textFailure("no project folder")
-                    NextStep.Continue -> Unit
+                    CallerDecision.Cancel -> return Result.textFailure("no project folder")
+                    CallerDecision.Continue -> Unit
                 }
             }
         }
@@ -69,6 +73,36 @@ class ProjectActionsImpl(
             Result.success(folderPath)
         } else {
             Result.textFailure("no project folder")
+        }
+    }
+
+    internal suspend fun ensureProjectFileReady(
+        project: Project,
+        file: ProjectFile,
+        actionPreferences: Preferences,
+        callerNotification: CallerNotification
+    ): Result<FilePath> {
+        val projectConfig = configService.getProjectConfig()
+        val fileName = projectConfig.fileName(file)
+        val filePath = FilePath("${project.folderPath.path}/$fileName".toPath())
+        if (fileSystemActions.pathExists(filePath)) {
+            return Result.success(filePath)
+        }
+
+        when (actionPreferences.ifNoFileOrFolder) {
+            PrefValue.ReturnError -> return Result.textFailure("no file exists")
+            PrefValue.NotifyCaller -> {
+                when (callerNotification.noFile(filePath.path.toString())) {
+                    CallerDecision.Cancel -> return Result.textFailure("no file exists")
+                    CallerDecision.Continue -> Unit
+                }
+            }
+        }
+
+        return if (fileSystemActions.pathExists(filePath)) {
+            Result.success(filePath)
+        } else {
+            Result.textFailure("no file exists")
         }
     }
 
@@ -85,12 +119,12 @@ class ProjectActionsImpl(
             return Result.success(pinnedProject)
         }
 
-        return when (actionPreferences.ifNoPinned) {
+        return when (actionPreferences.ifNoPinnedProject) {
             PrefValue.ReturnError -> Result.textFailure("no pinned project at position $pinPosition") // todo-soon: use 'text resources' to avoid text duplications like here 3x
             PrefValue.NotifyCaller -> {
                 when (callerNotification.noPinnedProject(pinPosition)) {
-                    NextStep.Cancel -> Result.textFailure("no pinned project at position $pinPosition")
-                    NextStep.Continue -> {
+                    CallerDecision.Cancel -> Result.textFailure("no pinned project at position $pinPosition")
+                    CallerDecision.Continue -> {
                         val updatedPinnedProject = projectRepository.getPinnedProjects()
                             .first()
                             .firstOrNull { it.pinPosition == pinPosition }
@@ -138,7 +172,19 @@ class ProjectActionsImpl(
         file: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
-    ): ActionResult = ActionResult.Error(NOT_IMPLEMENTED_ERROR)
+    ): ActionResult {
+        val project = ensureCurrentProjectReady(actionPreferences, callerNotification)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(project, actionPreferences, callerNotification)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFile(projectFile)
+        return ActionResult.Success
+    }
 
     override suspend fun openPinnedProjectFolder(
         pinPosition: Int,
@@ -160,7 +206,19 @@ class ProjectActionsImpl(
         file: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
-    ): ActionResult = ActionResult.Error(NOT_IMPLEMENTED_ERROR)
+    ): ActionResult {
+        val project = ensurePinnedProjectReady(pinPosition, actionPreferences, callerNotification)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(project, actionPreferences, callerNotification)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFile(projectFile)
+        return ActionResult.Success
+    }
 
     override suspend fun openRegularProjectFolder(
         projectId: Long,
@@ -182,7 +240,19 @@ class ProjectActionsImpl(
         file: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
-    ): ActionResult = ActionResult.Error(NOT_IMPLEMENTED_ERROR)
+    ): ActionResult {
+        val project = ensureRegularProjectReady(projectId)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        ensureProjectFolderReady(project, actionPreferences, callerNotification)
+            .onFailure { return ActionResult.Error(it.distillText()) }
+
+        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
+            .getOrElse { return ActionResult.Error(it.distillText()) }
+
+        operatingSystemActions.openFile(projectFile)
+        return ActionResult.Success
+    }
 
     private companion object {
         const val NOT_IMPLEMENTED_ERROR = "ProjectActions method is not implemented yet."
