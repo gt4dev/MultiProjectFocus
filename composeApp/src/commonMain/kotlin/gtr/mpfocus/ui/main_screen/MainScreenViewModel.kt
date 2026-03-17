@@ -18,8 +18,8 @@ class MainScreenViewModel(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     initialMessage: MessagePanelState? = null,
-    // todo-soon: replace with 'VM defaults specialized for VM'
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
+    // todo: impl. real user reactions
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) : ViewModel() {
 
@@ -97,7 +97,7 @@ class MainScreenViewModel(
 
     private fun onScreenHeaderAction(action: ScreenHeaderUiActions) {
         when (action) {
-            ScreenHeaderUiActions.AddProjectClicked -> onAddProject()
+            ScreenHeaderUiActions.AddProjectClicked -> Unit
         }
     }
 
@@ -171,15 +171,6 @@ class MainScreenViewModel(
     // todo: handle locally in compo
     private fun onDismissMessage() {
         messageState.value = null
-    }
-
-    private fun onAddProject() {
-        showInfo(
-            """
-            Add project is not implemented yet.
-            Check README.md to learn how to add projects from a TOML file.
-            """.trimIndent()
-        )
     }
 
     private fun onUnsetCurrentProject() {

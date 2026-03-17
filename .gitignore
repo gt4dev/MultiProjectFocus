@@ -19,3 +19,4 @@ captures
 node_modules/
 appBin/
 /assets/projects.real.toml
+.gradle-user-home/*

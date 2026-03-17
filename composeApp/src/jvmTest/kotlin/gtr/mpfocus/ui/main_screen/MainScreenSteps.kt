@@ -25,6 +25,7 @@ object MainScreenSteps {
                         koin.get(),
                         koin.get(),
                     ).create(),
+                    onCreateProjectDialogOpen = {}
                 )
             }
         }
