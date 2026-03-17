@@ -2,8 +2,8 @@ package gtr.mpfocus.ui.main_screen
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import gtr.hotest.HOTestCtx
-import gtr.hotest.hotest
+import dev.hotest.HOTestCtx
+import dev.hotest.hotest
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'project actions mock' exists`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns current project`

@@ -1,7 +1,7 @@
 package gtr.mpfocus.domain.model.core
 
+import dev.hotest.HOTestCtx
 import gtr.common.textFailure
-import gtr.hotest.HOTestCtx
 import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.system_actions.FolderPath
 import kotlin.test.assertEquals

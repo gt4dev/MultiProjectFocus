@@ -1,6 +1,6 @@
 package gtr.mpfocus.infra.db_repo
 
-import gtr.hotest.HOTestCtx
+import dev.hotest.HOTestCtx
 import gtr.mpfocus.domain.model.core.Models
 
 object DBSteps {

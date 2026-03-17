@@ -2,9 +2,9 @@ package gtr.mpfocus.hotest
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.runComposeUiTest
-import gtr.hotest.hotest
-import gtr.hotest.variants.variant
-import gtr.hotest.variants.variants
+import dev.hotest.hotest
+import dev.hotest.variants.variant
+import dev.hotest.variants.variants
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

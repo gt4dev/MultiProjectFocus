@@ -1,12 +1,12 @@
 package gtr.mpfocus.domain.model.core
 
+import dev.hotest.HOTestCtx
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verifySuspend
-import gtr.hotest.HOTestCtx
 
 object ProjectActionsSteps {
 
@@ -165,6 +165,12 @@ object ProjectActionsSteps {
         val callerNotification: ProjectActions.CallerNotification = koin.get()
 
         when (notification) {
+            "no file" -> {
+                verifySuspend {
+                    callerNotification.noFile(any())
+                }
+            }
+
             "no current project" -> {
                 verifySuspend {
                     callerNotification.noCurrentProject()

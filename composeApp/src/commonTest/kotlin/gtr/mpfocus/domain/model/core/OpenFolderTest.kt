@@ -1,8 +1,8 @@
 package gtr.mpfocus.domain.model.core
 
-import gtr.hotest.Async.hotest
-import gtr.hotest.variants.Async.variant
-import gtr.hotest.variants.Async.variants
+import dev.hotest.Async.hotest
+import dev.hotest.variants.Async.variant
+import dev.hotest.variants.Async.variants
 import gtr.mpfocus.domain.model.config.ConfigServiceSteps.`given 'basic config service' exists`
 import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.Models.Project

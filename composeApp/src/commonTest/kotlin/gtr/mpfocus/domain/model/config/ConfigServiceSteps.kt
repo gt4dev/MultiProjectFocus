@@ -1,6 +1,6 @@
 package gtr.mpfocus.domain.model.config
 
-import gtr.hotest.HOTestCtx
+import dev.hotest.HOTestCtx
 
 object ConfigServiceSteps {
 

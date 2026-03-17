@@ -1,6 +1,6 @@
 package gtr.mpfocus.hotest
 
-import gtr.hotest.HOTestCtx
+import dev.hotest.HOTestCtx
 
 
 // todo: move to HOTest project

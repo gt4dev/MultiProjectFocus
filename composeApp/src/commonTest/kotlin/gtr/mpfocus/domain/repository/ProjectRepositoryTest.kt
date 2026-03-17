@@ -1,6 +1,6 @@
 package gtr.mpfocus.domain.repository
 
-import gtr.hotest.Async.hotest
+import dev.hotest.Async.hotest
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'real project repo' exists`
 import gtr.mpfocus.domain.repository.RepositorySteps.`then 'project repo' current project is`

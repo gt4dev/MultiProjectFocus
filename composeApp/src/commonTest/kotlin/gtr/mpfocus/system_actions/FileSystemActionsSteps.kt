@@ -1,23 +1,18 @@
 package gtr.mpfocus.system_actions
 
+import dev.hotest.HOTestCtx
 import dev.mokkery.*
 import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentiallyReturns
 import dev.mokkery.matcher.any
 import dev.mokkery.verify.VerifyMode
-import gtr.hotest.HOTestCtx
 import gtr.mpfocus.system_actions.Converters.exists
 import okio.Path.Companion.toPath
 
 object FileSystemActionsSteps {
 
-    // file system steps
-
     fun HOTestCtx.`given 'file system mock' exists`() {
-        val obj = mock<FileSystemActions>()
-        koinAdd {
-            single { obj }
-        }
+        initFileSystemActionsMock()
     }
 
     // folder steps
@@ -25,20 +20,20 @@ object FileSystemActionsSteps {
     fun HOTestCtx.`given 'file system mock' returns that folder`(
         status: String,
     ) {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         every { obj.pathExists(any<FolderPath>()) } returns status.exists()
     }
 
     fun HOTestCtx.`given 'file system mock' sequentially returns that folder`(
         vararg statuses: String,
     ) {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         val returnsVals = statuses.map { it.exists() }
         every { obj.pathExists(any<FolderPath>()) } sequentiallyReturns returnsVals
     }
 
     fun HOTestCtx.`given 'file system mock' returns that folder is created successfully`() {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         every { obj.createFolder(any()) } returns true
     }
 
@@ -61,20 +56,20 @@ object FileSystemActionsSteps {
     fun HOTestCtx.`given 'file system mock' returns that file`(
         status: String,
     ) {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         every { obj.pathExists(any<FilePath>()) } returns status.exists()
     }
 
     fun HOTestCtx.`given 'file system mock' sequentially returns that file`(
         vararg statuses: String,
     ) {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         val returnsVals = statuses.map { it.exists() }
         every { obj.pathExists(any<FilePath>()) } sequentiallyReturns returnsVals
     }
 
     fun HOTestCtx.`given 'file system mock' returns that file is created successfully`() {
-        val obj: FileSystemActions = koin.get()
+        val obj: FileSystemActions = initFileSystemActionsMock()
         every { obj.createFile(any()) } returns true
     }
 
@@ -129,6 +124,20 @@ object FileSystemActionsSteps {
                 obj.openFile(FilePath(path.toPath()))
             }
         }
+    }
+
+
+    private fun HOTestCtx.initFileSystemActionsMock(): FileSystemActions {
+        val existing = runCatching { koin.get<FileSystemActions>() }.getOrNull()
+        if (existing != null) {
+            return existing
+        }
+
+        val obj = mock<FileSystemActions>()
+        koinAdd {
+            single { obj }
+        }
+        return obj
     }
 }
 
