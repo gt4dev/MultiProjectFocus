@@ -15,6 +15,9 @@ interface ProjectDao {
     @Query("DELETE FROM projects")
     suspend fun deleteAll()
 
+    @Query("SELECT * FROM projects WHERE id = :projectId LIMIT 1")
+    suspend fun getProject(projectId: Long): ProjectEntity?
+
     @Query("SELECT * FROM projects WHERE isCurrent = 1 LIMIT 1")
     fun getCurrentProject(): Flow<ProjectEntity?>
 

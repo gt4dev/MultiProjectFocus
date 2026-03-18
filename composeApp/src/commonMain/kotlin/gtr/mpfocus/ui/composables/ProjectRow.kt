@@ -49,7 +49,7 @@ sealed interface ProjectRowActions : UiActions {
     ) : ProjectRowActions
 
     data class DeleteClicked(val projectId: Long) : ProjectRowActions
-    data class AddSubProjectClicked(val projectId: Long) : ProjectRowActions
+    data class AddProjectClicked(val relatedProjectId: Long) : ProjectRowActions
 }
 
 @Composable
@@ -118,14 +118,13 @@ fun ProjectRow(
                 )
 
                 ProjectContextMenu(
-                    uiState = ProjectContextMenuState(projectId = uiState.projectId),
                     onAction = { action ->
                         when (action) {
-                            ProjectContextMenuUiActions.AddSubProjectClicked -> {
-                                onAction(ProjectRowActions.AddSubProjectClicked(uiState.projectId))
+                            ProjectContextMenu.Actions.AddProjectClicked -> {
+                                onAction(ProjectRowActions.AddProjectClicked(uiState.projectId))
                             }
 
-                            ProjectContextMenuUiActions.DeleteClicked -> {
+                            ProjectContextMenu.Actions.DeleteClicked -> {
                                 onAction(ProjectRowActions.DeleteClicked(uiState.projectId))
                             }
                         }

@@ -8,7 +8,6 @@ import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.composables.MessagePanelState.Tone
 import gtr.mpfocus.ui.composables.ProjectRowState
 import gtr.mpfocus.ui.main_screen.MainScreen
-import gtr.mpfocus.ui.main_screen.MainScreenState
 
 @Composable
 @Preview
@@ -21,8 +20,8 @@ fun App() {
     }
 }
 
-private fun previewMainScreenState(): MainScreenState {
-    return MainScreenState(
+private fun previewMainScreenState(): MainScreen.State {
+    return MainScreen.State(
         message = MessagePanelState(
             text = "Sample message panel. Use it for status, warnings, or next actions.",
             tone = Tone.Info,

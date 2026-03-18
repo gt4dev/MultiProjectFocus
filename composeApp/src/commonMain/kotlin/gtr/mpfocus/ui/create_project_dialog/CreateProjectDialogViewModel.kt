@@ -17,6 +17,7 @@ private sealed interface CreateProjectDialogEffect {
 class CreateProjectDialogViewModel(
     private val folderPicker: FolderPicker,
     private val createProjectService: CreateProjectService,
+    private val relatedProjectId: Long? = null,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateProjectDialog.State())
@@ -24,6 +25,10 @@ class CreateProjectDialogViewModel(
 
     private val _effects = MutableSharedFlow<CreateProjectDialogEffect>()
     private val effects: SharedFlow<CreateProjectDialogEffect> = _effects.asSharedFlow()
+
+    init {
+        loadRecommendedPath()
+    }
 
     fun onAction(action: CreateProjectDialog.Actions) {
         when (action) {
@@ -42,6 +47,23 @@ class CreateProjectDialogViewModel(
             when (effect) {
                 CreateProjectDialogEffect.DismissRequested -> onCloseRequest()
                 is CreateProjectDialogEffect.Completed -> onCompleted()
+            }
+        }
+    }
+
+    private fun loadRecommendedPath() {
+        viewModelScope.launch {
+            val recomCtx = relatedProjectId
+                ?.let(CreateProjectService.RecomCtx::ProjectCtx)
+                ?: CreateProjectService.RecomCtx.GlobalCtx
+            val recommendedPath = createProjectService
+                .getRecommendedPath(recomCtx) ?: return@launch
+            _uiState.update { currentState ->
+                if (currentState.projectPath.isNotBlank()) {
+                    currentState
+                } else {
+                    currentState.copy(projectPath = recommendedPath.path.toString())
+                }
             }
         }
     }
@@ -104,12 +126,13 @@ class CreateProjectDialogViewModelFactory(
     private val folderPicker: FolderPicker,
     private val createProjectService: CreateProjectService,
 ) {
-    fun create(): ViewModelProvider.Factory {
+    fun create(relatedProjectId: Long?): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
                 CreateProjectDialogViewModel(
                     folderPicker = folderPicker,
                     createProjectService = createProjectService,
+                    relatedProjectId = relatedProjectId,
                 )
             }
         }

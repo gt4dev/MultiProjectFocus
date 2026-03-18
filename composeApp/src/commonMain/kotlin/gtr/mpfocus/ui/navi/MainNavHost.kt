@@ -6,7 +6,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogContainer
+import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogViewModelFactory
 import gtr.mpfocus.ui.main_screen.MainScreenContainer
 import kotlinx.serialization.Serializable
 
@@ -16,14 +18,16 @@ object Routes {
     data object MainScreen
 
     @Serializable
-    data object CreateProjectDialog
+    data class CreateProjectDialog(
+        val relatedProjectId: Long? = null,
+    )
 }
 
 
 @Composable
 fun MainNavHost(
     mainScreenViewModelFactory: ViewModelProvider.Factory,
-    createProjectDialogViewModelFactory: ViewModelProvider.Factory,
+    createProjectDialogViewModelFactory: CreateProjectDialogViewModelFactory,
 ) {
     val navController = rememberNavController()
 
@@ -34,15 +38,18 @@ fun MainNavHost(
         composable<Routes.MainScreen> {
             MainScreenContainer(
                 viewModelFactory = mainScreenViewModelFactory,
-                onCreateProjectDialogOpen = {
-                    navController.navigate(Routes.CreateProjectDialog)
+                onCreateProjectDialogOpen = { relatedProjectId ->
+                    navController.navigate(Routes.CreateProjectDialog(relatedProjectId))
                 },
             )
         }
 
-        dialog<Routes.CreateProjectDialog> {
+        dialog<Routes.CreateProjectDialog> { backStackEntry ->
+            val relatedProjectId = backStackEntry
+                .toRoute<Routes.CreateProjectDialog>()
+                .relatedProjectId
             CreateProjectDialogContainer(
-                viewModelFactory = createProjectDialogViewModelFactory,
+                viewModelFactory = createProjectDialogViewModelFactory.create(relatedProjectId),
                 onCloseRequest = {
                     navController.popBackStack()
                 },

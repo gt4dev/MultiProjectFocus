@@ -12,26 +12,30 @@ import androidx.compose.ui.unit.dp
 import gtr.mpfocus.ui.composables.*
 import gtr.mpfocus.ui.core.UiActions
 
-data class MainScreenState(
-    val message: MessagePanelState? = null,
-    val currentProject: ProjectRowState? = null,
-    val pinnedProjects: List<ProjectRowState> = emptyList(),
-    val otherProjects: List<ProjectRowState> = emptyList(),
-    val isPinnedProjectsReorderMode: Boolean = false,
-)
+object MainScreen {
 
-sealed interface MainScreenUiActions : UiActions {
-    data class ScreenHeader(val action: ScreenHeaderUiActions) : MainScreenUiActions
-    data class MessagePanel(val action: MessagePanelUiActions) : MainScreenUiActions
-    data class CurrentProjectSection(val action: CurrentProjectSectionUiActions) : MainScreenUiActions
-    data class PinnedProjectsSection(val action: PinnedProjectsSectionUiActions) : MainScreenUiActions
-    data class OtherProjectsSection(val action: OtherProjectsSectionUiActions) : MainScreenUiActions
+    data class State(
+        val message: MessagePanelState? = null,
+        val currentProject: ProjectRowState? = null,
+        val pinnedProjects: List<ProjectRowState> = emptyList(),
+        val otherProjects: List<ProjectRowState> = emptyList(),
+        val isPinnedProjectsReorderMode: Boolean = false,
+    )
+
+    sealed interface Actions : UiActions {
+        data class ScreenHeader(val action: ScreenHeaderUiActions) : Actions
+        data class MessagePanel(val action: MessagePanelUiActions) : Actions
+        data class CurrentProjectSection(val action: CurrentProjectSectionUiActions) : Actions
+        data class PinnedProjectsSection(val action: PinnedProjectsSectionUiActions) : Actions
+        data class OtherProjectsSection(val action: OtherProjectsSectionUiActions) : Actions
+    }
+
 }
 
 @Composable
 fun MainScreen(
-    uiState: MainScreenState,
-    onAction: (MainScreenUiActions) -> Unit,
+    uiState: MainScreen.State,
+    onAction: (MainScreen.Actions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -45,19 +49,19 @@ fun MainScreen(
     ) {
         ScreenHeader(
             uiState = ScreenHeaderState(),
-            onAction = { onAction(MainScreenUiActions.ScreenHeader(it)) },
+            onAction = { onAction(MainScreen.Actions.ScreenHeader(it)) },
         )
 
         uiState.message?.let { message ->
             MessagePanel(
                 uiState = message,
-                onAction = { onAction(MainScreenUiActions.MessagePanel(it)) },
+                onAction = { onAction(MainScreen.Actions.MessagePanel(it)) },
             )
         }
 
         CurrentProjectSection(
             uiState = CurrentProjectSectionState(project = uiState.currentProject),
-            onAction = { onAction(MainScreenUiActions.CurrentProjectSection(it)) },
+            onAction = { onAction(MainScreen.Actions.CurrentProjectSection(it)) },
             modifier = Modifier.testTag(MainScreenTestTags.CURRENT_PROJECT_SECTION),
         )
 
@@ -66,13 +70,13 @@ fun MainScreen(
                 projects = uiState.pinnedProjects,
                 isReorderMode = uiState.isPinnedProjectsReorderMode,
             ),
-            onAction = { onAction(MainScreenUiActions.PinnedProjectsSection(it)) },
+            onAction = { onAction(MainScreen.Actions.PinnedProjectsSection(it)) },
             modifier = Modifier.testTag(MainScreenTestTags.PINNED_PROJECTS_SECTION),
         )
 
         OtherProjectsSection(
             uiState = OtherProjectsSectionState(projects = uiState.otherProjects),
-            onAction = { onAction(MainScreenUiActions.OtherProjectsSection(it)) },
+            onAction = { onAction(MainScreen.Actions.OtherProjectsSection(it)) },
             modifier = Modifier.testTag(MainScreenTestTags.OTHER_PROJECTS_SECTION),
         )
     }

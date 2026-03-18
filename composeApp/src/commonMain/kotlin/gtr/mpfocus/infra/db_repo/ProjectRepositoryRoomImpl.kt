@@ -56,12 +56,6 @@ internal class ProjectRepositoryRoomImpl(
         }
     }
 
-    override fun getAll(): Flow<List<Project>> {
-        return projectDao.getAll().map { entities ->
-            entities.map { it.toDomain() }
-        }
-    }
-
     override suspend fun addProject(projectPath: FolderPath): Long {
         return withContext(Dispatchers.IO) {
             projectDao.insert(
@@ -71,6 +65,18 @@ internal class ProjectRepositoryRoomImpl(
                     pinPosition = null
                 )
             )
+        }
+    }
+
+    override suspend fun getProject(projectId: Long): Project? {
+        return withContext(Dispatchers.IO) {
+            projectDao.getProject(projectId)?.toDomain()
+        }
+    }
+
+    override fun getAll(): Flow<List<Project>> {
+        return projectDao.getAll().map { entities ->
+            entities.map { it.toDomain() }
         }
     }
 }

@@ -11,6 +11,14 @@ class CreateProjectServiceImpl(
     private val fileSystemActions: FileSystemActions,
 ) : CreateProjectService {
 
+    override suspend fun getRecommendedPath(inputParams: CreateProjectService.RecomCtx): FolderPath? {
+        return when (inputParams) {
+            CreateProjectService.RecomCtx.GlobalCtx -> null
+            is CreateProjectService.RecomCtx.ProjectCtx ->
+                projectRepository.getProject(inputParams.relatedProjectId)?.folderPath
+        }
+    }
+
     override suspend fun createProject(folder: String): CreateProjectService.Result {
         val rawPath = folder.trim()
         if (rawPath.isBlank()) {

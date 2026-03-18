@@ -16,7 +16,7 @@ interface ProjectRepository {
 
     fun getOtherProjects(): Flow<List<Project>>
 
-    fun getAll(): Flow<List<Project>>
-
     suspend fun addProject(projectPath: FolderPath): Long
+    suspend fun getProject(projectId: Long): Project?
+    fun getAll(): Flow<List<Project>>
 }

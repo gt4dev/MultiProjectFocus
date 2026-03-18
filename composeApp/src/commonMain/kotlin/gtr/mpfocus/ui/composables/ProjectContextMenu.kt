@@ -8,19 +8,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import gtr.mpfocus.ui.core.UiActions
 
-data class ProjectContextMenuState(
-    val projectId: Long,
-)
+object ProjectContextMenu {
 
-sealed interface ProjectContextMenuUiActions : UiActions {
-    data object DeleteClicked : ProjectContextMenuUiActions
-    data object AddSubProjectClicked : ProjectContextMenuUiActions
+    sealed interface Actions : UiActions {
+        data object DeleteClicked : Actions
+
+        data object AddProjectClicked : Actions
+    }
 }
 
 @Composable
 fun ProjectContextMenu(
-    uiState: ProjectContextMenuState,
-    onAction: (ProjectContextMenuUiActions) -> Unit,
+    onAction: (ProjectContextMenu.Actions) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -36,17 +35,17 @@ fun ProjectContextMenu(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Delete") },
+                text = { Text("Add project ...") },
                 onClick = {
                     expanded = false
-                    onAction(ProjectContextMenuUiActions.DeleteClicked)
+                    onAction(ProjectContextMenu.Actions.AddProjectClicked)
                 },
             )
             DropdownMenuItem(
-                text = { Text("Add sub-project") },
+                text = { Text("Delete ...") },
                 onClick = {
                     expanded = false
-                    onAction(ProjectContextMenuUiActions.AddSubProjectClicked)
+                    onAction(ProjectContextMenu.Actions.DeleteClicked)
                 },
             )
         }

@@ -14,7 +14,6 @@ fun CreateProjectDialogContainer(
     onCompleted: () -> Unit,
 ) {
     val viewModel: CreateProjectDialogViewModel = viewModel(
-        key = "create-project-dialog", // todo: not needed
         factory = viewModelFactory,
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

@@ -26,6 +26,9 @@ class MainScreenViewModel(
     private val messageState = MutableStateFlow(initialMessage)
     private val isPinnedProjectsReorderMode = MutableStateFlow(false)
 
+    private val _effects = MutableSharedFlow<MainScreenEffect>()
+    val effects: SharedFlow<MainScreenEffect> = _effects.asSharedFlow()
+
     private val currentProject = projectRepository.getCurrentProject()
         .stateIn(
             scope = viewModelScope,
@@ -47,14 +50,14 @@ class MainScreenViewModel(
             initialValue = emptyList(),
         )
 
-    val uiState: StateFlow<MainScreenState> = combine(
+    val uiState: StateFlow<MainScreen.State> = combine(
         currentProject,
         pinnedProjects,
         otherProjects,
         messageState,
         isPinnedProjectsReorderMode,
     ) { current: Project?, pinned: List<Project>, other: List<Project>, message: MessagePanelState?, reorderMode: Boolean ->
-        MainScreenState(
+        MainScreen.State(
             message = message,
             currentProject = current
                 ?.toRowState()
@@ -82,22 +85,22 @@ class MainScreenViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-        initialValue = MainScreenState(message = initialMessage),
+        initialValue = MainScreen.State(message = initialMessage),
     )
 
-    fun onAction(action: MainScreenUiActions) {
+    fun onAction(action: MainScreen.Actions) {
         when (action) {
-            is MainScreenUiActions.ScreenHeader -> onScreenHeaderAction(action.action)
-            is MainScreenUiActions.MessagePanel -> onMessagePanelAction(action.action)
-            is MainScreenUiActions.CurrentProjectSection -> onCurrentProjectSectionAction(action.action)
-            is MainScreenUiActions.PinnedProjectsSection -> onPinnedProjectsSectionAction(action.action)
-            is MainScreenUiActions.OtherProjectsSection -> onOtherProjectsSectionAction(action.action)
+            is MainScreen.Actions.ScreenHeader -> onScreenHeaderAction(action.action)
+            is MainScreen.Actions.MessagePanel -> onMessagePanelAction(action.action)
+            is MainScreen.Actions.CurrentProjectSection -> onCurrentProjectSectionAction(action.action)
+            is MainScreen.Actions.PinnedProjectsSection -> onPinnedProjectsSectionAction(action.action)
+            is MainScreen.Actions.OtherProjectsSection -> onOtherProjectsSectionAction(action.action)
         }
     }
 
     private fun onScreenHeaderAction(action: ScreenHeaderUiActions) {
         when (action) {
-            ScreenHeaderUiActions.AddProjectClicked -> Unit
+            ScreenHeaderUiActions.AddProjectClicked -> onOpenCreateProjectDialog(null)
         }
     }
 
@@ -156,7 +159,7 @@ class MainScreenViewModel(
 
     private fun onProjectRowAction(action: ProjectRowActions) {
         when (action) {
-            is ProjectRowActions.AddSubProjectClicked -> onAddSubProject(action.projectId)
+            is ProjectRowActions.AddProjectClicked -> onOpenCreateProjectDialog(action.relatedProjectId)
             is ProjectRowActions.DeleteClicked -> onDeleteProject(action.projectId)
             is ProjectRowActions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
             is ProjectRowActions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
@@ -279,8 +282,10 @@ class MainScreenViewModel(
         showInfo("Not implemented yet.")
     }
 
-    private fun onAddSubProject(projectId: Long) {
-        showInfo("Not implemented yet.")
+    private fun onOpenCreateProjectDialog(relatedProjectId: Long?) {
+        viewModelScope.launch {
+            _effects.emit(MainScreenEffect.CreateProjectDialogRequested(relatedProjectId))
+        }
     }
 
     private fun onMovePinnedProjectUp(projectId: Long) {
