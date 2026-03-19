@@ -5,6 +5,7 @@ import gtr.mpfocus.system_actions.FolderPath
 import kotlinx.coroutines.flow.Flow
 
 interface ProjectRepository {
+    suspend fun deleteProject(projectId: Long)
     suspend fun deleteAll()
 
     fun getCurrentProject(): Flow<Project?>

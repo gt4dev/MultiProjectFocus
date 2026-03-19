@@ -20,6 +20,7 @@ object MainScreen {
         val pinnedProjects: List<ProjectRowState> = emptyList(),
         val otherProjects: List<ProjectRowState> = emptyList(),
         val isPinnedProjectsReorderMode: Boolean = false,
+        val deleteProjectDialog: DeleteProjectDialog.State? = null,
     )
 
     sealed interface Actions : UiActions {
@@ -28,8 +29,8 @@ object MainScreen {
         data class CurrentProjectSection(val action: CurrentProjectSectionUiActions) : Actions
         data class PinnedProjectsSection(val action: PinnedProjectsSectionUiActions) : Actions
         data class OtherProjectsSection(val action: OtherProjectsSectionUiActions) : Actions
+        data class DeleteProjectDialog(val action: DeleteProjectDialog.Actions) : Actions
     }
-
 }
 
 @Composable
@@ -38,6 +39,13 @@ fun MainScreen(
     onAction: (MainScreen.Actions) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    uiState.deleteProjectDialog?.let { dialogState ->
+        DeleteProjectDialog(
+            state = dialogState,
+            onAction = { onAction(MainScreen.Actions.DeleteProjectDialog(it)) },
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()

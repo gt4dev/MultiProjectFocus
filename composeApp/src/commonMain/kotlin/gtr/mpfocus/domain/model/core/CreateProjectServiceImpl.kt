@@ -38,7 +38,7 @@ class CreateProjectServiceImpl(
                 .first()
                 .any { project -> project.folderPath.path.toString() == normalizedPath }
         }.getOrElse {
-            return CreateProjectService.Result.Error("Unable to create project.")
+            return CreateProjectService.Result.Error("Unable to add project.")
         }
 
         if (projectAlreadyExists) {
@@ -49,7 +49,7 @@ class CreateProjectServiceImpl(
             projectRepository.addProject(folderPath)
             CreateProjectService.Result.Success
         }.getOrElse {
-            CreateProjectService.Result.Error("Unable to create project.")
+            CreateProjectService.Result.Error("Unable to add project.")
         }
     }
 }

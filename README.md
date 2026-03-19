@@ -1,7 +1,12 @@
 # Multi Project Focus [MPF]
 
-**Project is under heavy development.**  
-Core features work. New features are added regularly.
+#
+
+> **MPF is a safe and privacy-friendly app.**
+>
+> • MPF does **not read the contents** of your projects.  
+> • MPF works locally — no data leaves your computer.  
+> • MPF is 100% open source, so you can verify everything by yourself.
 
 # Table of Contents
 

@@ -23,8 +23,10 @@ class MainScreenViewModel(
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) : ViewModel() {
 
-    private val messageState = MutableStateFlow(initialMessage)
-    private val isPinnedProjectsReorderMode = MutableStateFlow(false)
+    private val _uiState = MutableStateFlow(MainScreen.State(message = initialMessage))
+    val uiState: StateFlow<MainScreen.State> = _uiState.asStateFlow()
+
+    private var pendingDeleteProjectId: Long? = null
 
     private val _effects = MutableSharedFlow<MainScreenEffect>()
     val effects: SharedFlow<MainScreenEffect> = _effects.asSharedFlow()
@@ -50,43 +52,9 @@ class MainScreenViewModel(
             initialValue = emptyList(),
         )
 
-    val uiState: StateFlow<MainScreen.State> = combine(
-        currentProject,
-        pinnedProjects,
-        otherProjects,
-        messageState,
-        isPinnedProjectsReorderMode,
-    ) { current: Project?, pinned: List<Project>, other: List<Project>, message: MessagePanelState?, reorderMode: Boolean ->
-        MainScreen.State(
-            message = message,
-            currentProject = current
-                ?.toRowState()
-                ?.copy(
-                    canSetAsCurrent = false,
-                ),
-            pinnedProjects = pinned.mapIndexed { index, project ->
-                project
-                    .toRowState()
-                    .copy(
-                        canSetAsCurrent = current?.projectId != project.projectId,
-                        canMovePinnedUp = index > 0,
-                        canMovePinnedDown = index < pinned.lastIndex,
-                    )
-            },
-            otherProjects = other.map { project ->
-                project
-                    .toRowState()
-                    .copy(
-                        canSetAsCurrent = current?.projectId != project.projectId,
-                    )
-            },
-            isPinnedProjectsReorderMode = reorderMode,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-        initialValue = MainScreen.State(message = initialMessage),
-    )
+    init {
+        bindDomainState()
+    }
 
     fun onAction(action: MainScreen.Actions) {
         when (action) {
@@ -95,6 +63,8 @@ class MainScreenViewModel(
             is MainScreen.Actions.CurrentProjectSection -> onCurrentProjectSectionAction(action.action)
             is MainScreen.Actions.PinnedProjectsSection -> onPinnedProjectsSectionAction(action.action)
             is MainScreen.Actions.OtherProjectsSection -> onOtherProjectsSectionAction(action.action)
+            // todo: probably to delete
+            is MainScreen.Actions.DeleteProjectDialog -> onDeleteProjectDialogAction(action.action)
         }
     }
 
@@ -107,6 +77,13 @@ class MainScreenViewModel(
     private fun onMessagePanelAction(action: MessagePanelUiActions) {
         when (action) {
             MessagePanelUiActions.DismissClicked -> onDismissMessage()
+        }
+    }
+
+    private fun onDeleteProjectDialogAction(action: DeleteProjectDialog.Actions) {
+        when (action) {
+            DeleteProjectDialog.Actions.CancelClicked -> onDeleteProjectDialogClear()
+            DeleteProjectDialog.Actions.ConfirmClicked -> onDeleteProjectDialogConfirm()
         }
     }
 
@@ -171,9 +148,8 @@ class MainScreenViewModel(
         }
     }
 
-    // todo: handle locally in compo
     private fun onDismissMessage() {
-        messageState.value = null
+        _uiState.update { it.copy(message = null) }
     }
 
     private fun onUnsetCurrentProject() {
@@ -183,7 +159,9 @@ class MainScreenViewModel(
     }
 
     private fun onTogglePinnedProjectsReorderMode() {
-        isPinnedProjectsReorderMode.update { !it }
+        _uiState.update {
+            it.copy(isPinnedProjectsReorderMode = !it.isPinnedProjectsReorderMode)
+        }
     }
 
     private fun onSetCurrentProject(projectId: Long) {
@@ -279,7 +257,17 @@ class MainScreenViewModel(
     }
 
     private fun onDeleteProject(projectId: Long) {
-        showInfo("Not implemented yet.")
+        viewModelScope.launch {
+            val project = projectRepository.getProject(projectId) ?: return@launch
+            pendingDeleteProjectId = project.projectId
+            _uiState.update {
+                it.copy(
+                    deleteProjectDialog = DeleteProjectDialog.State(
+                        path = project.folderPath.path.toString(),
+                    ),
+                )
+            }
+        }
     }
 
     private fun onOpenCreateProjectDialog(relatedProjectId: Long?) {
@@ -329,8 +317,21 @@ class MainScreenViewModel(
         }
     }
 
+    private fun onDeleteProjectDialogConfirm() {
+        val projectId = pendingDeleteProjectId ?: return
+        viewModelScope.launch {
+            projectRepository.deleteProject(projectId)
+            onDeleteProjectDialogClear()
+        }
+    }
+
+    private fun onDeleteProjectDialogClear() {
+        pendingDeleteProjectId = null
+        _uiState.update { it.copy(deleteProjectDialog = null) }
+    }
+
     private fun showInfo(text: String) {
-        messageState.value = MessagePanelState(text = text)
+        _uiState.update { it.copy(message = MessagePanelState(text = text)) }
     }
 
     private fun Project.toRowState(): ProjectRowState {
@@ -339,6 +340,41 @@ class MainScreenViewModel(
             pathText = folderPath.path.toString(),
             pinPosition = pinPosition,
         )
+    }
+
+    private fun bindDomainState() {
+        combine(
+            currentProject,
+            pinnedProjects,
+            otherProjects,
+        ) { current: Project?, pinned: List<Project>, other: List<Project> ->
+            // warning: side effects in 'flow' but the code is simpler
+            _uiState.update { state ->
+                state.copy(
+                    currentProject = current
+                        ?.toRowState()
+                        ?.copy(
+                            canSetAsCurrent = false,
+                        ),
+                    pinnedProjects = pinned.mapIndexed { index, project ->
+                        project
+                            .toRowState()
+                            .copy(
+                                canSetAsCurrent = current?.projectId != project.projectId,
+                                canMovePinnedUp = index > 0,
+                                canMovePinnedDown = index < pinned.lastIndex,
+                            )
+                    },
+                    otherProjects = other.map { project ->
+                        project
+                            .toRowState()
+                            .copy(
+                                canSetAsCurrent = current?.projectId != project.projectId,
+                            )
+                    },
+                )
+            }
+        }.launchIn(viewModelScope)
     }
 
     companion object {

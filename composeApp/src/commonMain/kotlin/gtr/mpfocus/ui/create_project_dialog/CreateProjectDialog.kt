@@ -41,7 +41,7 @@ fun CreateProjectDialog(
             }
         },
         title = {
-            Text("Create project")
+            Text("Add project")
         },
         text = {
             Column(
@@ -80,7 +80,7 @@ fun CreateProjectDialog(
                 onClick = { onAction(CreateProjectDialog.Actions.CreateClicked) },
                 enabled = !uiState.isSubmitting,
             ) {
-                Text(if (uiState.isSubmitting) "Creating..." else "Create")
+                Text(if (uiState.isSubmitting) "Adding..." else "Add")
             }
         },
         dismissButton = {

@@ -12,6 +12,9 @@ interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(project: ProjectEntity): Long
 
+    @Query("DELETE FROM projects WHERE id = :projectId")
+    suspend fun deleteProject(projectId: Long)
+
     @Query("DELETE FROM projects")
     suspend fun deleteAll()
 

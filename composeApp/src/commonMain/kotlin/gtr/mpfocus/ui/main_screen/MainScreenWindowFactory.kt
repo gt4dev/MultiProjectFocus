@@ -41,7 +41,6 @@ fun MainScreenContainer(
     val viewModel: MainScreenViewModel = viewModel(factory = viewModelFactory)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-
     LaunchedEffect(viewModel) {
         viewModel.effects.collect { effect ->
             when (effect) {
@@ -50,7 +49,6 @@ fun MainScreenContainer(
             }
         }
     }
-
 
     MainScreen(
         uiState = uiState,

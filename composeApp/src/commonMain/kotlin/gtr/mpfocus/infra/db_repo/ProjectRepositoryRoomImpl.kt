@@ -13,6 +13,12 @@ internal class ProjectRepositoryRoomImpl(
     private val projectDao: ProjectDao
 ) : ProjectRepository {
 
+    override suspend fun deleteProject(projectId: Long) {
+        withContext(Dispatchers.IO) {
+            projectDao.deleteProject(projectId)
+        }
+    }
+
     override suspend fun deleteAll() {
         withContext(Dispatchers.IO) {
             projectDao.deleteAll()

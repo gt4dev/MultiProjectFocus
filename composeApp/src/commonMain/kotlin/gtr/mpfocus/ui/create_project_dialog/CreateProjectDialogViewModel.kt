@@ -102,7 +102,7 @@ class CreateProjectDialogViewModel(
             _uiState.update { it.copy(isSubmitting = true, projectPathError = null) }
             when (
                 val result = runCatching { createProjectService.createProject(projectPath) }
-                    .getOrElse { CreateProjectService.Result.Error("Unable to create project.") }
+                    .getOrElse { CreateProjectService.Result.Error("Unable to add project.") }
             ) {
                 CreateProjectService.Result.Success -> {
                     _uiState.update { it.copy(isSubmitting = false) }
