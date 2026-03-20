@@ -39,8 +39,8 @@ fun DeleteProjectDialog(
                 
                 ${state.path}
                      
-                "Delete" does NOT DELETE this folder.
-                "Delete" removes this project from MPF.
+                "Delete" does NOT delete this folder.
+                "Delete" only removes this project from MPF.
                 """.trimIndent()
             )
         },

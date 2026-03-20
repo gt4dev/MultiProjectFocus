@@ -4,9 +4,9 @@
 
 > **MPF is a safe and privacy-friendly app.**
 >
-> • MPF does **not read the contents** of your projects.  
-> • MPF works locally — no data leaves your computer.  
-> • MPF is 100% open source, so you can verify everything by yourself.
+> • **MPF does not read the contents** of your projects.  
+> • **MPF works locally**, no data leaves your computer.  
+> • **MPF is 100% open source**, so you can verify everything by yourself.
 
 # Table of Contents
 
@@ -110,16 +110,21 @@ Example:
 ## 1. Build MPF app
 
 The app is provided as source code to build yourself.  
-This helps you ensure the app **does not read** your files or any data, thus is **completely safe for your use**.
+Open sources proves that the app **does not read** your files or any data, thus is **completely safe for your use**.
 
-1. Download the source code.
-2. In the project root folder, run command:
+1. Install [Java](https://www.oracle.com/java/technologies/downloads/#java25). Use any version between Java 17 and Java 25.  
+   Don't use Java 26, as newest Kotlin is not yet compatible with it.
+2. Download [the source code](https://github.com/gt4dev/MultiProjectFocus/archive/refs/heads/main.zip).
+3. In the source code folder, run command:
 
     `gradlew createDistributable`  
 
     This compiles the sources and generates the app for your current platform.   
-    For example: `.exe` for Windows, `.app` for macOS, and a binary file for Linux.
-3. The generated app file is placed in `./appBin`.
+    For example:
+    - `.exe` for Windows
+    - `.app` for macOS
+    - a binary file for Linux  
+    The generated app file is inside `./appBin` folder.
 
 ## 2. Install a hotkey manager app
 
@@ -211,6 +216,5 @@ It is valuable to me because it gives feedback on what must be refined.
 
 ## What next
 
-The project is currently under heavy development and is still at an early stage.  
-Please stay tuned for further improvements.  
-The UI will be added in the next steps. 
+The project is still under development.  
+Please stay tuned for further improvements.   

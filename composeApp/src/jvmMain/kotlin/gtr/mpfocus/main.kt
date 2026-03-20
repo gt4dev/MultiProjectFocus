@@ -11,6 +11,7 @@ import org.koin.core.context.startKoin
 import org.koin.core.lazyModules
 
 fun main(args: Array<String>): Unit = runBlocking {
+    fixSkiko()
 
     val command = CommandParser.parseArgs(args)
 

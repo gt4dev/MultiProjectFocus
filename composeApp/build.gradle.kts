@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
@@ -20,8 +20,17 @@ kotlin {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 
-    @Suppress("DEPRECATION")
-    androidTarget {
+    android {
+        namespace = "gtr.mpfocus.compo_app"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        androidResources {
+            enable = true
+        }
+
+        withHostTestBuilder {}
+
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -40,14 +49,12 @@ kotlin {
     jvm()
 
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.activity.compose)
-        }
-        androidUnitTest.dependencies {
+        // todo: due to KMP bug 'official unit test folder' [androidHostTest] is not visible in build DSL
+        getByName("androidHostTest").dependencies {
             implementation(libs.junit)
             implementation(libs.androidx.testExt.junit)
         }
+        android
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -90,40 +97,13 @@ kotlin {
     }
 }
 
-android {
-    namespace = "gtr.mpfocus"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "gtr.mpfocus"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspJvm", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 
-    debugImplementation(libs.compose.uiTooling)
+    add("androidRuntimeClasspath", libs.compose.uiTooling)
 }
 
 room {

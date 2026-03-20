@@ -1,7 +1,6 @@
 package gtr.mpfocus.hotest
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.runComposeUiTest
 import dev.hotest.hotest
 import dev.hotest.variants.variant
 import dev.hotest.variants.variants
@@ -12,7 +11,6 @@ import kotlin.test.assertEquals
 // todo: move to HOTest project
 
 
-// todo: instead of 'runComposeUiTest' introduce 'own lambda', similar to 'runComposeUiTest'
 @OptIn(ExperimentalTestApi::class)
 class VariantsNestedInLambdaTests {
 
@@ -21,7 +19,9 @@ class VariantsNestedInLambdaTests {
         val stamps = mutableListOf<String>()
         hotest {
             stamps.add("start")
-            runComposeUiTest {
+
+            sampleFunWithLambda {
+                
                 variants {
                     stamps.add("vs A")
 
@@ -47,4 +47,9 @@ class VariantsNestedInLambdaTests {
         assertEquals(expected, stamps)
     }
 
+}
+
+
+fun sampleFunWithLambda(block: String.() -> Unit) {
+    "hello-text".block()
 }
