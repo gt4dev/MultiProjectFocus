@@ -11,25 +11,25 @@ class CreateProjectServiceImpl(
     private val fileSystemActions: FileSystemActions,
 ) : CreateProjectService {
 
-    override suspend fun getRecommendedPath(inputParams: CreateProjectService.RecomCtx): FolderPath? {
+    override suspend fun getRecommendedPath(inputParams: CreateProjectService.RecommendationCtx): FolderPath? {
         return when (inputParams) {
-            CreateProjectService.RecomCtx.GlobalCtx -> null
-            is CreateProjectService.RecomCtx.ProjectCtx ->
+            CreateProjectService.RecommendationCtx.GlobalCtx -> null
+            is CreateProjectService.RecommendationCtx.ProjectCtx ->
                 projectRepository.getProject(inputParams.relatedProjectId)?.folderPath
         }
     }
 
-    override suspend fun createProject(folder: String): CreateProjectService.Result {
+    override suspend fun createProject(folder: String): CoreResult {
         val rawPath = folder.trim()
         if (rawPath.isBlank()) {
-            return CreateProjectService.Result.Error("Project path is required.")
+            return CoreResult.Error.Message("Project path is required.")
         }
 
         val folderPath = runCatching { FolderPath(rawPath.toPath()) }
-            .getOrElse { return CreateProjectService.Result.Error("Project path is invalid.") }
+            .getOrElse { return CoreResult.Error.Message("Project path is invalid.") }
 
         if (!fileSystemActions.pathExists(folderPath)) {
-            return CreateProjectService.Result.Error("Project folder does not exist.")
+            return CoreResult.Error.FolderDoesNotExist(folderPath)
         }
 
         val normalizedPath = folderPath.path.toString()
@@ -38,18 +38,18 @@ class CreateProjectServiceImpl(
                 .first()
                 .any { project -> project.folderPath.path.toString() == normalizedPath }
         }.getOrElse {
-            return CreateProjectService.Result.Error("Unable to add project.")
+            return CoreResult.Error.Message("Unable to add project.")
         }
 
         if (projectAlreadyExists) {
-            return CreateProjectService.Result.Error("Project already exists.")
+            return CoreResult.Error.Message("Project already exists.")
         }
 
         return runCatching {
             projectRepository.addProject(folderPath)
-            CreateProjectService.Result.Success
+            CoreResult.Success
         }.getOrElse {
-            CreateProjectService.Result.Error("Unable to add project.")
+            CoreResult.Error.Message("Unable to add project.")
         }
     }
 }

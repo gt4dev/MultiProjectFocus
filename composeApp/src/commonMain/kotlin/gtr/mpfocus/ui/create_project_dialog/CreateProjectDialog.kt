@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import gtr.mpfocus.ui.composables.CreateFolderPanel
 import gtr.mpfocus.ui.core.UiActions
 
 
@@ -18,6 +19,7 @@ object CreateProjectDialog {
         val projectPath: String = "",
         val projectPathError: String? = null,
         val isSubmitting: Boolean = false,
+        val createFolderPanel: CreateFolderPanel.State? = null,
     )
 
     sealed interface Actions : UiActions {
@@ -25,6 +27,7 @@ object CreateProjectDialog {
         data object BrowseClicked : Actions
         data object CreateClicked : Actions
         data object CloseClicked : Actions
+        data class CreateFolderPanelAction(val action: CreateFolderPanel.Actions) : Actions
     }
 }
 
@@ -34,9 +37,11 @@ fun CreateProjectDialog(
     uiState: CreateProjectDialog.State,
     onAction: (CreateProjectDialog.Actions) -> Unit,
 ) {
+    val isBusy = uiState.isSubmitting || uiState.createFolderPanel?.status is CreateFolderPanel.Status.InProgress
+
     AlertDialog(
         onDismissRequest = {
-            if (!uiState.isSubmitting) {
+            if (!isBusy) {
                 onAction(CreateProjectDialog.Actions.CloseClicked)
             }
         },
@@ -57,7 +62,7 @@ fun CreateProjectDialog(
                     trailingIcon = {
                         IconButton(
                             onClick = { onAction(CreateProjectDialog.Actions.BrowseClicked) },
-                            enabled = !uiState.isSubmitting,
+                            enabled = !isBusy,
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Folder,
@@ -71,14 +76,23 @@ fun CreateProjectDialog(
                         }
                     },
                     isError = uiState.projectPathError != null,
-                    enabled = !uiState.isSubmitting,
+                    enabled = !isBusy,
                 )
+
+                uiState.createFolderPanel?.let { createFolderPanelState ->
+                    CreateFolderPanel(
+                        state = createFolderPanelState,
+                        onAction = { action ->
+                            onAction(CreateProjectDialog.Actions.CreateFolderPanelAction(action))
+                        },
+                    )
+                }
             }
         },
         confirmButton = {
             Button(
                 onClick = { onAction(CreateProjectDialog.Actions.CreateClicked) },
-                enabled = !uiState.isSubmitting,
+                enabled = !isBusy,
             ) {
                 Text(if (uiState.isSubmitting) "Adding..." else "Add")
             }
@@ -86,7 +100,7 @@ fun CreateProjectDialog(
         dismissButton = {
             TextButton(
                 onClick = { onAction(CreateProjectDialog.Actions.CloseClicked) },
-                enabled = !uiState.isSubmitting,
+                enabled = !isBusy,
             ) {
                 Text("Cancel")
             }

@@ -14,7 +14,7 @@ fun uiModule() = lazyModule {
     single<AppWindowLauncher> { createAppWindowLauncher() }
     single { MainScreenViewModelFactory(get(), get()) }
     single { createFolderPicker() }
-    single { CreateProjectDialogViewModelFactory(get(), get()) }
+    single { CreateProjectDialogViewModelFactory(get(), get(), get()) }
     single { MainScreenWindowFactory(get(), get()) }
     single<AppUi> { AppUiImpl(get(), get()) }
 }

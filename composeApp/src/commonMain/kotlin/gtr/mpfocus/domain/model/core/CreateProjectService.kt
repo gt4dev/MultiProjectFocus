@@ -4,18 +4,12 @@ import gtr.mpfocus.system_actions.FolderPath
 
 interface CreateProjectService {
 
-    sealed interface RecomCtx {
-        data class ProjectCtx(val relatedProjectId: Long) : RecomCtx
-        data object GlobalCtx : RecomCtx
+    sealed interface RecommendationCtx {
+        data class ProjectCtx(val relatedProjectId: Long) : RecommendationCtx
+        data object GlobalCtx : RecommendationCtx
     }
 
-    // todo: move to global
-    sealed interface Result {
-        data object Success : Result
-        data class Error(val message: String) : Result
-    }
-
-    suspend fun getRecommendedPath(inputParams: RecomCtx): FolderPath?
-    suspend fun createProject(folder: String): Result
+    suspend fun getRecommendedPath(inputParams: RecommendationCtx): FolderPath?
+    suspend fun createProject(folder: String): CoreResult
 }
 

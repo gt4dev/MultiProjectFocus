@@ -22,7 +22,7 @@ class CreateProjectServiceTest {
         val result = service.createProject("   ")
 
         assertEquals(
-            CreateProjectService.Result.Error("Project path is required."),
+            CoreResult.Error.Message("Project path is required."),
             result,
         )
     }
@@ -40,7 +40,7 @@ class CreateProjectServiceTest {
         val result = service.createProject(folder)
 
         assertEquals(
-            CreateProjectService.Result.Error("Project folder does not exist."),
+            CoreResult.Error.FolderDoesNotExist(folderPath),
             result,
         )
     }
@@ -61,7 +61,7 @@ class CreateProjectServiceTest {
         val result = service.createProject(folder)
 
         assertEquals(
-            CreateProjectService.Result.Error("Project already exists."),
+            CoreResult.Error.Message("Project already exists."),
             result,
         )
     }
@@ -81,7 +81,7 @@ class CreateProjectServiceTest {
 
         val result = service.createProject(folder)
 
-        assertEquals(CreateProjectService.Result.Success, result)
+        assertEquals(CoreResult.Success, result)
         verifySuspend { repository.addProject(folderPath) }
     }
 }
