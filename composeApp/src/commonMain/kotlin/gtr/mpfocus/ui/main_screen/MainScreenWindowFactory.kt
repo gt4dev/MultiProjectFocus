@@ -8,12 +8,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.core.AppWindowSpec
-import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogViewModelFactory
+import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogViewModelFactoryProvider
 import gtr.mpfocus.ui.navi.MainNavHost
 
 class MainScreenWindowFactory(
     private val mainScreenViewModelFactory: MainScreenViewModelFactory,
-    private val createProjectDialogViewModelFactory: CreateProjectDialogViewModelFactory,
+    private val createProjectDialogViewModelFactoryProvider: CreateProjectDialogViewModelFactoryProvider,
 ) {
     fun create(initialMessage: MessagePanelState? = null): AppWindowSpec {
         val mainScreenFactory = mainScreenViewModelFactory.create(initialMessage)
@@ -22,7 +22,7 @@ class MainScreenWindowFactory(
             content = {
                 MainNavHost(
                     mainScreenViewModelFactory = mainScreenFactory,
-                    createProjectDialogViewModelFactory = createProjectDialogViewModelFactory,
+                    createProjectDialogViewModelFactoryProvider = createProjectDialogViewModelFactoryProvider,
                 )
             },
         )

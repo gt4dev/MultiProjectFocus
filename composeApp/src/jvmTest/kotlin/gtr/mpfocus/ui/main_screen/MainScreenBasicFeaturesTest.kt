@@ -22,7 +22,7 @@ import kotlin.test.Test
 class MainScreenBasicFeaturesTest {
 
     @Test
-    fun `ui correctly show projects`() {
+    fun `ui correctly shows projects`() {
         hotest(
             beforeTest = { `set up test data`() }
         ) {
@@ -47,7 +47,7 @@ class MainScreenBasicFeaturesTest {
     }
 
     @Test
-    fun `click set current`() {
+    fun `click sets current`() {
         hotest(
             beforeTest = { `set up test data`() }
         ) {

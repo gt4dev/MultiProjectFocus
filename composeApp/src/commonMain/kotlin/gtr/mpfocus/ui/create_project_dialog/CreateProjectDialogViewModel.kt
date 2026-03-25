@@ -9,7 +9,13 @@ import gtr.mpfocus.domain.model.core.CoreResult
 import gtr.mpfocus.domain.model.core.CreateProjectService
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.ui.composables.CreateFolderPanel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private sealed interface CreateProjectDialogEffect {
@@ -24,7 +30,7 @@ class CreateProjectDialogViewModel(
     private val relatedProjectId: Long? = null,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateProjectDialog.State())
+    internal val _uiState = MutableStateFlow(CreateProjectDialog.State())
     val uiState: StateFlow<CreateProjectDialog.State> = _uiState.asStateFlow()
 
     private val _effects = MutableSharedFlow<CreateProjectDialogEffect>()
@@ -61,11 +67,11 @@ class CreateProjectDialogViewModel(
 
     private fun loadRecommendedPath() {
         viewModelScope.launch {
-            val recomCtx = relatedProjectId
+            val recommendationCtx = relatedProjectId
                 ?.let(CreateProjectService.RecommendationCtx::ProjectCtx)
                 ?: CreateProjectService.RecommendationCtx.GlobalCtx
             val recommendedPath = createProjectService
-                .getRecommendedPath(recomCtx) ?: return@launch
+                .getRecommendedPath(recommendationCtx) ?: return@launch
             _uiState.update { currentState ->
                 if (currentState.projectPath.isNotBlank()) {
                     currentState
@@ -208,12 +214,12 @@ class CreateProjectDialogViewModel(
     }
 }
 
-class CreateProjectDialogViewModelFactory(
+class CreateProjectDialogViewModelFactoryProvider(
     private val folderPicker: FolderPicker,
     private val createProjectService: CreateProjectService,
     private val fileSystemActions: FileSystemActions,
 ) {
-    fun create(relatedProjectId: Long?): ViewModelProvider.Factory {
+    fun createFactory(relatedProjectId: Long?): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
                 CreateProjectDialogViewModel(

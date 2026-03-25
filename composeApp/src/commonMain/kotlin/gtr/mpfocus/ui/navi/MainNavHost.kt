@@ -8,7 +8,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogContainer
-import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogViewModelFactory
+import gtr.mpfocus.ui.create_project_dialog.CreateProjectDialogViewModelFactoryProvider
 import gtr.mpfocus.ui.main_screen.MainScreenContainer
 import kotlinx.serialization.Serializable
 
@@ -27,7 +27,7 @@ object Routes {
 @Composable
 fun MainNavHost(
     mainScreenViewModelFactory: ViewModelProvider.Factory,
-    createProjectDialogViewModelFactory: CreateProjectDialogViewModelFactory,
+    createProjectDialogViewModelFactoryProvider: CreateProjectDialogViewModelFactoryProvider,
 ) {
     val navController = rememberNavController()
 
@@ -49,7 +49,7 @@ fun MainNavHost(
                 .toRoute<Routes.CreateProjectDialog>()
                 .relatedProjectId
             CreateProjectDialogContainer(
-                viewModelFactory = createProjectDialogViewModelFactory.create(relatedProjectId),
+                viewModelFactory = createProjectDialogViewModelFactoryProvider.createFactory(relatedProjectId),
                 onCloseRequest = {
                     navController.popBackStack()
                 },

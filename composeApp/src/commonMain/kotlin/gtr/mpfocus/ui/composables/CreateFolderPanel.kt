@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import gtr.mpfocus.system_actions.FolderPath
@@ -39,7 +40,13 @@ object CreateFolderPanel {
         data object CreateClicked : Actions
         data object CloseClicked : Actions
     }
+
+    object TestTags {
+        const val ROOT = "create_folder_panel"
+        const val CREATE_BUTTON = "create_folder_panel_create_button"
+    }
 }
+
 
 @Composable
 fun CreateFolderPanel(
@@ -77,7 +84,9 @@ fun CreateFolderPanel(
     }
 
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(CreateFolderPanel.TestTags.ROOT),
         color = containerColor,
         contentColor = contentColor,
         shape = RoundedCornerShape(16.dp),
@@ -106,6 +115,7 @@ fun CreateFolderPanel(
             when (state.status) {
                 CreateFolderPanel.Status.Ready -> {
                     Button(
+                        modifier = Modifier.testTag(CreateFolderPanel.TestTags.CREATE_BUTTON),
                         onClick = { onAction(CreateFolderPanel.Actions.CreateClicked) },
                     ) {
                         Text("Create\nfolder", textAlign = TextAlign.Center)

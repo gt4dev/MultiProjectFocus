@@ -1,11 +1,15 @@
 package gtr.mpfocus.system_actions
 
 import dev.hotest.HOTestCtx
-import dev.mokkery.*
 import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentiallyReturns
+import dev.mokkery.every
+import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
+import dev.mokkery.mock
+import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
+import dev.mokkery.verifySuspend
 import gtr.mpfocus.system_actions.Converters.exists
 import okio.Path.Companion.toPath
 
@@ -44,10 +48,16 @@ object FileSystemActionsSteps {
         }
     }
 
-    fun HOTestCtx.`then 'file system mock' creates folder`() {
+    fun HOTestCtx.`then 'file system mock' creates folder`(path: String? = null) {
         val obj: FileSystemActions = koin.get()
-        verify {
-            obj.createFolder(any())
+        if (path == null) {
+            verify {
+                obj.createFolder(any())
+            }
+        } else {
+            verify {
+                obj.createFolder(FolderPath(path.toPath()))
+            }
         }
     }
 
