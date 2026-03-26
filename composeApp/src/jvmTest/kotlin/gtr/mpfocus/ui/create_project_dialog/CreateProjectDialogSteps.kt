@@ -1,11 +1,14 @@
 package gtr.mpfocus.ui.create_project_dialog
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextReplacement
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -16,7 +19,9 @@ import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
+import dev.mokkery.verifySuspend
 import gtr.mpfocus.domain.model.core.CoreResult
+import gtr.mpfocus.domain.model.core.CreateProjectService
 import gtr.mpfocus.system_actions.FolderPath
 import gtr.mpfocus.ui.composables.CreateFolderPanel
 import kotlinx.coroutines.flow.update
@@ -49,7 +54,7 @@ object CreateProjectDialogSteps {
         }
     }
 
-    fun HOTestCtx.`given 'create project dialog' shows 'create folder panel' no folder`(
+    fun HOTestCtx.`given 'create project dialog' shows 'create folder panel' with no folder info`(
         path: String,
     ) {
         val folder = FolderPath(path.toPath())
@@ -93,6 +98,57 @@ object CreateProjectDialogSteps {
         }
     }
 
+    fun HOTestCtx.`given in 'create project dialog' user enters project path`(path: String) {
+        val cut: ComposeUiTest = koin.get()
+        with(cut) {
+            waitForIdle()
+            onNodeWithTag(CreateProjectDialog.TestTags.PROJECT_PATH_INPUT)
+                .assertExists()
+                .performTextReplacement(path)
+            waitForIdle()
+        }
+    }
+
+    fun HOTestCtx.`given in 'create project dialog' user marks 'set as current project' as`(value: String) {
+        val shouldBeChecked = when (value.lowercase()) {
+            "checked" -> true
+            "unchecked" -> false
+            else -> error("Unknown set current value: $value")
+        }
+
+        val cut: ComposeUiTest = koin.get()
+        with(cut) {
+            waitForIdle()
+            val checkbox = onNodeWithTag(
+                CreateProjectDialog.TestTags.SET_AS_CURRENT_CHECKBOX,
+                useUnmergedTree = true,
+            )
+                .assertExists()
+
+            val isCurrentlyChecked =
+                checkbox.fetchSemanticsNode().config[SemanticsProperties.ToggleableState] == ToggleableState.On
+
+            if (isCurrentlyChecked != shouldBeChecked) {
+                checkbox.performClick()
+                waitForIdle()
+            }
+
+            val isCheckedAfterUpdate = onNodeWithTag(
+                CreateProjectDialog.TestTags.SET_AS_CURRENT_CHECKBOX,
+                useUnmergedTree = true,
+            )
+                .assertExists()
+                .fetchSemanticsNode()
+                .config[SemanticsProperties.ToggleableState] == ToggleableState.On
+
+            check(isCheckedAfterUpdate == shouldBeChecked) {
+                "Expected checkbox state '$value', but actual checked=$isCheckedAfterUpdate"
+            }
+
+            waitForIdle()
+        }
+    }
+
     fun HOTestCtx.`when in 'create folder panel' is clicked button 'create folder'`() {
         val cut: ComposeUiTest = koin.get()
         with(cut) {
@@ -105,6 +161,34 @@ object CreateProjectDialogSteps {
         }
     }
 
+    fun HOTestCtx.`when in 'create folder panel' user clicks button 'add'`() {
+        val cut: ComposeUiTest = koin.get()
+        with(cut) {
+            waitForIdle()
+            onNodeWithTag(
+                CreateProjectDialog.TestTags.ADD_BUTTON,
+                useUnmergedTree = true,
+            ).assertExists().performClick()
+            waitForIdle()
+        }
+    }
+
+    fun HOTestCtx.`then in 'create project mock' is called create project`(
+        path: String,
+        setCurrent: String,
+    ) {
+        val expectedSetAsCurrent = when (setCurrent.lowercase()) {
+            "is current project" -> true
+            "is not current project" -> false
+            else -> error("Unknown set current value: $setCurrent")
+        }
+
+        val createProjectService: CreateProjectService = koin.get()
+        verifySuspend {
+            createProjectService.createProject(path, expectedSetAsCurrent)
+        }
+    }
+
     private fun HOTestCtx.initCreateProjectDialogVm(): CreateProjectDialogViewModel {
         val vmExisting = runCatching { koin.get<CreateProjectDialogViewModel>() }.getOrNull()
         if (vmExisting != null) {
@@ -114,10 +198,7 @@ object CreateProjectDialogSteps {
         val vmFactoryReal =
             CreateProjectDialogViewModelFactoryProvider(
                 folderPicker = mock(MockMode.autofill),
-                createProjectService = mock(MockMode.autofill) {
-                    everySuspend { getRecommendedPath(any()) } returns null
-                    everySuspend { createProject(any()) } returns CoreResult.Success
-                },
+                createProjectService = initCreateProjectServiceMock(),
                 fileSystemActions = koin.get(),
             )
                 .createFactory(relatedProjectId = null)
@@ -139,6 +220,24 @@ object CreateProjectDialogSteps {
         }
 
         return vmReal
+    }
+
+    private fun HOTestCtx.initCreateProjectServiceMock(): CreateProjectService {
+        val existing = runCatching { koin.get<CreateProjectService>() }.getOrNull()
+        if (existing != null) {
+            return existing
+        }
+
+        val createProjectService = mock<CreateProjectService>(MockMode.autofill) {
+            everySuspend { getRecommendedPath(any()) } returns null
+            everySuspend { createProject(any(), any()) } returns CoreResult.Success
+        }
+
+        koinAdd {
+            single { createProjectService }
+        }
+
+        return createProjectService
     }
 
     private fun dummyViewModelFactory(

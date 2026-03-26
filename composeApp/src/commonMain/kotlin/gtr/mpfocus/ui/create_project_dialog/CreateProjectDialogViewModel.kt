@@ -45,6 +45,7 @@ class CreateProjectDialogViewModel(
             CreateProjectDialog.Actions.BrowseClicked -> onBrowseClicked()
             CreateProjectDialog.Actions.CreateClicked -> onCreateClicked()
             CreateProjectDialog.Actions.CloseClicked -> onCloseClicked()
+            is CreateProjectDialog.Actions.SetAsCurrentChanged -> onSetAsCurrentChanged(action.value)
             is CreateProjectDialog.Actions.CreateFolderPanelAction -> onCreateFolderPanelAction(
                 action.action
             )
@@ -92,6 +93,12 @@ class CreateProjectDialogViewModel(
         }
     }
 
+    private fun onSetAsCurrentChanged(value: Boolean) {
+        _uiState.update {
+            it.copy(setAsCurrent = value)
+        }
+    }
+
     private fun onCloseClicked() {
         viewModelScope.launch {
             _effects.emit(CreateProjectDialogEffect.DismissRequested)
@@ -123,6 +130,7 @@ class CreateProjectDialogViewModel(
         }
 
         val projectPath = uiState.value.projectPath
+        val setAsCurrent = uiState.value.setAsCurrent
 
         viewModelScope.launch {
             _uiState.update {
@@ -133,7 +141,12 @@ class CreateProjectDialogViewModel(
                 )
             }
             when (
-                val result = runCatching { createProjectService.createProject(projectPath) }
+                val result = runCatching {
+                    createProjectService.createProject(
+                        folder = projectPath,
+                        setAsCurrent = setAsCurrent,
+                    )
+                }
                     .getOrElse { CoreResult.Error.Message("Unable to add project.") }
             ) {
                 CoreResult.Success -> {

@@ -1,7 +1,11 @@
 package gtr.mpfocus.domain.model.core
 
-import dev.mokkery.*
+import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
+import dev.mokkery.every
+import dev.mokkery.everySuspend
+import dev.mokkery.mock
+import dev.mokkery.verifySuspend
 import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.FolderPath
@@ -19,7 +23,7 @@ class CreateProjectServiceTest {
         val fileSystemActions = mock<FileSystemActions>(MockMode.autofill)
         val service = CreateProjectServiceImpl(repository, fileSystemActions)
 
-        val result = service.createProject("   ")
+        val result = service.createProject("   ", setAsCurrent = false)
 
         assertEquals(
             CoreResult.Error.Message("Project path is required."),
@@ -37,7 +41,7 @@ class CreateProjectServiceTest {
         }
         val service = CreateProjectServiceImpl(repository, fileSystemActions)
 
-        val result = service.createProject(folder)
+        val result = service.createProject(folder, setAsCurrent = false)
 
         assertEquals(
             CoreResult.Error.FolderDoesNotExist(folderPath),
@@ -58,7 +62,7 @@ class CreateProjectServiceTest {
         }
         val service = CreateProjectServiceImpl(repository, fileSystemActions)
 
-        val result = service.createProject(folder)
+        val result = service.createProject(folder, setAsCurrent = false)
 
         assertEquals(
             CoreResult.Error.Message("Project already exists."),
@@ -79,9 +83,29 @@ class CreateProjectServiceTest {
         }
         val service = CreateProjectServiceImpl(repository, fileSystemActions)
 
-        val result = service.createProject(folder)
+        val result = service.createProject(folder, setAsCurrent = false)
 
         assertEquals(CoreResult.Success, result)
         verifySuspend { repository.addProject(folderPath) }
+    }
+
+    @Test
+    fun `set as current marks added project as current`() = runTest {
+        val folder = "path/to/project"
+        val folderPath = FolderPath(folder.toPath())
+        val repository = mock<ProjectRepository>(MockMode.autofill) {
+            every { getAll() } returns flowOf(emptyList())
+            everySuspend { addProject(folderPath) } returns 123L
+        }
+        val fileSystemActions = mock<FileSystemActions>(MockMode.autofill) {
+            every { pathExists(folderPath) } returns true
+        }
+        val service = CreateProjectServiceImpl(repository, fileSystemActions)
+
+        val result = service.createProject(folder, setAsCurrent = true)
+
+        assertEquals(CoreResult.Success, result)
+        verifySuspend { repository.addProject(folderPath) }
+        verifySuspend { repository.setCurrentProject(123L) }
     }
 }

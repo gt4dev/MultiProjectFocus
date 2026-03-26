@@ -10,6 +10,6 @@ interface CreateProjectService {
     }
 
     suspend fun getRecommendedPath(inputParams: RecommendationCtx): FolderPath?
-    suspend fun createProject(folder: String): CoreResult
+    suspend fun createProject(folder: String, setAsCurrent: Boolean): CoreResult
 }
 

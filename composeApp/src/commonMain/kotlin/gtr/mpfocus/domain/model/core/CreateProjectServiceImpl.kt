@@ -19,7 +19,7 @@ class CreateProjectServiceImpl(
         }
     }
 
-    override suspend fun createProject(folder: String): CoreResult {
+    override suspend fun createProject(folder: String, setAsCurrent: Boolean): CoreResult {
         val rawPath = folder.trim()
         if (rawPath.isBlank()) {
             return CoreResult.Error.Message("Project path is required.")
@@ -45,11 +45,21 @@ class CreateProjectServiceImpl(
             return CoreResult.Error.Message("Project already exists.")
         }
 
-        return runCatching {
+        val projectId = runCatching {
             projectRepository.addProject(folderPath)
+        }.getOrElse {
+            return CoreResult.Error.Message("Unable to add project.")
+        }
+
+        if (!setAsCurrent) {
+            return CoreResult.Success
+        }
+
+        return runCatching {
+            projectRepository.setCurrentProject(projectId)
             CoreResult.Success
         }.getOrElse {
-            CoreResult.Error.Message("Unable to add project.")
+            CoreResult.Error.Message("Project added, but unable to set it as current.")
         }
     }
 }
