@@ -138,7 +138,7 @@ object FileSystemActionsSteps {
 
 
     private fun HOTestCtx.initFileSystemActionsMock(): FileSystemActions {
-        val existing = runCatching { koin.get<FileSystemActions>() }.getOrNull()
+        val existing = koin.getOrNull<FileSystemActions>()
         if (existing != null) {
             return existing
         }

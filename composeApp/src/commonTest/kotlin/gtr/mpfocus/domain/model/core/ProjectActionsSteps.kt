@@ -7,6 +7,7 @@ import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verifySuspend
+import kotlin.test.assertEquals
 
 object ProjectActionsSteps {
 
@@ -179,6 +180,20 @@ object ProjectActionsSteps {
 
             else -> throw IllegalArgumentException("Unknown notification '$notification'")
         }
+    }
+
+    fun HOTestCtx.`then model returns`(result: String) {
+        val expected = when {
+            result == "success" -> ActionResult.Success
+            result.startsWith("error: ") -> {
+                val msg = result.removePrefix("error: ")
+                ActionResult.Error(msg)
+            }
+
+            else -> throw IllegalArgumentException("Unknown result '$result'")
+        }
+        val actual: ActionResult = koin.get()
+        assertEquals(expected, actual)
     }
 
     private fun HOTestCtx.getActionPreferences(): ProjectActions.Preferences {

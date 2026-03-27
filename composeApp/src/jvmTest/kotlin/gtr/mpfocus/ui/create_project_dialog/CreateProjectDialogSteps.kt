@@ -190,7 +190,7 @@ object CreateProjectDialogSteps {
     }
 
     private fun HOTestCtx.initCreateProjectDialogVm(): CreateProjectDialogViewModel {
-        val vmExisting = runCatching { koin.get<CreateProjectDialogViewModel>() }.getOrNull()
+        val vmExisting = koin.getOrNull<CreateProjectDialogViewModel>()
         if (vmExisting != null) {
             return vmExisting
         }
@@ -223,7 +223,7 @@ object CreateProjectDialogSteps {
     }
 
     private fun HOTestCtx.initCreateProjectServiceMock(): CreateProjectService {
-        val existing = runCatching { koin.get<CreateProjectService>() }.getOrNull()
+        val existing = koin.getOrNull<CreateProjectService>()
         if (existing != null) {
             return existing
         }

@@ -13,8 +13,8 @@ import org.koin.dsl.lazyModule
 fun uiModule() = lazyModule {
     single<AppWindowLauncher> { createAppWindowLauncher() }
     single { MainScreenViewModelFactory(get(), get()) }
-    single { createFolderPicker() }
-    single { CreateProjectDialogViewModelFactoryProvider(get(), get(), get()) }
     single { MainScreenWindowFactory(get(), get()) }
+    single { CreateProjectDialogViewModelFactoryProvider(get(), get(), get()) }
+    single { createFolderPicker() }
     single<AppUi> { AppUiImpl(get(), get()) }
 }

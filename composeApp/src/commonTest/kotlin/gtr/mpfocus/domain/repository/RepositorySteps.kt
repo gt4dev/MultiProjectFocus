@@ -132,7 +132,7 @@ object RepositorySteps {
     }
 
     private fun HOTestCtx.initMockProjectsRepo(): ProjectRepository {
-        val existing = runCatching { koin.get<ProjectRepository>() }.getOrNull()
+        val existing = koin.getOrNull<ProjectRepository>()
         if (existing != null) {
             return existing
         }

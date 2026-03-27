@@ -4,9 +4,9 @@ import dev.hotest.Async.hotest
 import dev.hotest.variants.Async.variant
 import dev.hotest.variants.Async.variants
 import gtr.mpfocus.domain.model.config.ConfigServiceSteps.`given 'basic config service' exists`
-import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'real project actions' exists`
+import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in current project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in pinned project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open folder in regular project'`

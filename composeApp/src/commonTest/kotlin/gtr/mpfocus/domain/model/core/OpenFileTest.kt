@@ -5,12 +5,12 @@ import dev.hotest.HOTestCtx
 import dev.hotest.variants.Async.variant
 import dev.hotest.variants.Async.variants
 import gtr.mpfocus.domain.model.config.ConfigServiceSteps.`given 'basic config service' exists`
-import gtr.mpfocus.domain.model.core.CoreActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'caller notification' response is set`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'project action preferences' is set`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'real project actions' exists`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`then 'caller notification' receives`
+import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`then model returns`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open file in current project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open file in pinned project'`
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`when 'project actions' executes command 'open file in regular project'`
