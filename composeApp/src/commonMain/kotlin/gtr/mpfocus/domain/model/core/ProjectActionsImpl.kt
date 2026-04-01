@@ -2,7 +2,7 @@ package gtr.mpfocus.domain.model.core
 
 import gtr.common.distillText
 import gtr.common.textFailure
-import gtr.mpfocus.domain.model.config.ConfigService
+import gtr.mpfocus.domain.model.config.ProjectConfigReader
 import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification
 import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification.CallerDecision
 import gtr.mpfocus.domain.model.core.ProjectActions.Preferences
@@ -15,11 +15,17 @@ import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
 import okio.Path.Companion.toPath
 
+
+data class NoFileException(
+    val filePath: FilePath,
+) : Throwable()
+
+
 class ProjectActionsImpl(
     private val operatingSystemActions: OperatingSystemActions,
     private val fileSystemActions: FileSystemActions,
     private val projectRepository: ProjectRepository,
-    private val configService: ConfigService,
+    private val configService: ProjectConfigReader,
 ) : ProjectActions {
 
     internal suspend fun ensureCurrentProjectReady(
@@ -62,7 +68,7 @@ class ProjectActionsImpl(
         when (actionPreferences.ifNoFileOrFolder) {
             PrefValue.ReturnError -> return Result.textFailure("no project folder")
             PrefValue.NotifyCaller -> {
-                when (callerNotification.noFolder(folderPath.path.toString())) {
+                when (callerNotification.noFolder()) {
                     CallerDecision.Cancel -> return Result.textFailure("no project folder")
                     CallerDecision.Continue -> Unit
                 }
@@ -82,7 +88,7 @@ class ProjectActionsImpl(
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): Result<FilePath> {
-        val projectConfig = configService.getProjectConfig()
+        val projectConfig = configService.getLocalProjectConfig(project.folderPath)
         val fileName = projectConfig.fileName(file)
         val filePath = FilePath("${project.folderPath.path}/$fileName".toPath())
         if (fileSystemActions.pathExists(filePath)) {
@@ -90,10 +96,10 @@ class ProjectActionsImpl(
         }
 
         when (actionPreferences.ifNoFileOrFolder) {
-            PrefValue.ReturnError -> return Result.textFailure("no file exists")
+            PrefValue.ReturnError -> return Result.failure(NoFileException(filePath))
             PrefValue.NotifyCaller -> {
-                when (callerNotification.noFile(filePath.path.toString())) {
-                    CallerDecision.Cancel -> return Result.textFailure("no file exists")
+                when (callerNotification.noFile()) {
+                    CallerDecision.Cancel -> return Result.failure(NoFileException(filePath))
                     CallerDecision.Continue -> Unit
                 }
             }
@@ -102,7 +108,7 @@ class ProjectActionsImpl(
         return if (fileSystemActions.pathExists(filePath)) {
             Result.success(filePath)
         } else {
-            Result.textFailure("no file exists")
+            Result.failure(NoFileException(filePath))
         }
     }
 
@@ -122,7 +128,7 @@ class ProjectActionsImpl(
         return when (actionPreferences.ifNoPinnedProject) {
             PrefValue.ReturnError -> Result.textFailure("no pinned project at position $pinPosition") // todo-soon: use 'text resources' to avoid text duplications like here 3x
             PrefValue.NotifyCaller -> {
-                when (callerNotification.noPinnedProject(pinPosition)) {
+                when (callerNotification.noPinnedProject()) {
                     CallerDecision.Cancel -> Result.textFailure("no pinned project at position $pinPosition")
                     CallerDecision.Continue -> {
                         val updatedPinnedProject = projectRepository.getPinnedProjects()
@@ -159,28 +165,29 @@ class ProjectActionsImpl(
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensureCurrentProjectReady(actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         val folderPath = ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFolder(folderPath)
         return ActionResult.Success
     }
 
     override suspend fun openCurrentProjectFile(
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensureCurrentProjectReady(actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .onFailure { return ActionResult.Error(it.distillText()) }
+            .onFailure { return it.toActionResult() }
 
-        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+        val projectFile =
+            ensureProjectFileReady(project, fileId, actionPreferences, callerNotification)
+                .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFile(projectFile)
         return ActionResult.Success
@@ -192,10 +199,10 @@ class ProjectActionsImpl(
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensurePinnedProjectReady(pinPosition, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         val folderPath = ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFolder(folderPath)
         return ActionResult.Success
@@ -203,18 +210,19 @@ class ProjectActionsImpl(
 
     override suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensurePinnedProjectReady(pinPosition, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .onFailure { return ActionResult.Error(it.distillText()) }
+            .onFailure { return it.toActionResult() }
 
-        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+        val projectFile =
+            ensureProjectFileReady(project, fileId, actionPreferences, callerNotification)
+                .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFile(projectFile)
         return ActionResult.Success
@@ -226,10 +234,10 @@ class ProjectActionsImpl(
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensureRegularProjectReady(projectId)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         val folderPath = ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFolder(folderPath)
         return ActionResult.Success
@@ -237,24 +245,28 @@ class ProjectActionsImpl(
 
     override suspend fun openRegularProjectFile(
         projectId: Long,
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult {
         val project = ensureRegularProjectReady(projectId)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+            .getOrElse { return it.toActionResult() }
 
         ensureProjectFolderReady(project, actionPreferences, callerNotification)
-            .onFailure { return ActionResult.Error(it.distillText()) }
+            .onFailure { return it.toActionResult() }
 
-        val projectFile = ensureProjectFileReady(project, file, actionPreferences, callerNotification)
-            .getOrElse { return ActionResult.Error(it.distillText()) }
+        val projectFile =
+            ensureProjectFileReady(project, fileId, actionPreferences, callerNotification)
+                .getOrElse { return it.toActionResult() }
 
         operatingSystemActions.openFile(projectFile)
         return ActionResult.Success
     }
 
-    private companion object {
-        const val NOT_IMPLEMENTED_ERROR = "ProjectActions method is not implemented yet."
+    private fun Throwable.toActionResult(): ActionResult {
+        return when (this) {
+            is NoFileException -> ActionResult.NoFileError
+            else -> ActionResult.Error(distillText())
+        }
     }
 }

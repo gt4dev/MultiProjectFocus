@@ -2,9 +2,9 @@ package gtr.mpfocus.domain.model.core
 
 sealed class ActionResult {
     object Success : ActionResult()
+    object NoFileError : ActionResult()
     data class Error(val msg: String) : ActionResult()
 }
-
 
 interface ProjectActions {
 
@@ -14,7 +14,7 @@ interface ProjectActions {
     ): ActionResult
 
     suspend fun openCurrentProjectFile(
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult
@@ -27,7 +27,7 @@ interface ProjectActions {
 
     suspend fun openPinnedProjectFile(
         pinPosition: Int,
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult
@@ -40,25 +40,25 @@ interface ProjectActions {
 
     suspend fun openRegularProjectFile(
         projectId: Long,
-        file: ProjectFile,
+        fileId: ProjectFile,
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): ActionResult
 
     interface CallerNotification {
-        suspend fun noFolder(folderName: String): CallerDecision
-        suspend fun noFile(fileName: String): CallerDecision
+        suspend fun noFolder(): CallerDecision
+        suspend fun noFile(): CallerDecision
         suspend fun noCurrentProject(): CallerDecision
-        suspend fun noPinnedProject(pinPosition: Int): CallerDecision
+        suspend fun noPinnedProject(): CallerDecision
 
         object CancelAll : CallerNotification {
-            override suspend fun noFolder(folderName: String) = CallerDecision.Cancel
+            override suspend fun noFolder() = CallerDecision.Cancel
 
-            override suspend fun noFile(fileName: String) = CallerDecision.Cancel
+            override suspend fun noFile() = CallerDecision.Cancel
 
             override suspend fun noCurrentProject() = CallerDecision.Cancel
 
-            override suspend fun noPinnedProject(pinPosition: Int) = CallerDecision.Cancel
+            override suspend fun noPinnedProject() = CallerDecision.Cancel
         }
 
         enum class CallerDecision { Continue, Cancel }

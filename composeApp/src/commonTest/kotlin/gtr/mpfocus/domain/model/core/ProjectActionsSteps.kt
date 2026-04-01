@@ -79,10 +79,10 @@ object ProjectActionsSteps {
             }
 
         val obj = mock<ProjectActions.CallerNotification>(MockMode.autofill)
-        everySuspend { obj.noFolder(any()) } returns toDecision(noFolderResponse)
-        everySuspend { obj.noFile(any()) } returns toDecision(noFileResponse)
+        everySuspend { obj.noFolder() } returns toDecision(noFolderResponse)
+        everySuspend { obj.noFile() } returns toDecision(noFileResponse)
         everySuspend { obj.noCurrentProject() } returns toDecision(noCurrentProjectResponse)
-        everySuspend { obj.noPinnedProject(any()) } returns toDecision(noPinnedProjectResponse)
+        everySuspend { obj.noPinnedProject() } returns toDecision(noPinnedProjectResponse)
 
         koinAdd {
             single<ProjectActions.CallerNotification> { obj }
@@ -103,7 +103,7 @@ object ProjectActionsSteps {
     ) {
         val projectActions: ProjectActions = koin.get()
         val result = projectActions.openCurrentProjectFile(
-            file = file,
+            fileId = file,
             actionPreferences = getActionPreferences(),
             callerNotification = getCallerNotification(),
         )
@@ -129,7 +129,7 @@ object ProjectActionsSteps {
         val projectActions: ProjectActions = koin.get()
         val result = projectActions.openPinnedProjectFile(
             pinPosition = pinPosition,
-            file = file,
+            fileId = file,
             actionPreferences = getActionPreferences(),
             callerNotification = getCallerNotification(),
         )
@@ -155,7 +155,7 @@ object ProjectActionsSteps {
         val projectActions: ProjectActions = koin.get()
         val result = projectActions.openRegularProjectFile(
             projectId = projectId,
-            file = file,
+            fileId = file,
             actionPreferences = getActionPreferences(),
             callerNotification = getCallerNotification(),
         )
@@ -168,7 +168,7 @@ object ProjectActionsSteps {
         when (notification) {
             "no file" -> {
                 verifySuspend {
-                    callerNotification.noFile(any())
+                    callerNotification.noFile()
                 }
             }
 
@@ -185,6 +185,7 @@ object ProjectActionsSteps {
     fun HOTestCtx.`then model returns`(result: String) {
         val expected = when {
             result == "success" -> ActionResult.Success
+            result == "no file error" -> ActionResult.NoFileError
             result.startsWith("error: ") -> {
                 val msg = result.removePrefix("error: ")
                 ActionResult.Error(msg)

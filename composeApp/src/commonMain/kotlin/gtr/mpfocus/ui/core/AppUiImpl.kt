@@ -2,6 +2,7 @@ package gtr.mpfocus.ui.core
 
 import androidx.compose.runtime.Composable
 import gtr.mpfocus.ui.composables.MessagePanelState
+import gtr.mpfocus.ui.composables.MessagePanelState.Tone
 import gtr.mpfocus.ui.main_screen.MainScreenWindowFactory
 
 class AppUiImpl(
@@ -11,10 +12,16 @@ class AppUiImpl(
 
     override suspend fun showMessage(msg: Message) {
         when (msg) {
-            is TextMessage -> {
+            is Message.Text -> {
                 appWindowLauncher.showWindow(
                     mainScreenWindowFactory.create(
-                        initialMessage = MessagePanelState(text = msg.text)
+                        initialMessage = MessagePanelState(
+                            text = msg.text,
+                            tone = when (msg.tone) {
+                                Message.Tone.Info -> Tone.Info
+                                Message.Tone.Error -> Tone.Error
+                            },
+                        )
                     )
                 )
             }

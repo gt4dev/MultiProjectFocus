@@ -1,6 +1,7 @@
 package gtr.mpfocus.domain.model.config
 
 import gtr.mpfocus.domain.model.core.ProjectFile
+import gtr.mpfocus.system_actions.FolderPath
 
 data class ProjectConfig(
     private val fileNames: Map<ProjectFile, String>
@@ -10,13 +11,15 @@ data class ProjectConfig(
     }
 }
 
-interface ConfigService {
+interface ProjectConfigReader {
 
-    suspend fun getProjectConfig(): ProjectConfig
+    suspend fun getGlobalProjectConfig(): ProjectConfig
+
+    suspend fun getLocalProjectConfig(projectPath: FolderPath): ProjectConfig
 
     // temporary, basic implementation with 'hard coded' settings
-    object Basic : ConfigService {
-        override suspend fun getProjectConfig(): ProjectConfig {
+    object HardCodedConfig : ProjectConfigReader {
+        override suspend fun getGlobalProjectConfig(): ProjectConfig {
             val filesNames = ProjectFile.entries.associateWith { file ->
                 when (file) {
                     ProjectFile.File1 -> "main.md"
@@ -26,6 +29,10 @@ interface ConfigService {
                 }
             }
             return ProjectConfig(filesNames)
+        }
+
+        override suspend fun getLocalProjectConfig(projectPath: FolderPath): ProjectConfig {
+            return getGlobalProjectConfig()
         }
     }
 }

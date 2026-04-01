@@ -11,7 +11,9 @@ import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.ProjectActions
 import gtr.mpfocus.domain.model.init_data.DataLoader
 import gtr.mpfocus.ui.core.AppUi
-import gtr.mpfocus.ui.core.TextMessage
+import gtr.mpfocus.ui.core.Message.Text
+import gtr.mpfocus.ui.core.Message.Tone
+import kotlinx.coroutines.CancellationException
 
 /**
  * Lazy loading - notes:
@@ -25,7 +27,26 @@ class CommandHandler(
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.CLI,
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) {
-    suspend fun handle(command: Command): ActionResult {
+    suspend fun handle(command: Command) {
+        try {
+            when (val result = executeCommand(command)) {
+                ActionResult.Success -> Unit
+                ActionResult.NoFileError -> showMessageError("requested file was not found")
+                is ActionResult.Error -> showMessageError(result.msg)
+            }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (t: Throwable) {
+            showMessageError(
+                """
+                Unexpected failure occurred:
+                ${t::class.simpleName ?: "[no class name]"}, ${t.message ?: "[no additional message]"}
+                """.trimIndent()
+            )
+        }
+    }
+
+    private suspend fun executeCommand(command: Command): ActionResult {
         return when (command) {
             ShowUi -> {
                 appUi.value.showMainWindow()
@@ -34,10 +55,10 @@ class CommandHandler(
 
             NoExplicitCommand -> {
                 appUi.value.showMessage(
-                    TextMessage(
+                    Text(
                         """
                         You started Multi Project Focus (MPF) app without any parameters.
-                        That’s fine, but MPF works best when running in the background and opening your projects via keyboard shortcuts.
+                        It's ok, but MPF works best when started in the background and opens your projects via global keyboard shortcuts.
                         Read the guide to learn how.
                         """.trimIndent()
                     )
@@ -51,7 +72,7 @@ class CommandHandler(
             )
 
             is ProjectCurrent.OpenFile -> projectActions.value.openCurrentProjectFile(
-                file = command.file,
+                fileId = command.file,
                 actionPreferences = projectActionPreferences,
                 callerNotification = projectActionCallerNotification
             )
@@ -64,7 +85,7 @@ class CommandHandler(
 
             is ProjectPinned.OpenFile -> projectActions.value.openPinnedProjectFile(
                 pinPosition = command.pinPosition,
-                file = command.file,
+                fileId = command.file,
                 actionPreferences = projectActionPreferences,
                 callerNotification = projectActionCallerNotification
             )
@@ -76,7 +97,7 @@ class CommandHandler(
             is LoadInitialData -> {
                 dataLoader.value.loadData(command.tomlFilePath)
                 appUi.value.showMessage(
-                    TextMessage(
+                    Text(
                         """
                         Data from TOML file loaded.
                         """.trimIndent()
@@ -85,5 +106,14 @@ class CommandHandler(
                 ActionResult.Success
             }
         }
+    }
+
+    private suspend fun showMessageError(text: String) {
+        appUi.value.showMessage(
+            Text(
+                text = text,
+                tone = Tone.Error,
+            )
+        )
     }
 }

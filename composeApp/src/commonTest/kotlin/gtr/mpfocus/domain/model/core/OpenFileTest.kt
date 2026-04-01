@@ -239,7 +239,7 @@ class OpenFileTest {
 
             `given 'project repository mock' returns sample projects - current, pinned, regular`()
 
-            variants("preference 'if no file or folder' = ..") {
+            variants("preference 'if no file or folder' then ..") {
 
                 variant(".. return error") {
 
@@ -252,7 +252,7 @@ class OpenFileTest {
 
                     `then 'file system mock' checks folder path exist'`()
                     `then 'file system mock' checks file path exist'`()
-                    `then model returns`("error: no file exists")
+                    `then model returns`("no file error")
                 }
 
                 variant(".. notify caller") {
@@ -274,7 +274,7 @@ class OpenFileTest {
                             `then 'caller notification' receives`("no file")
                             `then 'file system mock' checks folder path exist'`()
                             `then 'file system mock' checks file path exist'`()
-                            `then model returns`("error: no file exists")
+                            `then model returns`("no file error")
                         }
 
                         variant(".. continue") {
@@ -296,7 +296,7 @@ class OpenFileTest {
                                     `then 'file system mock' checks folder path exist'`()
                                     `then 'file system mock' checks file path exist'`()
                                     `then 'file system mock' checks file path exist'`()
-                                    `then model returns`("error: no file exists")
+                                    `then model returns`("no file error")
                                 }
 
                                 variant(".. already exists") {

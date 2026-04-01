@@ -5,6 +5,15 @@ interface AppUi {
     suspend fun showMainWindow()
 }
 
-interface Message
+sealed interface Message {
 
-data class TextMessage(val text: String) : Message
+    enum class Tone {
+        Info,
+        Error,
+    }
+
+    data class Text(
+        val text: String,
+        val tone: Tone = Tone.Info,
+    ) : Message
+}

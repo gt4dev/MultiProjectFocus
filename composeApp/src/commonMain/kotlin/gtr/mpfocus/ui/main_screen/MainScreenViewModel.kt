@@ -10,8 +10,28 @@ import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.domain.model.core.ProjectActions
 import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.domain.repository.ProjectRepository
-import gtr.mpfocus.ui.composables.*
-import kotlinx.coroutines.flow.*
+import gtr.mpfocus.ui.composables.CurrentProjectSectionUiActions
+import gtr.mpfocus.ui.composables.DeleteProjectDialog
+import gtr.mpfocus.ui.composables.MessagePanelState
+import gtr.mpfocus.ui.composables.MessagePanelUiActions
+import gtr.mpfocus.ui.composables.OtherProjectsSectionUiActions
+import gtr.mpfocus.ui.composables.PinnedProjectsSectionUiActions
+import gtr.mpfocus.ui.composables.ProjectRowActions
+import gtr.mpfocus.ui.composables.ProjectRowState
+import gtr.mpfocus.ui.composables.ScreenHeaderUiActions
+import gtr.mpfocus.ui.createScopeWithExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
@@ -19,7 +39,6 @@ class MainScreenViewModel(
     private val projectActions: ProjectActions,
     initialMessage: MessagePanelState? = null,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
-    // todo: impl. real user reactions
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) : ViewModel() {
 
@@ -30,6 +49,11 @@ class MainScreenViewModel(
 
     private val _effects = MutableSharedFlow<MainScreenEffect>()
     val effects: SharedFlow<MainScreenEffect> = _effects.asSharedFlow()
+
+    private val viewModelScopeWithExceptionHandler: CoroutineScope =
+        viewModelScope.createScopeWithExceptionHandler(
+            onException = ::onException
+        )
 
     private val currentProject = projectRepository.getCurrentProject()
         .stateIn(
@@ -92,7 +116,10 @@ class MainScreenViewModel(
             is CurrentProjectSectionUiActions.CurrentProjectRowActions -> {
                 when (val projectRowAction = action.action) {
                     is ProjectRowActions.OpenFolderClicked -> onOpenCurrentProjectFolder()
-                    is ProjectRowActions.OpenFileClicked -> onOpenCurrentProjectFile(projectRowAction.file)
+                    is ProjectRowActions.OpenFileClicked -> onOpenCurrentProjectFile(
+                        projectRowAction.file
+                    )
+
                     else -> onProjectRowAction(projectRowAction)
                 }
             }
@@ -123,11 +150,15 @@ class MainScreenViewModel(
         when (action) {
             is OtherProjectsSectionUiActions.OtherProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowActions.OpenFolderClicked -> onOpenRegularProjectFolder(projectRowAction.projectId)
+                    is ProjectRowActions.OpenFolderClicked -> onOpenRegularProjectFolder(
+                        projectRowAction.projectId
+                    )
+
                     is ProjectRowActions.OpenFileClicked -> onOpenRegularProjectFile(
                         projectId = projectRowAction.projectId,
                         file = projectRowAction.file,
                     )
+
                     else -> onProjectRowAction(projectRowAction)
                 }
             }
@@ -153,7 +184,7 @@ class MainScreenViewModel(
     }
 
     private fun onUnsetCurrentProject() {
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             projectRepository.setCurrentProject(null)
         }
     }
@@ -165,7 +196,7 @@ class MainScreenViewModel(
     }
 
     private fun onSetCurrentProject(projectId: Long) {
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             projectRepository.setCurrentProject(projectId)
         }
     }
@@ -202,7 +233,7 @@ class MainScreenViewModel(
     private fun onOpenCurrentProjectFile(file: ProjectFile) {
         executeProjectAction {
             projectActions.openCurrentProjectFile(
-                file = file,
+                fileId = file,
                 actionPreferences = projectActionPreferences,
                 callerNotification = projectActionCallerNotification,
             )
@@ -213,7 +244,7 @@ class MainScreenViewModel(
         executeProjectAction {
             projectActions.openPinnedProjectFile(
                 pinPosition = pinPosition,
-                file = file,
+                fileId = file,
                 actionPreferences = projectActionPreferences,
                 callerNotification = projectActionCallerNotification,
             )
@@ -224,7 +255,7 @@ class MainScreenViewModel(
         executeProjectAction {
             projectActions.openRegularProjectFile(
                 projectId = projectId,
-                file = file,
+                fileId = file,
                 actionPreferences = projectActionPreferences,
                 callerNotification = projectActionCallerNotification,
             )
@@ -232,17 +263,18 @@ class MainScreenViewModel(
     }
 
     private fun executeProjectAction(action: suspend () -> ActionResult) {
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             when (val result = action()) {
                 ActionResult.Success -> Unit
-                is ActionResult.Error -> showInfo(result.msg)
+                ActionResult.NoFileError -> showError("requested file was not found")
+                is ActionResult.Error -> showError(result.msg)
             }
         }
     }
 
     private fun onTogglePinnedProject(projectId: Long) {
         // todo: move to 'model' PinnedService
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             val currentPinned = pinnedProjects.value
             if (currentPinned.any { it.projectId == projectId }) {
                 repinProjects(currentPinned.filterNot { it.projectId == projectId })
@@ -252,12 +284,11 @@ class MainScreenViewModel(
         }
     }
 
-    // todo: handle in compo locally
     private fun onSelectProjectFile(projectId: Long, file: ProjectFile) {
     }
 
     private fun onDeleteProject(projectId: Long) {
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             val project = projectRepository.getProject(projectId) ?: return@launch
             pendingDeleteProjectId = project.projectId
             _uiState.update {
@@ -271,7 +302,7 @@ class MainScreenViewModel(
     }
 
     private fun onOpenCreateProjectDialog(relatedProjectId: Long?) {
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             _effects.emit(MainScreenEffect.CreateProjectDialogRequested(relatedProjectId))
         }
     }
@@ -289,7 +320,7 @@ class MainScreenViewModel(
         offset: Int,
     ) {
         // todo: move to PinnedService
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             val currentPinned = pinnedProjects.value.toMutableList()
             val currentIndex = currentPinned.indexOfFirst { it.projectId == projectId }
             if (currentIndex == -1) {
@@ -319,7 +350,7 @@ class MainScreenViewModel(
 
     private fun onDeleteProjectDialogConfirm() {
         val projectId = pendingDeleteProjectId ?: return
-        viewModelScope.launch {
+        viewModelScopeWithExceptionHandler.launch {
             projectRepository.deleteProject(projectId)
             onDeleteProjectDialogClear()
         }
@@ -332,6 +363,26 @@ class MainScreenViewModel(
 
     private fun showInfo(text: String) {
         _uiState.update { it.copy(message = MessagePanelState(text = text)) }
+    }
+
+    private fun showError(text: String) {
+        _uiState.update {
+            it.copy(
+                message = MessagePanelState(
+                    text = text,
+                    tone = MessagePanelState.Tone.Error,
+                )
+            )
+        }
+    }
+
+    private fun onException(e: Exception) {
+        showError(
+            """
+                Unexpected failure occurred:
+                ${e::class.simpleName ?: "[no class name]"}, ${e.message ?: "[no additional message]"}
+                """.trimIndent()
+        )
     }
 
     private fun Project.toRowState(): ProjectRowState {
@@ -374,7 +425,7 @@ class MainScreenViewModel(
                     },
                 )
             }
-        }.launchIn(viewModelScope)
+        }.launchIn(viewModelScopeWithExceptionHandler)
     }
 
     companion object {
