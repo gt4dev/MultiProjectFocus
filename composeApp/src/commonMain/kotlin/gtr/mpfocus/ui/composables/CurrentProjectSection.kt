@@ -7,12 +7,12 @@ import androidx.compose.ui.Modifier
 import gtr.mpfocus.ui.core.UiActions
 
 data class CurrentProjectSectionState(
-    val project: ProjectRowState? = null,
+    val project: ProjectRow.State? = null,
 )
 
 sealed interface CurrentProjectSectionUiActions : UiActions {
     data object UnsetCurrentProjectClicked : CurrentProjectSectionUiActions
-    data class CurrentProjectRowActions(val action: ProjectRowActions) :
+    data class CurrentProjectRowActions(val action: ProjectRow.Actions) :
         CurrentProjectSectionUiActions
 }
 

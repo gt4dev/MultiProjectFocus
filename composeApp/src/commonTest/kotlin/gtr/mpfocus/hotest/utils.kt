@@ -11,3 +11,14 @@ inline fun <reified T : Any> HOTestCtx.koinAddObject(obj: T) {
         single { obj }
     }
 }
+
+inline fun <reified T : Any> HOTestCtx.koinAddIfMissing(create: () -> T): T {
+    val existing = koin.getOrNull<T>()
+    if (existing != null) {
+        return existing
+    }
+
+    val obj = create()
+    koinAddObject<T>(obj)
+    return obj
+}

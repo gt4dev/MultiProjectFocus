@@ -88,7 +88,7 @@ object RepositorySteps {
         val obj = initMockProjectsRepo()
         val projects = pinnedProjects.map {
             Project(
-                requireNotNull(it.id),
+                it.id!!,
                 FolderPath(it.path!!.toPath()),
                 pinPosition = it.pinPosition,
             )
@@ -102,33 +102,11 @@ object RepositorySteps {
         val obj = initMockProjectsRepo()
         val projects = otherProjects.map {
             Project(
-                requireNotNull(it.id),
+                it.id!!,
                 FolderPath(it.path!!.toPath()),
             )
         }
         every { obj.getOtherProjects() } returns flowOf(projects)
-    }
-
-    fun HOTestCtx.`given 'project repository mock' returns sequential pinned project`(
-        vararg sequentialPinnedProject: Models.Project?,
-    ) {
-        val obj = initMockProjectsRepo()
-        val flows = sequentialPinnedProject.map { pinnedProject ->
-            if (pinnedProject == null) {
-                flowOf(emptyList())
-            } else {
-                flowOf(
-                    listOf(
-                        Project(
-                            123,
-                            FolderPath(pinnedProject.path!!.toPath()),
-                            pinPosition = pinnedProject.pinPosition,
-                        )
-                    )
-                )
-            }
-        }
-        every { obj.getPinnedProjects() } sequentiallyReturns flows
     }
 
     private fun HOTestCtx.initMockProjectsRepo(): ProjectRepository {

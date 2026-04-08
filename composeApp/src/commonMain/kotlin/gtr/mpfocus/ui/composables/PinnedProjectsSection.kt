@@ -11,14 +11,14 @@ import androidx.compose.ui.unit.dp
 import gtr.mpfocus.ui.core.UiActions
 
 data class PinnedProjectsSectionState(
-    val projects: List<ProjectRowState> = emptyList(),
+    val projects: List<ProjectRow.State> = emptyList(),
     val isReorderMode: Boolean = false,
 )
 
 sealed interface PinnedProjectsSectionUiActions : UiActions {
     data object ToggleReorderModeClicked : PinnedProjectsSectionUiActions
     data class PinnedProjectRowActions(
-        val action: ProjectRowActions,
+        val action: ProjectRow.Actions,
         val pinPosition: Int,
     ) : PinnedProjectsSectionUiActions
 }

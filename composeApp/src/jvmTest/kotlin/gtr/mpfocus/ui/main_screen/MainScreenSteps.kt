@@ -2,14 +2,28 @@ package gtr.mpfocus.ui.main_screen
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.ComposeUiTest
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import dev.hotest.HOTestCtx
 import dev.mokkery.matcher.any
 import dev.mokkery.verifySuspend
+import gtr.mpfocus.domain.model.config.ProjectConfigService
 import gtr.mpfocus.domain.model.core.Models
 import gtr.mpfocus.domain.model.core.ProjectActions
 import gtr.mpfocus.domain.model.core.ProjectFile
+import gtr.mpfocus.domain.model.read.ProjectReadModel
+import gtr.mpfocus.domain.model.read.ProjectReadModelImpl
 import gtr.mpfocus.hotest.CucumberExpressionMatcher
+import gtr.mpfocus.hotest.koinAddIfMissing
 import gtr.mpfocus.ui.composables.OptionsSplitButtonTestTags
 import gtr.mpfocus.ui.composables.ProjectRowTestTags
 
@@ -18,13 +32,11 @@ object MainScreenSteps {
 
     fun HOTestCtx.`when 'main screen' is started`() {
         val cut: ComposeUiTest = koin.get()
+        val viewModelFactory = initMainScreenViewModelFactory()
         cut.setContent {
             MaterialTheme {
                 MainScreenContainer(
-                    viewModelFactory = MainScreenViewModelFactory(
-                        koin.get(),
-                        koin.get(),
-                    ).create(),
+                    viewModelFactory = viewModelFactory.create(),
                     onCreateProjectDialogOpen = { }
                 )
             }
@@ -102,7 +114,9 @@ object MainScreenSteps {
             onNode(selectedRowMatcher, useUnmergedTree = true).performScrollTo()
 
             onNode(
-                hasTestTag(OptionsSplitButtonTestTags.TRAILING_BUTTON) and hasAnyAncestor(selectedRowMatcher),
+                hasTestTag(OptionsSplitButtonTestTags.TRAILING_BUTTON) and
+                    hasAnyAncestor(selectedRowMatcher) and
+                    hasAnyAncestor(hasTestTag(ProjectRowTestTags.PRIMARY_FILE_SPLIT_BUTTON)),
             ).assertExists().performClick()
 
             onNodeWithText(file.name).assertExists().performClick()
@@ -198,5 +212,21 @@ object MainScreenSteps {
 
         val rowTag = rows[position - 1].config[SemanticsProperties.TestTag]
         return hasTestTag(rowTag)
+    }
+
+    private fun HOTestCtx.initMainScreenViewModelFactory(): MainScreenViewModelFactory {
+        koinAddIfMissing<ProjectConfigService> {
+            ProjectConfigService.HardCodedConfig
+        }
+        koinAddIfMissing<ProjectReadModel> {
+            ProjectReadModelImpl(koin.get(), koin.get())
+        }
+        return koinAddIfMissing {
+            MainScreenViewModelFactory(
+                koin.get(),
+                koin.get(),
+                koin.get(),
+            )
+        }
     }
 }

@@ -1,7 +1,11 @@
 package gtr.mpfocus.ui.main_screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -9,16 +13,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import gtr.mpfocus.ui.composables.*
+import gtr.mpfocus.ui.composables.CurrentProjectSection
+import gtr.mpfocus.ui.composables.CurrentProjectSectionState
+import gtr.mpfocus.ui.composables.CurrentProjectSectionUiActions
+import gtr.mpfocus.ui.composables.DeleteProjectDialog
+import gtr.mpfocus.ui.composables.MessagePanel
+import gtr.mpfocus.ui.composables.MessagePanelState
+import gtr.mpfocus.ui.composables.MessagePanelUiActions
+import gtr.mpfocus.ui.composables.OtherProjectsSection
+import gtr.mpfocus.ui.composables.OtherProjectsSectionState
+import gtr.mpfocus.ui.composables.OtherProjectsSectionUiActions
+import gtr.mpfocus.ui.composables.PinnedProjectsSection
+import gtr.mpfocus.ui.composables.PinnedProjectsSectionState
+import gtr.mpfocus.ui.composables.PinnedProjectsSectionUiActions
+import gtr.mpfocus.ui.composables.ProjectRow
+import gtr.mpfocus.ui.composables.ScreenHeader
+import gtr.mpfocus.ui.composables.ScreenHeaderState
+import gtr.mpfocus.ui.composables.ScreenHeaderUiActions
 import gtr.mpfocus.ui.core.UiActions
 
 object MainScreen {
 
     data class State(
         val message: MessagePanelState? = null,
-        val currentProject: ProjectRowState? = null,
-        val pinnedProjects: List<ProjectRowState> = emptyList(),
-        val otherProjects: List<ProjectRowState> = emptyList(),
+        val currentProject: ProjectRow.State? = null,
+        val pinnedProjects: List<ProjectRow.State> = emptyList(),
+        val otherProjects: List<ProjectRow.State> = emptyList(),
         val isPinnedProjectsReorderMode: Boolean = false,
         val deleteProjectDialog: DeleteProjectDialog.State? = null,
     )

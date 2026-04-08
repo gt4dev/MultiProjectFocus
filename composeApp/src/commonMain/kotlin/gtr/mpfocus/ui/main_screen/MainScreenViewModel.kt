@@ -9,6 +9,9 @@ import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.domain.model.core.ProjectActions
 import gtr.mpfocus.domain.model.core.ProjectFile
+import gtr.mpfocus.domain.model.read.FileName
+import gtr.mpfocus.domain.model.read.ProjectReadModel
+import gtr.mpfocus.domain.model.read.ProjectWithFileNames
 import gtr.mpfocus.domain.repository.ProjectRepository
 import gtr.mpfocus.ui.composables.CurrentProjectSectionUiActions
 import gtr.mpfocus.ui.composables.DeleteProjectDialog
@@ -16,8 +19,7 @@ import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.composables.MessagePanelUiActions
 import gtr.mpfocus.ui.composables.OtherProjectsSectionUiActions
 import gtr.mpfocus.ui.composables.PinnedProjectsSectionUiActions
-import gtr.mpfocus.ui.composables.ProjectRowActions
-import gtr.mpfocus.ui.composables.ProjectRowState
+import gtr.mpfocus.ui.composables.ProjectRow
 import gtr.mpfocus.ui.composables.ScreenHeaderUiActions
 import gtr.mpfocus.ui.createScopeWithExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +39,7 @@ import kotlinx.coroutines.launch
 class MainScreenViewModel(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
+    private val projectReadModel: ProjectReadModel,
     initialMessage: MessagePanelState? = null,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
@@ -76,6 +79,27 @@ class MainScreenViewModel(
             initialValue = emptyList(),
         )
 
+    private val currentProjectWithFileNames = projectReadModel.getCurrentProject()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            initialValue = null,
+        )
+
+    private val pinnedProjectsWithFileNames = projectReadModel.getPinnedProjects()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            initialValue = emptyList(),
+        )
+
+    private val otherProjectsWithFileNames = projectReadModel.getRegularProjects()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            initialValue = emptyList(),
+        )
+
     init {
         bindDomainState()
     }
@@ -87,7 +111,6 @@ class MainScreenViewModel(
             is MainScreen.Actions.CurrentProjectSection -> onCurrentProjectSectionAction(action.action)
             is MainScreen.Actions.PinnedProjectsSection -> onPinnedProjectsSectionAction(action.action)
             is MainScreen.Actions.OtherProjectsSection -> onOtherProjectsSectionAction(action.action)
-            // todo: probably to delete
             is MainScreen.Actions.DeleteProjectDialog -> onDeleteProjectDialogAction(action.action)
         }
     }
@@ -115,8 +138,8 @@ class MainScreenViewModel(
         when (action) {
             is CurrentProjectSectionUiActions.CurrentProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowActions.OpenFolderClicked -> onOpenCurrentProjectFolder()
-                    is ProjectRowActions.OpenFileClicked -> onOpenCurrentProjectFile(
+                    is ProjectRow.Actions.OpenFolderClicked -> onOpenCurrentProjectFolder()
+                    is ProjectRow.Actions.OpenFileClicked -> onOpenCurrentProjectFile(
                         projectRowAction.file
                     )
 
@@ -132,8 +155,8 @@ class MainScreenViewModel(
         when (action) {
             is PinnedProjectsSectionUiActions.PinnedProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowActions.OpenFolderClicked -> onOpenPinnedProjectFolder(action.pinPosition)
-                    is ProjectRowActions.OpenFileClicked -> onOpenPinnedProjectFile(
+                    is ProjectRow.Actions.OpenFolderClicked -> onOpenPinnedProjectFolder(action.pinPosition)
+                    is ProjectRow.Actions.OpenFileClicked -> onOpenPinnedProjectFile(
                         pinPosition = action.pinPosition,
                         file = projectRowAction.file,
                     )
@@ -150,11 +173,11 @@ class MainScreenViewModel(
         when (action) {
             is OtherProjectsSectionUiActions.OtherProjectRowActions -> {
                 when (val projectRowAction = action.action) {
-                    is ProjectRowActions.OpenFolderClicked -> onOpenRegularProjectFolder(
+                    is ProjectRow.Actions.OpenFolderClicked -> onOpenRegularProjectFolder(
                         projectRowAction.projectId
                     )
 
-                    is ProjectRowActions.OpenFileClicked -> onOpenRegularProjectFile(
+                    is ProjectRow.Actions.OpenFileClicked -> onOpenRegularProjectFile(
                         projectId = projectRowAction.projectId,
                         file = projectRowAction.file,
                     )
@@ -165,17 +188,17 @@ class MainScreenViewModel(
         }
     }
 
-    private fun onProjectRowAction(action: ProjectRowActions) {
+    private fun onProjectRowAction(action: ProjectRow.Actions) {
         when (action) {
-            is ProjectRowActions.AddProjectClicked -> onOpenCreateProjectDialog(action.relatedProjectId)
-            is ProjectRowActions.DeleteClicked -> onDeleteProject(action.projectId)
-            is ProjectRowActions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
-            is ProjectRowActions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
-            is ProjectRowActions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
-            is ProjectRowActions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
-            is ProjectRowActions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
-            is ProjectRowActions.OpenFileClicked -> Unit
-            is ProjectRowActions.OpenFolderClicked -> Unit
+            is ProjectRow.Actions.AddProjectClicked -> onOpenCreateProjectDialog(action.relatedProjectId)
+            is ProjectRow.Actions.DeleteClicked -> onDeleteProject(action.projectId)
+            is ProjectRow.Actions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
+            is ProjectRow.Actions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
+            is ProjectRow.Actions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
+            is ProjectRow.Actions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
+            is ProjectRow.Actions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
+            is ProjectRow.Actions.OpenFileClicked -> Unit
+            is ProjectRow.Actions.OpenFolderClicked -> Unit
         }
     }
 
@@ -385,20 +408,24 @@ class MainScreenViewModel(
         )
     }
 
-    private fun Project.toRowState(): ProjectRowState {
-        return ProjectRowState(
-            projectId = projectId,
-            pathText = folderPath.path.toString(),
-            pinPosition = pinPosition,
-        )
-    }
+    private fun Project.toRowState(namedFiles: List<FileName>) = ProjectRow.State(
+        projectId = projectId,
+        pathText = folderPath.path.toString(),
+        availableNamedFiles = namedFiles,
+        pinPosition = pinPosition,
+    )
+
+    private fun ProjectWithFileNames.toRowState(): ProjectRow.State =
+        project.toRowState(namedFiles = fileNames)
 
     private fun bindDomainState() {
         combine(
-            currentProject,
-            pinnedProjects,
-            otherProjects,
-        ) { current: Project?, pinned: List<Project>, other: List<Project> ->
+            currentProjectWithFileNames,
+            pinnedProjectsWithFileNames,
+            otherProjectsWithFileNames,
+        ) { current: ProjectWithFileNames?, pinned: List<ProjectWithFileNames>, other: List<ProjectWithFileNames> ->
+            val currentProjectId = current?.project?.projectId
+
             // warning: side effects in 'flow' but the code is simpler
             _uiState.update { state ->
                 state.copy(
@@ -411,7 +438,7 @@ class MainScreenViewModel(
                         project
                             .toRowState()
                             .copy(
-                                canSetAsCurrent = current?.projectId != project.projectId,
+                                canSetAsCurrent = currentProjectId != project.project.projectId,
                                 canMovePinnedUp = index > 0,
                                 canMovePinnedDown = index < pinned.lastIndex,
                             )
@@ -420,7 +447,7 @@ class MainScreenViewModel(
                         project
                             .toRowState()
                             .copy(
-                                canSetAsCurrent = current?.projectId != project.projectId,
+                                canSetAsCurrent = currentProjectId != project.project.projectId,
                             )
                     },
                 )
@@ -436,6 +463,7 @@ class MainScreenViewModel(
 class MainScreenViewModelFactory(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
+    private val projectReadModel: ProjectReadModel,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
     private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) {
@@ -445,6 +473,7 @@ class MainScreenViewModelFactory(
                 MainScreenViewModel(
                     projectRepository = projectRepository,
                     projectActions = projectActions,
+                    projectReadModel = projectReadModel,
                     initialMessage = initialMessage,
                     projectActionPreferences = projectActionPreferences,
                     projectActionCallerNotification = projectActionCallerNotification,

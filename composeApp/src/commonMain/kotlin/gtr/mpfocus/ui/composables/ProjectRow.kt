@@ -3,60 +3,89 @@ package gtr.mpfocus.ui.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import gtr.mpfocus.domain.model.core.ProjectFile
+import gtr.mpfocus.domain.model.read.FileName
 import gtr.mpfocus.ui.core.UiActions
 
-data class ProjectRowState(
-    val projectId: Long,
-    val pathText: String,
-    val selectedFile: ProjectFile = ProjectFile.File1,
-    val availableFiles: List<ProjectFile> = ProjectFile.entries,
-    val pinPosition: Int? = null,
-    val canSetAsCurrent: Boolean = true,
-    val canMovePinnedUp: Boolean = false,
-    val canMovePinnedDown: Boolean = false,
-) {
-    val isPinned: Boolean
-        get() = (pinPosition != null)
-}
-sealed interface ProjectRowActions : UiActions {
-    data class SetCurrentClicked(val projectId: Long) : ProjectRowActions
-    data class OpenFolderClicked(val projectId: Long) : ProjectRowActions
-    data class OpenFileClicked(
-        val projectId: Long,
-        val file: ProjectFile,
-    ) : ProjectRowActions
 
-    data class TogglePinnedClicked(val projectId: Long) : ProjectRowActions
-    data class MovePinnedUpClicked(val projectId: Long) : ProjectRowActions
-    data class MovePinnedDownClicked(val projectId: Long) : ProjectRowActions
-    data class FileSelected(
-        val projectId: Long,
-        val file: ProjectFile,
-    ) : ProjectRowActions
+object ProjectRow {
 
-    data class DeleteClicked(val projectId: Long) : ProjectRowActions
-    data class AddProjectClicked(val relatedProjectId: Long) : ProjectRowActions
+    data class State(
+        val projectId: Long,
+        val pathText: String,
+        val selectedFile: ProjectFile = ProjectFile.File1,
+        val availableFiles: List<ProjectFile> = ProjectFile.entries,
+        val selectedNamedFile: ProjectFile = ProjectFile.File1,
+        val availableNamedFiles: List<FileName> = defaultNamedFileOptions(),
+        val pinPosition: Int? = null,
+        val canSetAsCurrent: Boolean = true,
+        val canMovePinnedUp: Boolean = false,
+        val canMovePinnedDown: Boolean = false,
+    ) {
+        val isPinned: Boolean
+            get() = (pinPosition != null)
+    }
+
+    sealed interface Actions : UiActions {
+        data class SetCurrentClicked(val projectId: Long) : Actions
+        data class OpenFolderClicked(val projectId: Long) : Actions
+        data class OpenFileClicked(
+            val projectId: Long,
+            val file: ProjectFile,
+        ) : Actions
+
+        data class TogglePinnedClicked(val projectId: Long) : Actions
+        data class MovePinnedUpClicked(val projectId: Long) : Actions
+        data class MovePinnedDownClicked(val projectId: Long) : Actions
+        data class FileSelected(
+            val projectId: Long,
+            val file: ProjectFile,
+        ) : Actions
+
+        data class DeleteClicked(val projectId: Long) : Actions
+        data class AddProjectClicked(val relatedProjectId: Long) : Actions
+    }
+
+    fun defaultNamedFileOptions(): List<FileName> {
+        return ProjectFile.entries.map { file ->
+            FileName(
+                fileId = file,
+                fileName = placeholderFileLabel(file),
+            )
+        }
+    }
+
+    fun placeholderFileLabel(file: ProjectFile): String = "${file.ordinal} ..."
 }
 
 @Composable
 fun ProjectRow(
-    uiState: ProjectRowState,
+    uiState: ProjectRow.State,
     showPinnedReorderControls: Boolean,
-    onAction: (ProjectRowActions) -> Unit,
+    onAction: (ProjectRow.Actions) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -78,42 +107,40 @@ fun ProjectRow(
             ) {
                 OutlinedButton(
                     modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
-                    onClick = { onAction(ProjectRowActions.SetCurrentClicked(uiState.projectId)) },
+                    onClick = { onAction(ProjectRow.Actions.SetCurrentClicked(uiState.projectId)) },
                     enabled = uiState.canSetAsCurrent,
                 ) {
                     Text("Set current")
                 }
-                OutlinedButton(onClick = { onAction(ProjectRowActions.OpenFolderClicked(uiState.projectId)) }) {
+                OutlinedButton(onClick = { onAction(ProjectRow.Actions.OpenFolderClicked(uiState.projectId)) }) {
                     Text("Open folder")
                 }
 
-                val availableFiles = remember { uiState.availableFiles }
-                var selectedFileIdx by remember {
-                    val selectedFileIdx = availableFiles.indexOf(uiState.selectedFile)
-                    mutableStateOf(selectedFileIdx)
-                }
+                ProjectFilesSplitButton(
+                    splitButtonTag = ProjectRowTestTags.PRIMARY_FILE_SPLIT_BUTTON,
+                    projectId = uiState.projectId,
+                    initialSelectedFile = uiState.selectedFile,
+                    options = uiState.availableFiles.map { file ->
+                        FileName(
+                            fileId = file,
+                            fileName = file.name,
+                        )
+                    },
+                    onAction = onAction,
+                )
 
-                OptionsSplitButton(
-                    options = availableFiles.map { it.name },
-                    currentOptionIdx = selectedFileIdx,
-                    onOptionClicked = { optionIdx ->
-                        if (optionIdx != null) {
-                            selectedFileIdx = optionIdx
-                            val clickedFile = availableFiles[optionIdx]
-                            onAction(
-                                ProjectRowActions.OpenFileClicked(
-                                    projectId = uiState.projectId,
-                                    file = clickedFile,
-                                )
-                            )
-                        }
-                    }
+                ProjectFilesSplitButton(
+                    splitButtonTag = ProjectRowTestTags.SECONDARY_FILE_SPLIT_BUTTON,
+                    projectId = uiState.projectId,
+                    initialSelectedFile = uiState.selectedNamedFile,
+                    options = uiState.availableNamedFiles,
+                    onAction = onAction,
                 )
 
                 PinButton(
                     uiState.isPinned,
                     onPinSwitch = {
-                        onAction(ProjectRowActions.TogglePinnedClicked(uiState.projectId))
+                        onAction(ProjectRow.Actions.TogglePinnedClicked(uiState.projectId))
                     },
                 )
 
@@ -121,24 +148,24 @@ fun ProjectRow(
                     onAction = { action ->
                         when (action) {
                             ProjectContextMenu.Actions.AddProjectClicked -> {
-                                onAction(ProjectRowActions.AddProjectClicked(uiState.projectId))
+                                onAction(ProjectRow.Actions.AddProjectClicked(uiState.projectId))
                             }
 
                             ProjectContextMenu.Actions.DeleteClicked -> {
-                                onAction(ProjectRowActions.DeleteClicked(uiState.projectId))
+                                onAction(ProjectRow.Actions.DeleteClicked(uiState.projectId))
                             }
                         }
                     },
                 )
                 if (showPinnedReorderControls) {
                     OutlinedButton(
-                        onClick = { onAction(ProjectRowActions.MovePinnedUpClicked(uiState.projectId)) },
+                        onClick = { onAction(ProjectRow.Actions.MovePinnedUpClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedUp,
                     ) {
                         Text("Up")
                     }
                     OutlinedButton(
-                        onClick = { onAction(ProjectRowActions.MovePinnedDownClicked(uiState.projectId)) },
+                        onClick = { onAction(ProjectRow.Actions.MovePinnedDownClicked(uiState.projectId)) },
                         enabled = uiState.canMovePinnedDown,
                     ) {
                         Text("Down")
@@ -166,7 +193,48 @@ fun ProjectRow(
     }
 }
 
+@Composable
+private fun ProjectFilesSplitButton(
+    splitButtonTag: String,
+    projectId: Long,
+    initialSelectedFile: ProjectFile,
+    options: List<FileName>,
+    onAction: (ProjectRow.Actions) -> Unit,
+) {
+    var selectedFile by remember(projectId, splitButtonTag) {
+        mutableStateOf(initialSelectedFile)
+    }
+
+    LaunchedEffect(initialSelectedFile) {
+        selectedFile = initialSelectedFile
+    }
+
+    val currentOptionIdx = options.indexOfFirst { it.fileId == selectedFile }
+        .takeIf { it >= 0 }
+
+    Box(modifier = Modifier.testTag(splitButtonTag)) {
+        OptionsSplitButton(
+            options = options.map { it.fileName },
+            currentOptionIdx = currentOptionIdx,
+            onOptionClicked = { optionIdx ->
+                if (optionIdx != null) {
+                    val clickedFile = options[optionIdx].fileId
+                    selectedFile = clickedFile
+                    onAction(
+                        ProjectRow.Actions.OpenFileClicked(
+                            projectId = projectId,
+                            file = clickedFile,
+                        )
+                    )
+                }
+            }
+        )
+    }
+}
+
 object ProjectRowTestTags {
+    const val PRIMARY_FILE_SPLIT_BUTTON = "project-row-primary-file-split-button"
+    const val SECONDARY_FILE_SPLIT_BUTTON = "project-row-secondary-file-split-button"
     fun row(projectId: Long): String = "project-row-$projectId"
     fun path(projectId: Long): String = "project-row-$projectId-path"
     fun buttonSetCurrent(projectId: Long): String = "project-row-$projectId-set-current"

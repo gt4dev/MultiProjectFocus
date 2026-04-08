@@ -8,11 +8,11 @@ import androidx.compose.ui.unit.dp
 import gtr.mpfocus.ui.core.UiActions
 
 data class OtherProjectsSectionState(
-    val projects: List<ProjectRowState> = emptyList(),
+    val projects: List<ProjectRow.State> = emptyList(),
 )
 
 sealed interface OtherProjectsSectionUiActions : UiActions {
-    data class OtherProjectRowActions(val action: ProjectRowActions) : OtherProjectsSectionUiActions
+    data class OtherProjectRowActions(val action: ProjectRow.Actions) : OtherProjectsSectionUiActions
 }
 
 @Composable

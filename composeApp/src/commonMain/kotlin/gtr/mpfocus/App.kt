@@ -6,7 +6,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.composables.MessagePanelState.Tone
-import gtr.mpfocus.ui.composables.ProjectRowState
+import gtr.mpfocus.ui.composables.ProjectRow
 import gtr.mpfocus.ui.main_screen.MainScreen
 
 @Composable
@@ -26,21 +26,21 @@ private fun previewMainScreenState(): MainScreen.State {
             text = "Sample message panel. Use it for status, warnings, or next actions.",
             tone = Tone.Info,
         ),
-        currentProject = ProjectRowState(
+        currentProject = ProjectRow.State(
             projectId = 1,
             pathText = "c:\\projects\\product-a\\feature-xyz",
             selectedFile = ProjectFile.File1,
             canSetAsCurrent = false,
         ),
         pinnedProjects = listOf(
-            ProjectRowState(
+            ProjectRow.State(
                 projectId = 2,
                 pathText = "c:\\projects\\product-b\\bugfix-123",
                 selectedFile = ProjectFile.File2,
                 canMovePinnedUp = false,
                 canMovePinnedDown = true,
             ),
-            ProjectRowState(
+            ProjectRow.State(
                 projectId = 3,
                 pathText = "c:\\projects\\personal\\writing",
                 selectedFile = ProjectFile.File1,
@@ -49,12 +49,12 @@ private fun previewMainScreenState(): MainScreen.State {
             ),
         ),
         otherProjects = listOf(
-            ProjectRowState(
+            ProjectRow.State(
                 projectId = 4,
                 pathText = "c:\\projects\\ops\\maintenance",
                 selectedFile = ProjectFile.File3,
             ),
-            ProjectRowState(
+            ProjectRow.State(
                 projectId = 5,
                 pathText = "c:\\projects\\home\\garden-plans",
                 selectedFile = ProjectFile.File1,

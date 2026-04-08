@@ -11,14 +11,15 @@ data class ProjectConfig(
     }
 }
 
-interface ProjectConfigReader {
+interface ProjectConfigService {
 
     suspend fun getGlobalProjectConfig(): ProjectConfig
-
     suspend fun getLocalProjectConfig(projectPath: FolderPath): ProjectConfig
 
+    suspend fun getProjectConfig(projectPath: FolderPath): ProjectConfig
+
     // temporary, basic implementation with 'hard coded' settings
-    object HardCodedConfig : ProjectConfigReader {
+    object HardCodedConfig : ProjectConfigService {
         override suspend fun getGlobalProjectConfig(): ProjectConfig {
             val filesNames = ProjectFile.entries.associateWith { file ->
                 when (file) {
@@ -33,6 +34,13 @@ interface ProjectConfigReader {
 
         override suspend fun getLocalProjectConfig(projectPath: FolderPath): ProjectConfig {
             return getGlobalProjectConfig()
+        }
+
+        override suspend fun getProjectConfig(projectPath: FolderPath): ProjectConfig {
+            val fileNames = ProjectFile.entries.associateWith { file ->
+                "Dmy${file.name}.md"
+            }
+            return ProjectConfig(fileNames)
         }
     }
 }

@@ -2,7 +2,7 @@ package gtr.mpfocus.domain.model.core
 
 import gtr.common.distillText
 import gtr.common.textFailure
-import gtr.mpfocus.domain.model.config.ProjectConfigReader
+import gtr.mpfocus.domain.model.config.ProjectConfigService
 import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification
 import gtr.mpfocus.domain.model.core.ProjectActions.CallerNotification.CallerDecision
 import gtr.mpfocus.domain.model.core.ProjectActions.Preferences
@@ -25,7 +25,7 @@ class ProjectActionsImpl(
     private val operatingSystemActions: OperatingSystemActions,
     private val fileSystemActions: FileSystemActions,
     private val projectRepository: ProjectRepository,
-    private val configService: ProjectConfigReader,
+    private val configService: ProjectConfigService,
 ) : ProjectActions {
 
     internal suspend fun ensureCurrentProjectReady(
