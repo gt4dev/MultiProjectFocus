@@ -88,7 +88,7 @@ class ProjectActionsImpl(
         actionPreferences: Preferences,
         callerNotification: CallerNotification
     ): Result<FilePath> {
-        val projectConfig = configService.getLocalProjectConfig(project.folderPath)
+        val projectConfig = configService.getProjectConfig(project.folderPath)
         val fileName = projectConfig.fileName(file)
         val filePath = FilePath("${project.folderPath.path}/$fileName".toPath())
         if (fileSystemActions.pathExists(filePath)) {

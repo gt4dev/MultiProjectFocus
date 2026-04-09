@@ -17,7 +17,9 @@ object ConfigServiceSteps {
 
     fun HOTestCtx.`given 'basic config service' exists`() {
         koinAdd {
-            single<ProjectConfigService> { ProjectConfigService.HardCodedConfig }
+            single<ProjectGlobalConfigService> { ProjectGlobalConfigService.NullConfig }
+            single<ProjectLocalConfigService> { ProjectLocalConfigService.NullConfig }
+            single<ProjectConfigService> { ProjectConfigServiceImpl(get(), get()) }
         }
     }
 
