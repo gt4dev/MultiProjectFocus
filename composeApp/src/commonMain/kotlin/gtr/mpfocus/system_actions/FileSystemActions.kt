@@ -14,6 +14,8 @@ interface FileSystemActions {
     fun createFile(path: FilePath): Boolean
 
     fun readFile(path: FilePath): String
+
+    fun writeContent(path: FilePath, content: String)
 }
 
 class FileSystemActionsImpl : FileSystemActions {
@@ -39,6 +41,12 @@ class FileSystemActionsImpl : FileSystemActions {
     override fun readFile(path: FilePath): String {
         return FileSystem.SYSTEM.read(path.path) {
             readUtf8()
+        }
+    }
+
+    override fun writeContent(path: FilePath, content: String) {
+        FileSystem.SYSTEM.write(path.path) {
+            writeUtf8(content)
         }
     }
 

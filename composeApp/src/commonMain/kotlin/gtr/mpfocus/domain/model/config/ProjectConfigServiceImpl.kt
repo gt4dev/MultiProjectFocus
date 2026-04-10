@@ -4,20 +4,20 @@ import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.system_actions.FolderPath
 
 class ProjectConfigServiceImpl(
-    private val projectGlobalConfigService: ProjectGlobalConfigService,
-    private val projectLocalConfigService: ProjectLocalConfigService,
+    private val globalProjectConfigService: GlobalProjectConfigService,
+    private val localProjectConfigService: LocalProjectConfigService,
 ) : ProjectConfigService {
 
     override suspend fun getProjectConfig(projectPath: FolderPath): ProjectConfig {
-        val local = projectLocalConfigService.readConfig(projectPath)
-        val global = projectGlobalConfigService.readConfig()
+        val local = localProjectConfigService.readConfig(projectPath)
+        val global = globalProjectConfigService.readConfig()
         val default = getDefaultProjectConfig()
         return merge(local, global, default)
     }
 
     private fun merge(
-        local: ProjectLocalConfig?,
-        global: ProjectGlobalConfig?,
+        local: LocalProjectConfig?,
+        global: GlobalProjectConfig?,
         default: ProjectConfig,
     ): ProjectConfig {
         val fileNames = ProjectFile.entries.associateWith { file ->

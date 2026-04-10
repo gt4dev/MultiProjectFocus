@@ -3,7 +3,7 @@
 This document describes how to write tests with the HOTest framework.
 
 The core role of the HOTest framework is to enable writing human-readable tests - tests that are easy to read and explain the 'business idea' of the production code to the reader.
-HOTest mixes the approaches of `gherkin language` and Kotlin language.
+HOTest mixes the approaches of Gherkin language and Kotlin language.
 The final result is Kotlin code, but as human-friendly as possible.
 Any low-level Kotlin code may be used in a test if it is practical and increases the brevity of the test code.
 
@@ -74,7 +74,7 @@ For example:
 `then 'payment component' is called to get payment`(123.45, USD)
 ```
 
-## internal models used by steps
+## internal data models used by steps
 In the above steps, the classes SampleProduct and InventoryReservation are used.
 These classes come from test code, not production code,
 because their presence increases the readability of the scenario / step.
@@ -90,3 +90,32 @@ For example:
   this step belongs to package `com.mylogic.domain.repositories`
   so `class InventoryReservation` should be nested in `object Models` in package `com.mylogic.domain.repositories`
 
+
+# keep 'expected values' and 'actual values' separated
+- if a step is aimed to assert expected values against actual values
+- then the step parameters represent expected values
+
+- if a step definition requires converting expected or actual values so they can be matched together
+- then during this operation never mix expected and actual values in one object
+- expected value and actual value must be separated and compared during assert
+
+for example:
+if there is a step which asserts exchange rate calculation
+`then calculated exchange money should equal`(100, "PLN")
+
+and the implementation of a step is
+```kotlin
+fun `then calculated exchange money should equal`(expectedAmount:Int, expectedCurrency:String) {
+    val actualMoney = koin.get<Money>()
+    
+    // example of error approach!!!
+    // because 'expected' and 'actual' cannot be mixed!!!
+    val expectedMoney = actual.copy(amount = expectedAmount, currency = expectedCurrency)
+    
+    // example of correct approach
+    // because both: 'expected' and 'actual' are all the time separated
+    val expectedMoney = Money(amount = expectedAmount, currency = expectedCurrency)
+    
+    assertEquals(expectedMoney, actualMoney)
+}
+```
