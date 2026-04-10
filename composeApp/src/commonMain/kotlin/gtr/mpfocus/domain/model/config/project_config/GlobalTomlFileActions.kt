@@ -31,9 +31,11 @@ class GlobalTomlFileActions(
 
         private val FILE_DEFAULT_CONTENT = """
             # This file sets global file names used in projects in MultiProjectFocus.
+            # Feel free to name project files in any way you like.
             #
-            # Thanks of it, MultiProjectFocus knows that for instance: 'file1' is in real a file named 'some-file.txt', similarly 'file2', 'file3' etc.
-            # Without it, MultiProjectFocus treats 'file1' as 'file1.md', file2 as 'file2.md' etc.
+            # Thanks of it, MultiProjectFocus knows how to map particular file from CLI command ProjectCurrent.OpenFile(file:F1)
+            # to real file name 'main-notes.md'.
+            # Without it, MultiProjectFocus maps 'file1' to file name 'file1.md', file2 to 'file2.md' etc.
             #
             # To reset this file: remove it and restart the app. MultiProjectFocus will re-create this file.
             

@@ -28,15 +28,9 @@ class ProjectConfigServiceImpl(
         return ProjectConfig(fileNames)
     }
 
-    // todo: move "custom file names" config to 'global'
     private fun getDefaultProjectConfig(): ProjectConfig {
         val filesNames = ProjectFile.entries.associateWith { file ->
-            when (file) {
-                ProjectFile.File1 -> "main.md"
-                ProjectFile.File2 -> "dists.md"
-                ProjectFile.File3 -> "others.md"
-                else -> "file${file.ordinal}.md"
-            }
+            "file${file.ordinal}.md"
         }
         return ProjectConfig(filesNames)
     }

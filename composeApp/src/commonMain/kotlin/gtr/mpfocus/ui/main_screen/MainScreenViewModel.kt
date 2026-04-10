@@ -411,7 +411,8 @@ class MainScreenViewModel(
     private fun Project.toRowState(namedFiles: List<FileName>) = ProjectRow.State(
         projectId = projectId,
         pathText = folderPath.path.toString(),
-        availableNamedFiles = namedFiles,
+        selectedFile = ProjectFile.File1,
+        availableFiles = namedFiles,
         pinPosition = pinPosition,
     )
 

@@ -114,7 +114,7 @@ Open sources proves that the app **does not read** your files or any data, thus 
 
 1. Install [Java](https://www.oracle.com/java/technologies/downloads/#java25). Use any version between Java 17 and Java 25.  
    Don't use Java 26, as newest Kotlin is not yet compatible with it.
-2. Download [the source code](https://github.com/gt4dev/MultiProjectFocus/archive/refs/heads/main.zip).
+2. Download [this project source code](https://github.com/gt4dev/MultiProjectFocus/archive/refs/heads/main.zip).
 3. In the source code folder, run command:
 
     `gradlew createDistributable`  

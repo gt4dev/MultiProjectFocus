@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,10 +35,8 @@ object ProjectRow {
     data class State(
         val projectId: Long,
         val pathText: String,
-        val selectedFile: ProjectFile = ProjectFile.File1,
-        val availableFiles: List<ProjectFile> = ProjectFile.entries,
-        val selectedNamedFile: ProjectFile = ProjectFile.File1,
-        val availableNamedFiles: List<FileName> = defaultNamedFileOptions(),
+        val selectedFile: ProjectFile,
+        val availableFiles: List<FileName>,
         val pinPosition: Int? = null,
         val canSetAsCurrent: Boolean = true,
         val canMovePinnedUp: Boolean = false,
@@ -68,17 +65,6 @@ object ProjectRow {
         data class DeleteClicked(val projectId: Long) : Actions
         data class AddProjectClicked(val relatedProjectId: Long) : Actions
     }
-
-    fun defaultNamedFileOptions(): List<FileName> {
-        return ProjectFile.entries.map { file ->
-            FileName(
-                fileId = file,
-                fileName = placeholderFileLabel(file),
-            )
-        }
-    }
-
-    fun placeholderFileLabel(file: ProjectFile): String = "${file.ordinal} ..."
 }
 
 @Composable
@@ -116,24 +102,10 @@ fun ProjectRow(
                     Text("Open folder")
                 }
 
-                ProjectFilesSplitButton(
-                    splitButtonTag = ProjectRowTestTags.PRIMARY_FILE_SPLIT_BUTTON,
+                OpenFileSplitButton(
                     projectId = uiState.projectId,
                     initialSelectedFile = uiState.selectedFile,
-                    options = uiState.availableFiles.map { file ->
-                        FileName(
-                            fileId = file,
-                            fileName = file.name,
-                        )
-                    },
-                    onAction = onAction,
-                )
-
-                ProjectFilesSplitButton(
-                    splitButtonTag = ProjectRowTestTags.SECONDARY_FILE_SPLIT_BUTTON,
-                    projectId = uiState.projectId,
-                    initialSelectedFile = uiState.selectedNamedFile,
-                    options = uiState.availableNamedFiles,
+                    availableFiles = uiState.availableFiles,
                     onAction = onAction,
                 )
 
@@ -194,47 +166,37 @@ fun ProjectRow(
 }
 
 @Composable
-private fun ProjectFilesSplitButton(
-    splitButtonTag: String,
+private fun OpenFileSplitButton(
     projectId: Long,
     initialSelectedFile: ProjectFile,
-    options: List<FileName>,
+    availableFiles: List<FileName>,
     onAction: (ProjectRow.Actions) -> Unit,
 ) {
-    var selectedFile by remember(projectId, splitButtonTag) {
+    var selectedFile by remember {
         mutableStateOf(initialSelectedFile)
     }
 
-    LaunchedEffect(initialSelectedFile) {
-        selectedFile = initialSelectedFile
-    }
+    val currentOptionIdx = availableFiles.indexOfFirst { it.fileId == selectedFile }
 
-    val currentOptionIdx = options.indexOfFirst { it.fileId == selectedFile }
-        .takeIf { it >= 0 }
-
-    Box(modifier = Modifier.testTag(splitButtonTag)) {
-        OptionsSplitButton(
-            options = options.map { it.fileName },
-            currentOptionIdx = currentOptionIdx,
-            onOptionClicked = { optionIdx ->
-                if (optionIdx != null) {
-                    val clickedFile = options[optionIdx].fileId
-                    selectedFile = clickedFile
-                    onAction(
-                        ProjectRow.Actions.OpenFileClicked(
-                            projectId = projectId,
-                            file = clickedFile,
-                        )
+    OptionsSplitButton(
+        options = availableFiles.map { it.fileName },
+        currentOptionIdx = currentOptionIdx,
+        onOptionClicked = { optionIdx ->
+            if (optionIdx != null) {
+                val clickedFile = availableFiles[optionIdx].fileId
+                selectedFile = clickedFile
+                onAction(
+                    ProjectRow.Actions.OpenFileClicked(
+                        projectId = projectId,
+                        file = clickedFile,
                     )
-                }
+                )
             }
-        )
-    }
+        }
+    )
 }
 
 object ProjectRowTestTags {
-    const val PRIMARY_FILE_SPLIT_BUTTON = "project-row-primary-file-split-button"
-    const val SECONDARY_FILE_SPLIT_BUTTON = "project-row-secondary-file-split-button"
     fun row(projectId: Long): String = "project-row-$projectId"
     fun path(projectId: Long): String = "project-row-$projectId-path"
     fun buttonSetCurrent(projectId: Long): String = "project-row-$projectId-set-current"

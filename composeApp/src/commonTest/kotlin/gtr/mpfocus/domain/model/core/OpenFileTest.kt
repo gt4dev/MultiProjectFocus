@@ -55,7 +55,7 @@ class OpenFileTest {
 
                             `then 'file system mock' checks folder path exist'`()
                             `then 'file system mock' checks file path exist'`()
-                            `then 'operating system mock' opens file`("path/to/current-project/main.md")
+                            `then 'operating system mock' opens file`("path/to/current-project/file1.md")
                             `then model returns`("success")
                         }
 
@@ -85,7 +85,7 @@ class OpenFileTest {
 
                             `then 'file system mock' checks folder path exist'`()
                             `then 'file system mock' checks file path exist'`()
-                            `then 'operating system mock' opens file`("any/path/project333/main.md")
+                            `then 'operating system mock' opens file`("any/path/project333/file1.md")
                             `then model returns`("success")
                         }
 
@@ -116,7 +116,7 @@ class OpenFileTest {
 
                             `then 'file system mock' checks folder path exist'`()
                             `then 'file system mock' checks file path exist'`()
-                            `then 'operating system mock' opens file`("any/path/project555/main.md")
+                            `then 'operating system mock' opens file`("any/path/project555/file1.md")
                             `then model returns`("success")
                         }
 
@@ -217,7 +217,7 @@ class OpenFileTest {
                                     `then 'caller notification' receives`("no current project")
                                     `then 'file system mock' checks folder path exist'`()
                                     `then 'file system mock' checks file path exist'`()
-                                    `then 'operating system mock' opens file`("path/to/current-project/123/main.md")
+                                    `then 'operating system mock' opens file`("path/to/current-project/123/file1.md")
                                     `then model returns`("success")
                                 }
                             }
@@ -314,7 +314,7 @@ class OpenFileTest {
                                     `then 'file system mock' checks folder path exist'`()
                                     `then 'file system mock' checks file path exist'`()
                                     `then 'file system mock' checks file path exist'`()
-                                    `then 'operating system mock' opens file`("any/path/project333/main.md")
+                                    `then 'operating system mock' opens file`("any/path/project333/file1.md")
                                     `then model returns`("success")
                                 }
                             }

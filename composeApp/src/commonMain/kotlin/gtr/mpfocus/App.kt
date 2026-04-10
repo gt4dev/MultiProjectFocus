@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import gtr.mpfocus.domain.model.core.ProjectFile
+import gtr.mpfocus.domain.model.read.FileName
 import gtr.mpfocus.ui.composables.MessagePanelState
 import gtr.mpfocus.ui.composables.MessagePanelState.Tone
 import gtr.mpfocus.ui.composables.ProjectRow
@@ -26,39 +27,52 @@ private fun previewMainScreenState(): MainScreen.State {
             text = "Sample message panel. Use it for status, warnings, or next actions.",
             tone = Tone.Info,
         ),
-        currentProject = ProjectRow.State(
+        currentProject = previewRowState(
             projectId = 1,
             pathText = "c:\\projects\\product-a\\feature-xyz",
-            selectedFile = ProjectFile.File1,
             canSetAsCurrent = false,
         ),
         pinnedProjects = listOf(
-            ProjectRow.State(
+            previewRowState(
                 projectId = 2,
                 pathText = "c:\\projects\\product-b\\bugfix-123",
-                selectedFile = ProjectFile.File2,
                 canMovePinnedUp = false,
                 canMovePinnedDown = true,
             ),
-            ProjectRow.State(
+            previewRowState(
                 projectId = 3,
                 pathText = "c:\\projects\\personal\\writing",
-                selectedFile = ProjectFile.File1,
                 canMovePinnedUp = true,
                 canMovePinnedDown = false,
             ),
         ),
         otherProjects = listOf(
-            ProjectRow.State(
+            previewRowState(
                 projectId = 4,
                 pathText = "c:\\projects\\ops\\maintenance",
-                selectedFile = ProjectFile.File3,
             ),
-            ProjectRow.State(
+            previewRowState(
                 projectId = 5,
                 pathText = "c:\\projects\\home\\garden-plans",
-                selectedFile = ProjectFile.File1,
             ),
         ),
     )
 }
+
+private fun previewRowState(
+    projectId: Long,
+    pathText: String,
+    canSetAsCurrent: Boolean = true,
+    canMovePinnedUp: Boolean = false,
+    canMovePinnedDown: Boolean = false,
+    pinPosition: Int? = null,
+) = ProjectRow.State(
+    projectId = projectId,
+    pathText = pathText,
+    selectedFile = ProjectFile.File1,
+    availableFiles = ProjectFile.entries.map { FileName(it, "${it.ordinal} ...") },
+    canSetAsCurrent = canSetAsCurrent,
+    canMovePinnedUp = canMovePinnedUp,
+    canMovePinnedDown = canMovePinnedDown,
+    pinPosition = pinPosition,
+)

@@ -109,7 +109,7 @@ object MainScreenSteps {
         }
     }
 
-    fun HOTestCtx.`when 'open file' is clicked on project`(project: String, file: ProjectFile) {
+    fun HOTestCtx.`when button 'open file' is clicked for project and file`(project: String, fileName: String) {
         val cut: ComposeUiTest = koin.get()
         with(cut) {
             waitForIdle()
@@ -118,11 +118,10 @@ object MainScreenSteps {
 
             onNode(
                 hasTestTag(OptionsSplitButtonTestTags.TRAILING_BUTTON) and
-                    hasAnyAncestor(selectedRowMatcher) and
-                    hasAnyAncestor(hasTestTag(ProjectRowTestTags.PRIMARY_FILE_SPLIT_BUTTON)),
+                        hasAnyAncestor(selectedRowMatcher),
             ).assertExists().performClick()
 
-            onNodeWithText(file.name).assertExists().performClick()
+            onNodeWithText(fileName).assertExists().performClick()
             waitForIdle()
         }
     }

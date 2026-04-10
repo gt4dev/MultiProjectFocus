@@ -8,14 +8,13 @@ import dev.hotest.variants.variant
 import dev.hotest.variants.variants
 import gtr.mpfocus.domain.model.core.Models.Project
 import gtr.mpfocus.domain.model.core.ProjectActionsSteps.`given 'project actions mock' exists`
-import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns current project`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns other projects`
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns pinned projects`
 import gtr.mpfocus.hotest.koinAddObject
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`then is executed 'project actions' command`
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when 'main screen' is started`
-import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when 'open file' is clicked on project`
+import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when button 'open file' is clicked for project and file`
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
@@ -35,27 +34,27 @@ class MainScreenOpenFileTest {
 
                     variant("open file from current project") {
 
-                        `when 'open file' is clicked on project`(
+                        `when button 'open file' is clicked for project and file`(
                             "section 'current-project'",
-                            ProjectFile.File3
+                            "file3.md"
                         )
                         `then is executed 'project actions' command`("open file in current project, file: File3")
                     }
 
                     variant("open file from pinned project") {
 
-                        `when 'open file' is clicked on project`(
+                        `when button 'open file' is clicked for project and file`(
                             "section 'pinned-projects', position 2",
-                            ProjectFile.File3,
+                            "file3.md",
                         )
                         `then is executed 'project actions' command`("open file in pinned project, pin: 2, file: File3")
                     }
 
                     variant("open file from regular project") {
 
-                        `when 'open file' is clicked on project`(
+                        `when button 'open file' is clicked for project and file`(
                             "section 'other-projects', position 2",
-                            ProjectFile.File3,
+                            "file3.md",
                         )
                         `then is executed 'project actions' command`("open file in regular project, id: 555, file: File3")
                     }
