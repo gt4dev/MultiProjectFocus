@@ -67,7 +67,7 @@ object CommandParser {
         loadInitialDataPattern.matchEntire(command)?.let { match ->
             val path = match.groupValues[1]
             return LoadInitialData(
-                tomlFilePath = FilePath(path.toPath())
+                tomlFilePath = FilePath.create(path.toPath())
             )
         }
 

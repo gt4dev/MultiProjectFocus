@@ -80,7 +80,7 @@ object ProjectActionsSteps {
 
         val obj = mock<ProjectActions.CallerNotification>(MockMode.autofill)
         everySuspend { obj.noFolder() } returns toDecision(noFolderResponse)
-        everySuspend { obj.noFile() } returns toDecision(noFileResponse)
+        everySuspend { obj.noFile(any()) } returns toDecision(noFileResponse)
         everySuspend { obj.noCurrentProject() } returns toDecision(noCurrentProjectResponse)
         everySuspend { obj.noPinnedProject() } returns toDecision(noPinnedProjectResponse)
 
@@ -168,7 +168,7 @@ object ProjectActionsSteps {
         when (notification) {
             "no file" -> {
                 verifySuspend {
-                    callerNotification.noFile()
+                    callerNotification.noFile(any())
                 }
             }
 

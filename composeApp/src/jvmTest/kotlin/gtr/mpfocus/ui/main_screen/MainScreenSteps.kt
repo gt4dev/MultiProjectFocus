@@ -29,18 +29,23 @@ import gtr.mpfocus.hotest.CucumberExpressionMatcher
 import gtr.mpfocus.hotest.koinAddIfMissing
 import gtr.mpfocus.ui.composables.OptionsSplitButtonTestTags
 import gtr.mpfocus.ui.composables.ProjectRowTestTags
+import gtr.mpfocus.ui.create_file_dialog.CreateFileDialog
 
 @OptIn(ExperimentalTestApi::class)
 object MainScreenSteps {
 
-    fun HOTestCtx.`when 'main screen' is started`() {
+    fun HOTestCtx.`when 'main screen' is started`(
+        onCreateProjectDialogOpen: (Long?) -> Unit = { },
+        onCreateFileDialogOpen: (CreateFileDialog.StartParameters) -> Unit = { },
+    ) {
         val cut: ComposeUiTest = koin.get()
         val viewModelFactory = initMainScreenViewModelFactory()
         cut.setContent {
             MaterialTheme {
                 MainScreenContainer(
-                    viewModelFactory = viewModelFactory.create(),
-                    onCreateProjectDialogOpen = { }
+                    viewModelFactory = viewModelFactory.createFactory(),
+                    onCreateProjectDialogOpen = onCreateProjectDialogOpen,
+                    onCreateFileDialogOpen = onCreateFileDialogOpen,
                 )
             }
         }
@@ -216,7 +221,7 @@ object MainScreenSteps {
         return hasTestTag(rowTag)
     }
 
-    private fun HOTestCtx.initMainScreenViewModelFactory(): MainScreenViewModelFactory {
+    private fun HOTestCtx.initMainScreenViewModelFactory(): MainScreenViewModelFactoryProvider {
         koinAddIfMissing<ProjectConfigService> {
             ProjectConfigServiceImpl(
                 GlobalProjectConfigService.NullConfig,
@@ -229,7 +234,7 @@ object MainScreenSteps {
         }
 
         return koinAddIfMissing {
-            MainScreenViewModelFactory(
+            MainScreenViewModelFactoryProvider(
                 koin.get(),
                 koin.get(),
                 koin.get(),

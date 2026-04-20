@@ -131,7 +131,7 @@ object FileSystemActionsSteps {
             }
         } else {
             verifySuspend {
-                obj.openFile(FilePath(path.toPath()))
+                obj.openFile(FilePath.create(path.toPath()))
             }
         }
     }

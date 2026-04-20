@@ -13,6 +13,7 @@ import gtr.mpfocus.domain.model.read.FileName
 import gtr.mpfocus.domain.model.read.ProjectReadModel
 import gtr.mpfocus.domain.model.read.ProjectWithFileNames
 import gtr.mpfocus.domain.repository.ProjectRepository
+import gtr.mpfocus.system_actions.FilePath
 import gtr.mpfocus.ui.composables.CurrentProjectSectionUiActions
 import gtr.mpfocus.ui.composables.DeleteProjectDialog
 import gtr.mpfocus.ui.composables.MessagePanelState
@@ -22,6 +23,7 @@ import gtr.mpfocus.ui.composables.PinnedProjectsSectionUiActions
 import gtr.mpfocus.ui.composables.ProjectRow
 import gtr.mpfocus.ui.composables.ScreenHeaderUiActions
 import gtr.mpfocus.ui.createScopeWithExceptionHandler
+import gtr.mpfocus.ui.create_file_dialog.CreateFileDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,6 @@ class MainScreenViewModel(
     private val projectReadModel: ProjectReadModel,
     initialMessage: MessagePanelState? = null,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
-    private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreen.State(message = initialMessage))
@@ -50,8 +51,34 @@ class MainScreenViewModel(
 
     private var pendingDeleteProjectId: Long? = null
 
-    private val _effects = MutableSharedFlow<MainScreenEffect>()
+    private val _effects = MutableSharedFlow<MainScreenEffect>(extraBufferCapacity = 1)
     val effects: SharedFlow<MainScreenEffect> = _effects.asSharedFlow()
+
+    private val projectActionCallerNotification = object : ProjectActions.CallerNotification {
+        override suspend fun noFolder(): ProjectActions.CallerNotification.CallerDecision {
+            return ProjectActions.CallerNotification.CallerDecision.Cancel
+        }
+
+        override suspend fun noFile(filePath: FilePath): ProjectActions.CallerNotification.CallerDecision {
+            emitEffect(
+                MainScreenEffect.CreateFileDialogRequested(
+                    startParameters = CreateFileDialog.StartParameters(
+                        extraInfo = null,
+                        file = filePath,
+                    )
+                )
+            )
+            return ProjectActions.CallerNotification.CallerDecision.Cancel
+        }
+
+        override suspend fun noCurrentProject(): ProjectActions.CallerNotification.CallerDecision {
+            return ProjectActions.CallerNotification.CallerDecision.Cancel
+        }
+
+        override suspend fun noPinnedProject(): ProjectActions.CallerNotification.CallerDecision {
+            return ProjectActions.CallerNotification.CallerDecision.Cancel
+        }
+    }
 
     private val viewModelScopeWithExceptionHandler: CoroutineScope =
         viewModelScope.createScopeWithExceptionHandler(
@@ -289,7 +316,7 @@ class MainScreenViewModel(
         viewModelScopeWithExceptionHandler.launch {
             when (val result = action()) {
                 ActionResult.Success -> Unit
-                ActionResult.NoFileError -> showError("requested file was not found")
+                ActionResult.NoFileError -> {}
                 is ActionResult.Error -> showError(result.msg)
             }
         }
@@ -325,9 +352,7 @@ class MainScreenViewModel(
     }
 
     private fun onOpenCreateProjectDialog(relatedProjectId: Long?) {
-        viewModelScopeWithExceptionHandler.launch {
-            _effects.emit(MainScreenEffect.CreateProjectDialogRequested(relatedProjectId))
-        }
+        emitEffect(MainScreenEffect.CreateProjectDialogRequested(relatedProjectId))
     }
 
     private fun onMovePinnedProjectUp(projectId: Long) {
@@ -386,6 +411,12 @@ class MainScreenViewModel(
 
     private fun showInfo(text: String) {
         _uiState.update { it.copy(message = MessagePanelState(text = text)) }
+    }
+
+    private fun emitEffect(effect: MainScreenEffect) {
+        viewModelScopeWithExceptionHandler.launch {
+            _effects.emit(effect)
+        }
     }
 
     private fun showError(text: String) {
@@ -461,14 +492,16 @@ class MainScreenViewModel(
     }
 }
 
-class MainScreenViewModelFactory(
+
+class MainScreenViewModelFactoryProvider(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     private val projectReadModel: ProjectReadModel,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
-    private val projectActionCallerNotification: ProjectActions.CallerNotification = ProjectActions.CallerNotification.CancelAll,
 ) {
-    fun create(initialMessage: MessagePanelState? = null): ViewModelProvider.Factory {
+    fun createFactory(
+        initialMessage: MessagePanelState? = null,
+    ): ViewModelProvider.Factory {
         return viewModelFactory {
             initializer {
                 MainScreenViewModel(
@@ -477,7 +510,6 @@ class MainScreenViewModelFactory(
                     projectReadModel = projectReadModel,
                     initialMessage = initialMessage,
                     projectActionPreferences = projectActionPreferences,
-                    projectActionCallerNotification = projectActionCallerNotification,
                 )
             }
         }

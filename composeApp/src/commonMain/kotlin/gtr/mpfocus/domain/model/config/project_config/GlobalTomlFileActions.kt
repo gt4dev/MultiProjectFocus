@@ -10,19 +10,19 @@ class GlobalTomlFileActions(
 ) {
 
     fun fileExists(): Boolean {
-        val filePath = FilePath(appMainFolder.path / FILE_NAME)
+        val filePath = FilePath(FILE_NAME, appMainFolder)
         return fileSystemActions.pathExists(filePath)
     }
 
     fun createFile() {
         fileSystemActions.createFolder(appMainFolder)
-        val filePath = FilePath(appMainFolder.path / FILE_NAME)
+        val filePath = FilePath(FILE_NAME, appMainFolder)
         fileSystemActions.createFile(filePath)
         fileSystemActions.writeContent(filePath, FILE_DEFAULT_CONTENT)
     }
 
     fun readFileContent(): String {
-        val filePath = FilePath(appMainFolder.path / FILE_NAME)
+        val filePath = FilePath(FILE_NAME, appMainFolder)
         return fileSystemActions.readFile(filePath)
     }
 
@@ -33,8 +33,7 @@ class GlobalTomlFileActions(
             # This file sets global file names used in projects in MultiProjectFocus.
             # Feel free to name project files in any way you like.
             #
-            # Thanks of it, MultiProjectFocus knows how to map particular file from CLI command ProjectCurrent.OpenFile(file:F1)
-            # to real file name 'main-notes.md'.
+            # Thanks of it, MultiProjectFocus knows which real file to open when you call CLI command like eg: ProjectCurrent.OpenFile(file:F1)
             # Without it, MultiProjectFocus maps 'file1' to file name 'file1.md', file2 to 'file2.md' etc.
             #
             # To reset this file: remove it and restart the app. MultiProjectFocus will re-create this file.

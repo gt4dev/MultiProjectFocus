@@ -13,7 +13,6 @@ import gtr.mpfocus.system_actions.FileSystemActions
 import gtr.mpfocus.system_actions.FolderPath
 import gtr.mpfocus.system_actions.OperatingSystemActions
 import kotlinx.coroutines.flow.first
-import okio.Path.Companion.toPath
 
 
 data class NoFileException(
@@ -90,7 +89,7 @@ class ProjectActionsImpl(
     ): Result<FilePath> {
         val projectConfig = configService.getProjectConfig(project.folderPath)
         val fileName = projectConfig.fileName(file)
-        val filePath = FilePath("${project.folderPath.path}/$fileName".toPath())
+        val filePath = FilePath(fileName, project.folderPath)
         if (fileSystemActions.pathExists(filePath)) {
             return Result.success(filePath)
         }
@@ -98,7 +97,7 @@ class ProjectActionsImpl(
         when (actionPreferences.ifNoFileOrFolder) {
             PrefValue.ReturnError -> return Result.failure(NoFileException(filePath))
             PrefValue.NotifyCaller -> {
-                when (callerNotification.noFile()) {
+                when (callerNotification.noFile(filePath)) {
                     CallerDecision.Cancel -> return Result.failure(NoFileException(filePath))
                     CallerDecision.Continue -> Unit
                 }

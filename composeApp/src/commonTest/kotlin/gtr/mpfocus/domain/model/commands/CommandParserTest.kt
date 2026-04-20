@@ -2,6 +2,7 @@ package gtr.mpfocus.domain.model.commands
 
 import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.system_actions.FilePath
+import gtr.mpfocus.system_actions.FolderPath
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -87,11 +88,12 @@ class CommandParserTest {
         assertEquals(
             LoadInitialData(
                 FilePath(
-                    """c:\path to\folder with\init-config.toml""".toPath()
+                    fileName = "init-config.toml",
+                    folderPath = FolderPath("""c:\path to\folder123""".toPath())
                 )
             ),
             CommandParser.parse(
-                """LoadInitialData(file:c:\path to\folder with\init-config.toml)"""
+                """LoadInitialData(file:c:\path to\folder123\init-config.toml)"""
             )
         )
     }

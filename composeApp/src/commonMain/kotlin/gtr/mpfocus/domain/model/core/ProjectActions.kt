@@ -1,5 +1,7 @@
 package gtr.mpfocus.domain.model.core
 
+import gtr.mpfocus.system_actions.FilePath
+
 sealed class ActionResult {
     object Success : ActionResult()
     object NoFileError : ActionResult()
@@ -47,14 +49,14 @@ interface ProjectActions {
 
     interface CallerNotification {
         suspend fun noFolder(): CallerDecision
-        suspend fun noFile(): CallerDecision
+        suspend fun noFile(filePath: FilePath): CallerDecision
         suspend fun noCurrentProject(): CallerDecision
         suspend fun noPinnedProject(): CallerDecision
 
         object CancelAll : CallerNotification {
             override suspend fun noFolder() = CallerDecision.Cancel
 
-            override suspend fun noFile() = CallerDecision.Cancel
+            override suspend fun noFile(filePath: FilePath) = CallerDecision.Cancel
 
             override suspend fun noCurrentProject() = CallerDecision.Cancel
 

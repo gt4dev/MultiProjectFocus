@@ -21,3 +21,4 @@ appBin/
 /assets/projects.real.toml
 .gradle-user-home/*
 .android-user-home/*
+.skiko/*
