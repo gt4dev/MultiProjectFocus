@@ -1,10 +1,22 @@
 package gtr.mpfocus.ui.composables
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.PushPin
-import androidx.compose.material3.*
+import androidx.compose.material3.Badge
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,21 +73,34 @@ internal fun EmptySectionText(
 @Composable
 internal fun PinButton(
     isPinned: Boolean,
+    pinPosition: Int? = null,
     onPinSwitch: () -> Unit,
 ) {
-    FilledTonalIconButton(
-        onClick = onPinSwitch,
-    ) {
-        if (isPinned) {
-            Icon(
-                imageVector = Icons.Filled.PushPin,
-                contentDescription = "Unpin project",
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Outlined.PushPin,
-                contentDescription = "Pin project",
-            )
+    Box {
+        FilledTonalIconButton(
+            onClick = onPinSwitch,
+        ) {
+            if (isPinned) {
+                Icon(
+                    imageVector = Icons.Filled.PushPin,
+                    contentDescription = "Unpin project",
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Outlined.PushPin,
+                    contentDescription = "Pin project",
+                )
+            }
+        }
+
+        if (pinPosition != null) {
+            Badge(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = (-2).dp, y = 2.dp),
+            ) {
+                Text(pinPosition.toString())
+            }
         }
     }
 }

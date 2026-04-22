@@ -110,7 +110,8 @@ fun ProjectRow(
                 )
 
                 PinButton(
-                    uiState.isPinned,
+                    isPinned = uiState.isPinned,
+                    pinPosition = uiState.pinPosition,
                     onPinSwitch = {
                         onAction(ProjectRow.Actions.TogglePinnedClicked(uiState.projectId))
                     },
