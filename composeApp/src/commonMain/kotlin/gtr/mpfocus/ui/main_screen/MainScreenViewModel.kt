@@ -85,27 +85,6 @@ class MainScreenViewModel(
             onException = ::onException
         )
 
-    private val currentProject = projectRepository.getCurrentProject()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-            initialValue = null,
-        )
-
-    private val pinnedProjects = projectRepository.getPinnedProjects()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-            initialValue = emptyList(),
-        )
-
-    private val otherProjects = projectRepository.getOtherProjects()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-            initialValue = emptyList(),
-        )
-
     private val currentProjectWithFileNames = projectReadModel.getCurrentProject()
         .stateIn(
             scope = viewModelScope,
@@ -323,9 +302,8 @@ class MainScreenViewModel(
     }
 
     private fun onTogglePinnedProject(projectId: Long) {
-        // todo: move to 'model' PinnedService
         viewModelScopeWithExceptionHandler.launch {
-            val currentPinned = pinnedProjects.value
+            val currentPinned = pinnedProjectsWithFileNames.value.map(ProjectWithFileNames::project)
             if (currentPinned.any { it.projectId == projectId }) {
                 repinProjects(currentPinned.filterNot { it.projectId == projectId })
             } else {
@@ -367,9 +345,10 @@ class MainScreenViewModel(
         projectId: Long,
         offset: Int,
     ) {
-        // todo: move to PinnedService
         viewModelScopeWithExceptionHandler.launch {
-            val currentPinned = pinnedProjects.value.toMutableList()
+            val currentPinned = pinnedProjectsWithFileNames.value
+                .map(ProjectWithFileNames::project)
+                .toMutableList()
             val currentIndex = currentPinned.indexOfFirst { it.projectId == projectId }
             if (currentIndex == -1) {
                 return@launch
