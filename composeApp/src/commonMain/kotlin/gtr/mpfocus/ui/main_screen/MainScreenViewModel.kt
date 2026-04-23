@@ -422,9 +422,18 @@ class MainScreenViewModel(
         projectId = projectId,
         pathText = folderPath.path.toString(),
         selectedFile = ProjectFile.File1,
-        availableFiles = namedFiles,
+        availableFiles = namedFiles.sortBy1To9Then0(),
         pinPosition = pinPosition,
     )
+
+    private fun List<FileName>.sortBy1To9Then0(): List<FileName> =
+        sortedBy { fileName ->
+            if (fileName.fileId == ProjectFile.File0) {
+                Int.MAX_VALUE
+            } else {
+                fileName.fileId.ordinal
+            }
+        }
 
     private fun ProjectWithFileNames.toRowState(): ProjectRow.State =
         project.toRowState(namedFiles = fileNames)

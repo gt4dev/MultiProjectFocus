@@ -9,10 +9,12 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.semantics.getOrNull
 import dev.hotest.HOTestCtx
 import dev.mokkery.matcher.any
 import dev.mokkery.verifySuspend
@@ -30,6 +32,7 @@ import gtr.mpfocus.hotest.koinAddIfMissing
 import gtr.mpfocus.ui.composables.OptionsSplitButtonTestTags
 import gtr.mpfocus.ui.composables.ProjectRowTestTags
 import gtr.mpfocus.ui.create_file_dialog.CreateFileDialog
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalTestApi::class)
 object MainScreenSteps {
@@ -106,7 +109,7 @@ object MainScreenSteps {
             waitForIdle()
             val selectedRowMatcher = findProjectRowMatcher(project)
             onNode(
-                hasText("Open folder") and hasAnyAncestor(selectedRowMatcher),
+                hasText("Folder") and hasAnyAncestor(selectedRowMatcher),
                 useUnmergedTree = true,
             ).assertExists().performClick()
 
@@ -126,8 +129,35 @@ object MainScreenSteps {
                         hasAnyAncestor(selectedRowMatcher),
             ).assertExists().performClick()
 
-            onNodeWithText(fileName).assertExists().performClick()
+            onNode(hasText(fileName, substring = true)).assertExists().performClick()
             waitForIdle()
+        }
+    }
+
+    fun HOTestCtx.`then 'open file' options for project are`(project: String, vararg expectedOptions: String) {
+        val cut: ComposeUiTest = koin.get()
+        with(cut) {
+            waitForIdle()
+            val selectedRowMatcher = findProjectRowMatcher(project)
+            onNode(selectedRowMatcher, useUnmergedTree = true).performScrollTo()
+
+            onNode(
+                hasTestTag(OptionsSplitButtonTestTags.TRAILING_BUTTON) and
+                        hasAnyAncestor(selectedRowMatcher),
+            ).assertExists().performClick()
+
+            waitForIdle()
+
+            val actualOptions = onAllNodesWithTag(
+                OptionsSplitButtonTestTags.DROPDOWN_ROW,
+                useUnmergedTree = false,
+            ).fetchSemanticsNodes().map { node ->
+                node.config.getOrNull(SemanticsProperties.Text)
+                    .orEmpty()
+                    .joinToString(separator = "") { annotatedString -> annotatedString.text }
+            }
+
+            assertEquals(expectedOptions.toList(), actualOptions)
         }
     }
 

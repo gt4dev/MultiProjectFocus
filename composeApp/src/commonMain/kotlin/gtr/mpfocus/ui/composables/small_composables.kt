@@ -11,12 +11,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,5 +108,36 @@ internal fun PinButton(
                 Text(pinPosition.toString())
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun SimpleTooltip(
+    text: String?,
+    content: @Composable () -> Unit,
+) {
+    if (text.isNullOrBlank()) {
+        content()
+        return
+    }
+
+    TooltipBox(
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above,
+            ),
+        tooltip = {
+            PlainTooltip(
+                maxWidth = 320.dp,
+            ) {
+                Text(
+                    text = text
+                )
+            }
+        },
+        state = rememberTooltipState(),
+    ) {
+        content()
     }
 }

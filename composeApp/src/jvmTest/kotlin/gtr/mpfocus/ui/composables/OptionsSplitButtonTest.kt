@@ -23,12 +23,13 @@ class OptionsSplitButtonTest {
                 OptionsSplitButton(
                     options = sampleOptions,
                     currentOptionIdx = 3,
+                    leadingButtonText = "leading btn text",
                     onOptionClicked = {},
                 )
             }
         }
 
-        onNodeWithText("Open option idx 3").assertIsDisplayed()
+        onNodeWithText("leading btn text").assertIsDisplayed()
         onNodeWithTag(OptionsSplitButtonTestTags.TRAILING_BUTTON).performClick()
 
         waitForIdle()
@@ -45,6 +46,7 @@ class OptionsSplitButtonTest {
                 OptionsSplitButton(
                     options = sampleOptions,
                     currentOptionIdx = 3,
+                    leadingButtonText = "leading btn text",
                     onOptionClicked = { selectedOptionIdx ->
                         clickedOptionIdx = selectedOptionIdx
                     },
@@ -52,7 +54,7 @@ class OptionsSplitButtonTest {
             }
         }
 
-        onNodeWithText("Open option idx 3").assertIsDisplayed()
+        onNodeWithText("leading btn text").assertIsDisplayed()
         onNodeWithTag(OptionsSplitButtonTestTags.LEADING_BUTTON).performClick()
 
         waitForIdle()
@@ -69,6 +71,7 @@ class OptionsSplitButtonTest {
                 OptionsSplitButton(
                     options = sampleOptions,
                     currentOptionIdx = 3,
+                    leadingButtonText = "leading btn text",
                     onOptionClicked = { selectedOptionIdx ->
                         clickedOptionIdx = selectedOptionIdx
                     },

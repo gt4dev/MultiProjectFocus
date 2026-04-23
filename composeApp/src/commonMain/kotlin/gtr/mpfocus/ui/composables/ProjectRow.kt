@@ -91,16 +91,22 @@ fun ProjectRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                OutlinedButton(
-                    modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
-                    onClick = { onAction(ProjectRow.Actions.SetCurrentClicked(uiState.projectId)) },
-                    enabled = uiState.canSetAsCurrent,
-                ) {
-                    Text("Set current")
+                SimpleTooltip(text = "Set the project as 'current project'.") {
+                    OutlinedButton(
+                        modifier = Modifier.testTag(ProjectRowTestTags.buttonSetCurrent(uiState.projectId)),
+                        onClick = { onAction(ProjectRow.Actions.SetCurrentClicked(uiState.projectId)) },
+                        enabled = uiState.canSetAsCurrent,
+                    ) {
+                        Text("Set current")
+                    }
                 }
-                OutlinedButton(onClick = { onAction(ProjectRow.Actions.OpenFolderClicked(uiState.projectId)) }) {
-                    Text("Open folder")
+
+                SimpleTooltip(text = "Open the project folder.") {
+                    OutlinedButton(onClick = { onAction(ProjectRow.Actions.OpenFolderClicked(uiState.projectId)) }) {
+                        Text("Folder")
+                    }
                 }
+
 
                 OpenFileSplitButton(
                     projectId = uiState.projectId,
@@ -178,10 +184,17 @@ private fun OpenFileSplitButton(
     }
 
     val currentOptionIdx = availableFiles.indexOfFirst { it.fileId == selectedFile }
+    val buttonOptions = availableFiles.map(::createButtonOption)
+    val selectedFileLabel = buttonOptions
+        .getOrNull(currentOptionIdx)
+        ?: "..."
 
     OptionsSplitButton(
-        options = availableFiles.map { it.fileName },
+        options = buttonOptions,
         currentOptionIdx = currentOptionIdx,
+        leadingButtonText = selectedFileLabel,
+        leadingButtonDescription = "Open the project file.",
+        trailingButtonDescription = "Open another the project file.",
         onOptionClicked = { optionIdx ->
             if (optionIdx != null) {
                 val clickedFile = availableFiles[optionIdx].fileId
@@ -196,6 +209,9 @@ private fun OpenFileSplitButton(
         }
     )
 }
+
+private fun createButtonOption(fileName: FileName): String =
+    "File ${fileName.fileId.ordinal}: ${fileName.fileName}"
 
 object ProjectRowTestTags {
     fun row(projectId: Long): String = "project-row-$projectId"

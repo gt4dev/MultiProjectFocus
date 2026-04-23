@@ -13,6 +13,7 @@ import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository 
 import gtr.mpfocus.domain.repository.RepositorySteps.`given 'project repository mock' returns pinned projects`
 import gtr.mpfocus.hotest.koinAddObject
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`then is executed 'project actions' command`
+import gtr.mpfocus.ui.main_screen.MainScreenSteps.`then 'open file' options for project are`
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when 'main screen' is started`
 import gtr.mpfocus.ui.main_screen.MainScreenSteps.`when button 'open file' is clicked for project and file`
 import kotlin.test.Test
@@ -59,6 +60,24 @@ class MainScreenOpenFileTest {
                         `then is executed 'project actions' command`("open file in regular project, id: 555, file: File3")
                     }
                 }
+            }
+        }
+    }
+
+    @Test
+    fun `open file dropdown shows File1 to File9 and File0 last`() {
+        hotest {
+            runComposeUiTest {
+                koinAddObject(this)
+
+                `set up test`()
+
+                `when 'main screen' is started`()
+
+                `then 'open file' options for project are`(
+                    "section 'current-project'",
+                    *((1..9).map { "File $it: file$it.md" } + "File 0: file0.md").toTypedArray(),
+                )
             }
         }
     }
