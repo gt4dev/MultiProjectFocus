@@ -1,7 +1,5 @@
 # Multi Project Focus [MPF]
 
-#
-
 > **MPF is a safe and privacy-friendly app.**
 >
 > • **MPF does not read the contents** of your projects.  
@@ -16,6 +14,13 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Others](#others)
+
+# Video introduction
+
+<a href="https://youtu.be/IZDgkaZPkcc">
+    <img src="./assets/docs/yt-intro-thumbnail.png" width="80%" alt="video introduction to MPF">
+</a>
+
 
 # Core idea
 
@@ -107,6 +112,13 @@ Example:
 
 # Installation
 
+Installation consists of two steps:
+1. building the app from source code
+2. installing a hotkey manager app
+
+Building the app from source code assure you that MPF is safe - fully transparent.  
+In case of problems - please, let us know - best through [the issues page](https://github.com/gt4dev/MultiProjectFocus/issues).
+
 ## 1. Build MPF app
 
 The app is provided as source code to build yourself.  
@@ -173,16 +185,19 @@ MultiPorojectFocus.exe "ProjectPinned(pinPosition:3).OpenFile(file:F7)"
 ```
 
 
-Below table list hot key [definied here](./AutoHotKey/MultiProjectFocus.ahk), ready to use to call MPF commands.  
-So you can quickly access any of your project.
+## Default hot keys
+Below table list hot key [definied here](./AutoHotKey/MultiProjectFocus.ahk), ready to use.  
+
 
 | Shortcut                                  | Action                                                |
 |-------------------------------------------|-------------------------------------------------------|
+| **General**                               |                                                       |
+| `CapsLock + A`                            | Open MPF app                                          |
 | **Current project commands**              |                                                       |
 | `CapsLock + F`                            | Open current project folder                           |
 | `CapsLock + 1`                            | Open current project file 1                           |
 | `CapsLock + 2`                            | Open current project file 2                           |
-| `CapsLock + 3`, `..4`, `..5`              | Open current project files 3, 4, 5                |
+| `CapsLock + 3`, up to: ... 8, 9           | Open current project files 3, up to: ... 8, 9         |
 | **Pinned project commands**               |                                                       |
 | `CapsLock + P, {pin position}, F`         | Open pinned project `{pin position}` folder           |
 | `CapsLock + P, {pin position}, {file nr}` | Open pinned project `{pin position}` file `{file nr}` |
@@ -190,9 +205,6 @@ So you can quickly access any of your project.
 | `CapsLock + P, 1, 2`                      | Open pinned project 1 file 2                          |
 | `CapsLock + P, 3, 5`                      | Open pinned project 3 file 5                          |
 | `CapsLock + P, 4, F`                      | Open pinned project 4 folder                          |
-| **Load data into MPF commands**                   |                                                       |
-| `CapsLock + L`                            | Populate MPF database from a TOML file                |
-| `CapsLock + O`                            | Open TOML file for editing                            |
 
 # Others
 

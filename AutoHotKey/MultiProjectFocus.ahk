@@ -12,8 +12,8 @@ if !FileExist(mpfExePath) {
 }
 
 
-; `CapsLock u` - opens UI
-CapsLock & u::
+; `CapsLock a` - opens UI
+CapsLock & a::
 {
     windowSelector := "Multi Project Focus ahk_exe MultiProjectFocus.exe"
     if WinExist(windowSelector) {
