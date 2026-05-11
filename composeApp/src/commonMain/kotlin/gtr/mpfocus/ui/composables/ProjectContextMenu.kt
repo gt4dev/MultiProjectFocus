@@ -4,8 +4,16 @@ package gtr.mpfocus.ui.composables
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import gtr.mpfocus.ui.core.UiActions
 
 object ProjectContextMenu {
@@ -14,6 +22,8 @@ object ProjectContextMenu {
         data object DeleteClicked : Actions
 
         data object AddProjectClicked : Actions
+
+        data object ProjectConfigClicked : Actions
     }
 }
 
@@ -35,17 +45,24 @@ fun ProjectContextMenu(
             onDismissRequest = { expanded = false },
         ) {
             DropdownMenuItem(
-                text = { Text("Add project ...") },
+                text = { Text("Add project...") },
                 onClick = {
                     expanded = false
                     onAction(ProjectContextMenu.Actions.AddProjectClicked)
                 },
             )
             DropdownMenuItem(
-                text = { Text("Delete ...") },
+                text = { Text("Delete...") },
                 onClick = {
                     expanded = false
                     onAction(ProjectContextMenu.Actions.DeleteClicked)
+                },
+            )
+            DropdownMenuItem(
+                text = { Text("Project config") },
+                onClick = {
+                    expanded = false
+                    onAction(ProjectContextMenu.Actions.ProjectConfigClicked)
                 },
             )
         }

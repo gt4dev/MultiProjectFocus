@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import gtr.mpfocus.domain.model.config.GlobalProjectConfigService
+import gtr.mpfocus.domain.model.config.LocalProjectConfigService
 import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.domain.model.core.ProjectActions
@@ -42,6 +44,8 @@ class MainScreenViewModel(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     private val projectReadModel: ProjectReadModel,
+    private val localProjectConfigService: LocalProjectConfigService,
+    private val globalProjectConfigService: GlobalProjectConfigService,
     initialMessage: MessagePanelState? = null,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
 ) : ViewModel() {
@@ -124,6 +128,7 @@ class MainScreenViewModel(
     private fun onScreenHeaderAction(action: ScreenHeaderUiActions) {
         when (action) {
             ScreenHeaderUiActions.AddProjectClicked -> onOpenCreateProjectDialog(null)
+            ScreenHeaderUiActions.ProjectConfigClicked -> onOpenProjectGlobalConfig()
         }
     }
 
@@ -201,6 +206,7 @@ class MainScreenViewModel(
             is ProjectRow.Actions.FileSelected -> onSelectProjectFile(action.projectId, action.file)
             is ProjectRow.Actions.MovePinnedDownClicked -> onMovePinnedProjectDown(action.projectId)
             is ProjectRow.Actions.MovePinnedUpClicked -> onMovePinnedProjectUp(action.projectId)
+            is ProjectRow.Actions.ProjectConfigClicked -> onOpenProjectLocalConfig(action.projectId)
             is ProjectRow.Actions.SetCurrentClicked -> onSetCurrentProject(action.projectId)
             is ProjectRow.Actions.TogglePinnedClicked -> onTogglePinnedProject(action.projectId)
             is ProjectRow.Actions.OpenFileClicked -> Unit
@@ -331,6 +337,18 @@ class MainScreenViewModel(
 
     private fun onOpenCreateProjectDialog(relatedProjectId: Long?) {
         emitEffect(MainScreenEffect.CreateProjectDialogRequested(relatedProjectId))
+    }
+
+    private fun onOpenProjectLocalConfig(projectId: Long) {
+        viewModelScopeWithExceptionHandler.launch {
+            localProjectConfigService.openConfigFile(projectId)
+        }
+    }
+
+    private fun onOpenProjectGlobalConfig() {
+        viewModelScopeWithExceptionHandler.launch {
+            globalProjectConfigService.openConfigFile()
+        }
     }
 
     private fun onMovePinnedProjectUp(projectId: Long) {
@@ -485,6 +503,8 @@ class MainScreenViewModelFactoryProvider(
     private val projectRepository: ProjectRepository,
     private val projectActions: ProjectActions,
     private val projectReadModel: ProjectReadModel,
+    private val localProjectConfigService: LocalProjectConfigService,
+    private val globalProjectConfigService: GlobalProjectConfigService,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
 ) {
     fun createFactory(
@@ -496,6 +516,8 @@ class MainScreenViewModelFactoryProvider(
                     projectRepository = projectRepository,
                     projectActions = projectActions,
                     projectReadModel = projectReadModel,
+                    localProjectConfigService = localProjectConfigService,
+                    globalProjectConfigService = globalProjectConfigService,
                     initialMessage = initialMessage,
                     projectActionPreferences = projectActionPreferences,
                 )

@@ -4,10 +4,13 @@ import gtr.mpfocus.domain.model.config.AppConfigService
 import gtr.mpfocus.domain.model.config.GlobalProjectConfigService
 import gtr.mpfocus.domain.model.config.GlobalProjectConfigServiceImpl
 import gtr.mpfocus.domain.model.config.LocalProjectConfigService
+import gtr.mpfocus.domain.model.config.LocalProjectConfigServiceImpl
 import gtr.mpfocus.domain.model.config.ProjectConfigService
 import gtr.mpfocus.domain.model.config.ProjectConfigServiceImpl
 import gtr.mpfocus.domain.model.config.project_config.GlobalTomlFileActions
 import gtr.mpfocus.domain.model.config.project_config.GlobalTomlParser
+import gtr.mpfocus.domain.model.config.project_config.LocalTomlFileActions
+import gtr.mpfocus.domain.model.config.project_config.LocalTomlParser
 import gtr.mpfocus.domain.model.core.CreateProjectService
 import gtr.mpfocus.domain.model.core.CreateProjectServiceImpl
 import gtr.mpfocus.domain.model.core.ProjectActions
@@ -24,10 +27,13 @@ fun domainModule() = module {
             get<AppConfigService>().getAppMainFolder()
         )
     }
+    single { LocalTomlFileActions(get()) }
     single { GlobalTomlParser() }
-    single<GlobalProjectConfigService> { GlobalProjectConfigServiceImpl(get(), get()) }
-    single<LocalProjectConfigService> { LocalProjectConfigService.NullConfig }
+    single { LocalTomlParser() }
+    single<GlobalProjectConfigService> { GlobalProjectConfigServiceImpl(get(), get(), get()) }
+    single<LocalProjectConfigService> { LocalProjectConfigServiceImpl(get(), get(), get(), get()) }
     single<ProjectConfigService> { ProjectConfigServiceImpl(get(), get()) }
+
     single<CreateProjectService> { CreateProjectServiceImpl(get(), get()) }
     single<ProjectActions> { ProjectActionsImpl(get(), get(), get(), get()) }
     single<ProjectReadModel> { ProjectReadModelImpl(get(), get()) }

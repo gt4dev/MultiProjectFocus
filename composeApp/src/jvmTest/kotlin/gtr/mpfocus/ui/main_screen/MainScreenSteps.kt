@@ -2,6 +2,7 @@ package gtr.mpfocus.ui.main_screen
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
@@ -11,10 +12,8 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import androidx.compose.ui.semantics.getOrNull
 import dev.hotest.HOTestCtx
 import dev.mokkery.matcher.any
 import dev.mokkery.verifySuspend
@@ -252,10 +251,18 @@ object MainScreenSteps {
     }
 
     private fun HOTestCtx.initMainScreenViewModelFactory(): MainScreenViewModelFactoryProvider {
+        koinAddIfMissing<GlobalProjectConfigService> {
+            GlobalProjectConfigService.NullConfig
+        }
+
+        koinAddIfMissing<LocalProjectConfigService> {
+            LocalProjectConfigService.NullConfig
+        }
+
         koinAddIfMissing<ProjectConfigService> {
             ProjectConfigServiceImpl(
-                GlobalProjectConfigService.NullConfig,
-                LocalProjectConfigService.NullConfig
+                koin.get(),
+                koin.get()
             )
         }
 
@@ -265,6 +272,8 @@ object MainScreenSteps {
 
         return koinAddIfMissing {
             MainScreenViewModelFactoryProvider(
+                koin.get(),
+                koin.get(),
                 koin.get(),
                 koin.get(),
                 koin.get(),

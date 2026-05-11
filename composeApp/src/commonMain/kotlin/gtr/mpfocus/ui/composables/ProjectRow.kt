@@ -64,6 +64,7 @@ object ProjectRow {
 
         data class DeleteClicked(val projectId: Long) : Actions
         data class AddProjectClicked(val relatedProjectId: Long) : Actions
+        data class ProjectConfigClicked(val projectId: Long) : Actions
     }
 }
 
@@ -132,6 +133,10 @@ fun ProjectRow(
 
                             ProjectContextMenu.Actions.DeleteClicked -> {
                                 onAction(ProjectRow.Actions.DeleteClicked(uiState.projectId))
+                            }
+
+                            ProjectContextMenu.Actions.ProjectConfigClicked -> {
+                                onAction(ProjectRow.Actions.ProjectConfigClicked(uiState.projectId))
                             }
                         }
                     },

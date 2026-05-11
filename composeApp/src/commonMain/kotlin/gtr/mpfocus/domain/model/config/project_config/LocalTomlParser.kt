@@ -1,12 +1,14 @@
 package gtr.mpfocus.domain.model.config.project_config
 
 import com.akuleshov7.ktoml.Toml
-import gtr.mpfocus.domain.model.config.GlobalProjectConfig
+import gtr.mpfocus.domain.model.config.LocalProjectConfig
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 
 @Serializable
-data class GlobalTomlFile(
+data class LocalTomlFile(
+    val projectName: String? = null,
+    val projectDescription: String? = null,
     val file0: FileSection? = null,
     val file1: FileSection? = null,
     val file2: FileSection? = null,
@@ -19,11 +21,11 @@ data class GlobalTomlFile(
     val file9: FileSection? = null,
 )
 
-class GlobalTomlParser {
+class LocalTomlParser {
 
-    fun parseConfig(content: String): GlobalProjectConfig? {
+    fun parseConfig(content: String): LocalProjectConfig? {
         val tomlFile = try {
-            Toml.decodeFromString<GlobalTomlFile>(content)
+            Toml.decodeFromString<LocalTomlFile>(content)
         } catch (e: Exception) {
             // todo: report the error to a user
             return null
@@ -31,7 +33,7 @@ class GlobalTomlParser {
         return mapToConfig(tomlFile)
     }
 
-    private fun mapToConfig(tomlFile: GlobalTomlFile): GlobalProjectConfig {
+    private fun mapToConfig(tomlFile: LocalTomlFile): LocalProjectConfig {
         val fileNames = mapFileNames(
             tomlFile.file0,
             tomlFile.file1,
@@ -44,6 +46,10 @@ class GlobalTomlParser {
             tomlFile.file8,
             tomlFile.file9,
         )
-        return GlobalProjectConfig(fileNames = fileNames)
+        return LocalProjectConfig(
+            projectName = tomlFile.projectName,
+            projectDescription = tomlFile.projectDescription,
+            fileNames = fileNames,
+        )
     }
 }

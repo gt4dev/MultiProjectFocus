@@ -8,21 +8,20 @@ class GlobalTomlFileActions(
     private val fileSystemActions: FileSystemActions,
     private val appMainFolder: FolderPath,
 ) {
+    val filePath: FilePath
+        get() = FilePath(FILE_NAME, appMainFolder)
 
     fun fileExists(): Boolean {
-        val filePath = FilePath(FILE_NAME, appMainFolder)
         return fileSystemActions.pathExists(filePath)
     }
 
     fun createFile() {
         fileSystemActions.createFolder(appMainFolder)
-        val filePath = FilePath(FILE_NAME, appMainFolder)
         fileSystemActions.createFile(filePath)
         fileSystemActions.writeContent(filePath, FILE_DEFAULT_CONTENT)
     }
 
     fun readFileContent(): String {
-        val filePath = FilePath(FILE_NAME, appMainFolder)
         return fileSystemActions.readFile(filePath)
     }
 
@@ -30,14 +29,24 @@ class GlobalTomlFileActions(
         const val FILE_NAME = "global-project-config.toml"
 
         private val FILE_DEFAULT_CONTENT = """
-            # This file sets global file names used in projects in MultiProjectFocus.
-            # Feel free to name project files in any way you like.
+            # GLOBAL PROJECT CONFIG
             #
-            # Thanks of it, MultiProjectFocus knows which real file to open when you call CLI command like eg: ProjectCurrent.OpenFile(file:F1)
-            # Without it, MultiProjectFocus maps 'file1' to file name 'file1.md', file2 to 'file2.md' etc.
+            # This file globally defines file names used in all projects in MultiProjectFocus.
+            # Feel free to change it as you like.
             #
-            # To reset this file: remove it and restart the app. MultiProjectFocus will re-create this file.
-            
+            # To reset this file: remove it and restart the app. MPF will create this file on a start.
+            # 
+            # Thanks to this file, MPF knows how to map a 'file number' to a 'real file name',
+            # e.g. "file1" to "main-notes.md".
+            # Later, MPF can correctly perform commands like 'open file1 from the current project'.
+            # Without this file, MPF maps file1, file2, ... to default file names like:
+            # 'file1.md', 'file2.md', ...
+            #
+            # Uncomment particular [file..] sections to activate them.
+            #
+            #
+            #
+           
             [file1]
             name = "main-notes.md"
             desc = "File for notes regarding current project. For example: current goals / plans / tasks, notes about different aspects of the project, etc."
@@ -46,14 +55,13 @@ class GlobalTomlFileActions(
             name = "distractions.md"
             desc = "file for distractions you encounter when working on this project, but not related to it. For example: your thoughts, notes, etc. regarding other projects."
 
-            # uncomment below section to define your own file names for other files
             # 
             # [file3]
-            # name = ""
+            # name = "another-file-nr3.txt"
             # desc = ""
             # 
             # [file4]
-            # name = ""
+            # name = "yet-another-file-nr4.txt"
             # desc = ""
             # 
             # [file5]
