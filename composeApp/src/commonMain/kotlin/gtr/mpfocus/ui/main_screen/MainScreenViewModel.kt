@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import gtr.mpfocus.domain.model.config.GlobalProjectConfigService
 import gtr.mpfocus.domain.model.config.LocalProjectConfigService
+import gtr.mpfocus.domain.model.config.ProjectConfigService
 import gtr.mpfocus.domain.model.core.ActionResult
 import gtr.mpfocus.domain.model.core.Project
 import gtr.mpfocus.domain.model.core.ProjectActions
@@ -46,6 +47,7 @@ class MainScreenViewModel(
     private val projectReadModel: ProjectReadModel,
     private val localProjectConfigService: LocalProjectConfigService,
     private val globalProjectConfigService: GlobalProjectConfigService,
+    private val projectConfigService: ProjectConfigService,
     initialMessage: MessagePanelState? = null,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
 ) : ViewModel() {
@@ -129,6 +131,7 @@ class MainScreenViewModel(
         when (action) {
             ScreenHeaderUiActions.AddProjectClicked -> onOpenCreateProjectDialog(null)
             ScreenHeaderUiActions.ProjectConfigClicked -> onOpenProjectGlobalConfig()
+            ScreenHeaderUiActions.ReloadConfigClicked -> onReloadConfig()
         }
     }
 
@@ -351,6 +354,13 @@ class MainScreenViewModel(
         }
     }
 
+    private fun onReloadConfig() {
+        viewModelScopeWithExceptionHandler.launch {
+            projectConfigService.reloadConfigs()
+            showInfo("Config reloaded")
+        }
+    }
+
     private fun onMovePinnedProjectUp(projectId: Long) {
         movePinnedProject(projectId = projectId, offset = -1)
     }
@@ -505,6 +515,7 @@ class MainScreenViewModelFactoryProvider(
     private val projectReadModel: ProjectReadModel,
     private val localProjectConfigService: LocalProjectConfigService,
     private val globalProjectConfigService: GlobalProjectConfigService,
+    private val projectConfigService: ProjectConfigService,
     private val projectActionPreferences: ProjectActions.Preferences = ProjectActions.Preferences.UI,
 ) {
     fun createFactory(
@@ -518,6 +529,7 @@ class MainScreenViewModelFactoryProvider(
                     projectReadModel = projectReadModel,
                     localProjectConfigService = localProjectConfigService,
                     globalProjectConfigService = globalProjectConfigService,
+                    projectConfigService = projectConfigService,
                     initialMessage = initialMessage,
                     projectActionPreferences = projectActionPreferences,
                 )

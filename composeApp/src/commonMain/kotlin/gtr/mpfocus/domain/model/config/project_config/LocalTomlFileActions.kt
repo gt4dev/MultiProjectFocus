@@ -29,12 +29,13 @@ class LocalTomlFileActions(
         private val FILE_DEFAULT_CONTENT = """
             # LOCAL PROJECT CONFIG
             # 
-            # This file is optional.
-            # 
-            # This file allows you to set file names only for this project. It allows overriding global settings.
+            # This config is optional, but useful to customize particular project config.
+            # If not set then global config is used.
+            # Here you can set `project file names` used only in this project.
+            # You can override all or only selected configs.
             # For example:
             #   if the global `file1` is `notes_1.txt`
-            #   then you can rename it in this project to `my-notes.txt` or any other real file
+            #   then you can rename it in this project to `my-notes.txt`
             # 
             #   just uncomment and set:
             #   ```
@@ -42,64 +43,57 @@ class LocalTomlFileActions(
             #   name = "my-notes.md"
             #   ```
             # 
-            # Thanks to this file, MultiProjectFocus knows how to map a `file number` to a `real file name`.
-            # For example, `file1`, `file2`, etc. can be mapped to real files like `main-notes.txt`, `side-notes.txt`, ...
+            # Uncomment particular section eg: [file5] to activate it.
             # 
-            # Later, you can quickly access numbered files using keyboard shortcuts like:
-            # - "open file1 from the current project"
-            # - "open file2 from pinned project no. 3"
-            # 
-            # You can remove this file. In such a case, MPF uses global file names.
-            # 
-            # To quickly create this file, click the "Project config" option in the project context menu.
-            # It creates this file for the project and opens it for further editing.
-            #
-            # Uncomment particular [file..] sections to activate them.
+            # To reset this file: delete it, 2/ in app in selected project click the "Project config" option.
+            # Then MPF creates this file.
             #
             #
             #
             # projectName = 'your custom project name'
             # projectDescription = 'some description of the project'
             # 
+            # 
+            # 
             # [file1]
-            # name = "sample-file-name1.txt"
-            # desc = ""
+            # name = 'your-name-for-file1.txt'
+            # desc = ''
             # 
             # [file2]
-            # name = "sample-file-name2.txt"
-            # desc = ""
+            # name = 'your-name-for-file2.txt'
+            # desc = ''
             # 
             # [file3]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file4]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file5]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file6]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file7]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file8]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file9]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file0]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''            
         """.trimIndent()
     }
 }

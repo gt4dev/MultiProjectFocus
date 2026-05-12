@@ -36,6 +36,8 @@ sealed interface ScreenHeaderUiActions : UiActions {
     data object AddProjectClicked : ScreenHeaderUiActions
 
     data object ProjectConfigClicked : ScreenHeaderUiActions
+
+    data object ReloadConfigClicked : ScreenHeaderUiActions
 }
 
 @Composable
@@ -78,10 +80,17 @@ fun ScreenHeader(
                     onDismissRequest = { settingsMenuExpanded = false },
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Global project config") },
+                        text = { Text("Project config - global") },
                         onClick = {
                             settingsMenuExpanded = false
                             onAction(ScreenHeaderUiActions.ProjectConfigClicked)
+                        },
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Reload configs") },
+                        onClick = {
+                            settingsMenuExpanded = false
+                            onAction(ScreenHeaderUiActions.ReloadConfigClicked)
                         },
                     )
                 }

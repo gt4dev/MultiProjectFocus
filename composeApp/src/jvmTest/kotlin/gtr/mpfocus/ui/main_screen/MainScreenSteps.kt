@@ -19,6 +19,8 @@ import dev.mokkery.matcher.any
 import dev.mokkery.verifySuspend
 import gtr.mpfocus.domain.model.config.GlobalProjectConfigService
 import gtr.mpfocus.domain.model.config.LocalProjectConfigService
+import gtr.mpfocus.domain.model.config.NullReturningGlobalProjectConfig
+import gtr.mpfocus.domain.model.config.NullReturningLocalProjectConfig
 import gtr.mpfocus.domain.model.config.ProjectConfigService
 import gtr.mpfocus.domain.model.config.ProjectConfigServiceImpl
 import gtr.mpfocus.domain.model.core.Models
@@ -252,11 +254,11 @@ object MainScreenSteps {
 
     private fun HOTestCtx.initMainScreenViewModelFactory(): MainScreenViewModelFactoryProvider {
         koinAddIfMissing<GlobalProjectConfigService> {
-            GlobalProjectConfigService.NullConfig
+            NullReturningGlobalProjectConfig
         }
 
         koinAddIfMissing<LocalProjectConfigService> {
-            LocalProjectConfigService.NullConfig
+            NullReturningLocalProjectConfig
         }
 
         koinAddIfMissing<ProjectConfigService> {
@@ -272,6 +274,7 @@ object MainScreenSteps {
 
         return koinAddIfMissing {
             MainScreenViewModelFactoryProvider(
+                koin.get(),
                 koin.get(),
                 koin.get(),
                 koin.get(),

@@ -12,11 +12,7 @@ data class LocalProjectConfig(
 interface LocalProjectConfigService {
     suspend fun readConfig(folder: FolderPath): LocalProjectConfig?
 
+    fun invalidateCache()
+
     suspend fun openConfigFile(projectId: Long)
-
-    object NullConfig : LocalProjectConfigService {
-        override suspend fun readConfig(folder: FolderPath): LocalProjectConfig? = null
-
-        override suspend fun openConfigFile(projectId: Long) = Unit
-    }
 }

@@ -59,7 +59,7 @@ fun ProjectContextMenu(
                 },
             )
             DropdownMenuItem(
-                text = { Text("Project config") },
+                text = { Text("Project config - local") },
                 onClick = {
                     expanded = false
                     onAction(ProjectContextMenu.Actions.ProjectConfigClicked)

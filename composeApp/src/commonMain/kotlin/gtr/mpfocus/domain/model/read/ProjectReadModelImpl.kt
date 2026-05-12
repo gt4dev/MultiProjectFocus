@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onStart
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProjectReadModelImpl(
@@ -20,20 +21,33 @@ class ProjectReadModelImpl(
 
     override fun getCurrentProject(): Flow<ProjectWithFileNames?> {
         return projectRepository.getCurrentProject().flatMapLatest { project ->
-            if (project == null) {
-                flowOf(null)
-            } else {
-                buildProjectWithFileNames(project)
-            }
+            projectConfigService.configChanges
+                // onStart emits value that enforces computing 'main result'
+                // without waiting for real 1st value from 'config changes' flow
+                .onStart { emit(Unit) }.flatMapLatest {
+                    if (project == null) {
+                        flowOf(null)
+                    } else {
+                        buildProjectWithFileNames(project)
+                    }
+                }
         }
     }
 
     override fun getPinnedProjects(): Flow<List<ProjectWithFileNames>> {
-        return projectRepository.getPinnedProjects().flatMapLatest(::buildProjectsWithFileNames)
+        return projectRepository.getPinnedProjects().flatMapLatest { projects ->
+            projectConfigService.configChanges.onStart { emit(Unit) }.flatMapLatest {
+                buildProjectsWithFileNames(projects)
+            }
+        }
     }
 
     override fun getRegularProjects(): Flow<List<ProjectWithFileNames>> {
-        return projectRepository.getOtherProjects().flatMapLatest(::buildProjectsWithFileNames)
+        return projectRepository.getOtherProjects().flatMapLatest { projects ->
+            projectConfigService.configChanges.onStart { emit(Unit) }.flatMapLatest {
+                buildProjectsWithFileNames(projects)
+            }
+        }
     }
 
     private fun buildProjectsWithFileNames(projects: List<Project>): Flow<List<ProjectWithFileNames>> = flow {

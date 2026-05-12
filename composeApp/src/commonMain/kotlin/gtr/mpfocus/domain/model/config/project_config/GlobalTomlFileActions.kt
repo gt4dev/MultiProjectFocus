@@ -31,62 +31,63 @@ class GlobalTomlFileActions(
         private val FILE_DEFAULT_CONTENT = """
             # GLOBAL PROJECT CONFIG
             #
-            # This file globally defines file names used in all projects in MultiProjectFocus.
+            # This config globally defines project file names used in all projects in MultiProjectFocus.
             # Feel free to change it as you like.
             #
-            # To reset this file: remove it and restart the app. MPF will create this file on a start.
+            # To reset this file: 1/ remove it, 2/ restart the app. MPF will create this file on a start.
             # 
-            # Thanks to this file, MPF knows how to map a 'file number' to a 'real file name',
-            # e.g. "file1" to "main-notes.md".
-            # Later, MPF can correctly perform commands like 'open file1 from the current project'.
-            # Without this file, MPF maps file1, file2, ... to default file names like:
-            # 'file1.md', 'file2.md', ...
+            # Thanks to this file, MPF knows how to map a 'file number' to a 'real file name', e.g. "file1" to "main-notes.md".
+            # Later, you can quickly access numbered files using keyboard shortcuts like:
+            # - "open file1 from the current project"
+            # - "open file2 from pinned project no. 3"
             #
-            # Uncomment particular [file..] sections to activate them.
+            # Without this config, MPF uses default file names like: file1='file1.md', file2='file2.md' , ...
+            #
+            # Uncomment particular section eg: [file5] to activate it.
             #
             #
             #
-           
+            
             [file1]
-            name = "main-notes.md"
-            desc = "File for notes regarding current project. For example: current goals / plans / tasks, notes about different aspects of the project, etc."
-
+            name = 'main-notes.md'
+            desc = 'File for any notes regarding this project. For example: 1/ current plans / tasks, 2/ notes how to do sth, etc.'
+            
             [file2]
-            name = "distractions.md"
-            desc = "file for distractions you encounter when working on this project, but not related to it. For example: your thoughts, notes, etc. regarding other projects."
-
+            name = 'distractions.md'
+            desc = 'File for distractions not related to this project, but worth noting for later. For example: 1/ your ideas what to change on "other projects", 2/ tasks to do later etc.'
+            
             # 
             # [file3]
-            # name = "another-file-nr3.txt"
-            # desc = ""
+            # name = 'another-file-nr3.txt'
+            # desc = ''
             # 
             # [file4]
-            # name = "yet-another-file-nr4.txt"
-            # desc = ""
+            # name = 'yet-another-file-nr4.txt'
+            # desc = ''
             # 
             # [file5]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file6]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file7]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file8]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file9]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
             # 
             # [file0]
-            # name = ""
-            # desc = ""
+            # name = ''
+            # desc = ''
         """.trimIndent()
     }
 }

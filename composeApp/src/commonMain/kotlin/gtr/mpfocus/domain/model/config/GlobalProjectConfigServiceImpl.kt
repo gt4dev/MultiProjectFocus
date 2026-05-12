@@ -31,6 +31,10 @@ class GlobalProjectConfigServiceImpl(
         return config
     }
 
+    override fun invalidateCache() {
+        cache = null
+    }
+
     override suspend fun openConfigFile() {
         if (!globalTomlFileActions.fileExists()) {
             globalTomlFileActions.createFile()

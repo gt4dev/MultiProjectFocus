@@ -31,6 +31,10 @@ class LocalProjectConfigServiceImpl(
         return config
     }
 
+    override fun invalidateCache() {
+        // no cache yet
+    }
+
     override suspend fun openConfigFile(projectId: Long) {
         try {
             val project = projectRepository.getProject(projectId)

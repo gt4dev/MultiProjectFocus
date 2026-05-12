@@ -2,13 +2,30 @@
 
 This document describes how to write tests with the HOTest framework.
 
-The core role of the HOTest framework is to enable writing human-readable tests - tests that are easy to read and explain the 'business idea' of the production code to the reader.
+The core role of the HOTest framework is to enable writing human-readable tests, that is: tests that are easy to read and explain the 'business idea' behind the production code.
 HOTest mixes the approaches of Gherkin language and Kotlin language.
 The final result is Kotlin code, but as human-friendly as possible.
 Any low-level Kotlin code may be used in a test if it is practical and increases the brevity of the test code.
 
+## Priorities in HOTest
 
-## core definitions
+The highest priority of HOTest is to enable writing tests/scenarios that are easy for humans to read and that use *business language* to explain the ideas behind the code.
+Therefore, tests should avoid technical language as much as possible and primarily use business-oriented language.
+
+The second important priority is creating reusable step definitions.
+When writing tests, you also create a set of steps that can later be reused across many tests/scenarios.
+Each step definition should express a specific *business action* that can be executed on the System Under Test (SUT).
+
+Of course, keep the code pragmatic:
+
+* if a small amount of technical language simplifies test scenarios, then use it,
+* if a step cannot realistically be reused and must be specialized, then make it specialized.
+
+These two factors speed up both reading and writing tests.
+You mainly need to add steps for new features while reusing steps created previously for older scenarios.
+
+
+## Core Definitions
 Each test is equivalent to a test scenario.
 A test is a regular Kotlin function annotated with @Test.
 
@@ -21,7 +38,7 @@ Usually it is some call to production code which has business meaning, like:
 
 
 
-## step definition
+## Step Definition
 A 'step definition' is a notion from the gherkin / cucumber framework.
 A 'step definition' is an implementation of a function called in a test.
 
@@ -33,8 +50,14 @@ For example:
 1/ placed in the same package as `interface ProductRepository`, here it is the package `com.mylogic.domain`
 2/ placed in kotlin object: `ProductRepositorySteps`
 
+Tests / scenarios themselves should not contain helper code.
+A test should only call steps. And steps can contain implementation details and helper logic.
 
-## test body location
+All logic related to test setup should be placed inside steps.
+Steps should be reusable and should not be tailored to a single scenario.
+Instead, they should be designed in a way that allows them to be used across many different scenarios.
+
+## Test Body Location
 each test should:
 1/ take its name from the component it tests
 2/ be placed in the package where the tested component resides
@@ -45,7 +68,7 @@ for example
     then the test should also be placed in `com.mylogic.domain`
 
 
-## test body content
+## Test Body Content
 The primary and most important aspect is to create test scenarios that are human-friendly and easy to read.
 Thus, steps in the scenario must be human-friendly and easy to understand.
 The style of language in tests should be similar to gherkin scenarios.
@@ -74,7 +97,7 @@ For example:
 `then 'payment component' is called to get payment`(123.45, USD)
 ```
 
-## internal data models used by steps
+## Internal Data Models Used by Steps
 In the above steps, the classes SampleProduct and InventoryReservation are used.
 These classes come from test code, not production code,
 because their presence increases the readability of the scenario / step.
@@ -91,7 +114,7 @@ For example:
   so `class InventoryReservation` should be nested in `object Models` in package `com.mylogic.domain.repositories`
 
 
-# keep 'expected values' and 'actual values' separated
+# Keep 'expected values' and 'actual values' separated
 - if a step is aimed to assert expected values against actual values
 - then the step parameters represent expected values
 
