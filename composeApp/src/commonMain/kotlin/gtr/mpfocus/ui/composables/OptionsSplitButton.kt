@@ -5,6 +5,7 @@ package gtr.mpfocus.ui.composables
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -15,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SplitButtonDefaults
-import androidx.compose.material3.SplitButtonLayout
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextOverflow
 
 object OptionsSplitButtonTestTags {
     const val LEADING_BUTTON = "options_split_button_leading_button"
@@ -54,7 +55,13 @@ fun OptionsSplitButton(
         trailingButtonDescription = trailingButtonDescription,
         leadingButtonModifier = Modifier.testTag(OptionsSplitButtonTestTags.LEADING_BUTTON),
         trailingButtonModifier = Modifier.testTag(OptionsSplitButtonTestTags.TRAILING_BUTTON),
-        leadingButtonContent = { Text(leadingButtonText) },
+        leadingButtonContent = {
+            Text(
+                text = leadingButtonText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
         dropdownContent = {
             options.forEachIndexed { index, option ->
                 DropdownMenuItem(
@@ -84,8 +91,10 @@ private fun OptionsSplitButtonScaffold(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
-        SplitButtonLayout(
-            leadingButton = {
+        Row {
+            Box(
+                modifier = Modifier.weight(1f, fill = false),
+            ) {
                 SimpleTooltip(text = leadingButtonDescription) {
                     SplitButtonDefaults.OutlinedLeadingButton(
                         onClick = onLeadingClick,
@@ -94,13 +103,13 @@ private fun OptionsSplitButtonScaffold(
                         leadingButtonContent()
                     }
                 }
-            },
-            trailingButton = {
+            }
+            Box {
                 SimpleTooltip(text = trailingButtonDescription) {
                     SplitButtonDefaults.OutlinedTrailingButton(
                         checked = expanded,
                         onCheckedChange = onExpandedChange,
-                        modifier = trailingButtonModifier
+                        modifier = trailingButtonModifier,
                     ) {
                         val rotation: Float by
                         animateFloatAsState(
@@ -119,8 +128,8 @@ private fun OptionsSplitButtonScaffold(
                         )
                     }
                 }
-            },
-        )
+            }
+        }
 
         DropdownMenu(expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
             dropdownContent()

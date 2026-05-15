@@ -2,14 +2,13 @@ package gtr.mpfocus.ui.composables
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import gtr.mpfocus.domain.model.core.ProjectFile
 import gtr.mpfocus.domain.model.read.FileName
 import gtr.mpfocus.ui.core.UiActions
-
 
 object ProjectRow {
 
@@ -86,10 +84,8 @@ fun ProjectRow(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 SimpleTooltip(text = "Set the project as 'current project'.") {
@@ -115,6 +111,8 @@ fun ProjectRow(
                     availableFiles = uiState.availableFiles,
                     onAction = onAction,
                 )
+
+                Spacer(modifier = Modifier.weight(1f))
 
                 PinButton(
                     isPinned = uiState.isPinned,
@@ -183,6 +181,7 @@ private fun OpenFileSplitButton(
     initialSelectedFile: ProjectFile,
     availableFiles: List<FileName>,
     onAction: (ProjectRow.Actions) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var selectedFile by remember {
         mutableStateOf(initialSelectedFile)
@@ -211,7 +210,8 @@ private fun OpenFileSplitButton(
                     )
                 )
             }
-        }
+        },
+        modifier = modifier,
     )
 }
 
