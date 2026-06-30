@@ -13,11 +13,13 @@
 - [Sample use cases](#sample-use-cases)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Ask for Help](#ask-for-help)
+- [Support MPF](#support-mpf)
 - [Others](#others)
 
 # Video introduction
 
-<a href="https://youtu.be/IZDgkaZPkcc">
+<a href="https://youtu.be/Me6jOl_mx14">
     <img src="./assets/docs/yt-intro-thumbnail.png" width="80%" alt="video introduction to MPF">
 </a>
 
@@ -206,6 +208,23 @@ Below table list hot key [definied here](./AutoHotKey/MultiProjectFocus.ahk), re
 | `CapsLock + P, 3, 5`                      | Open pinned project 3 file 5                          |
 | `CapsLock + P, 4, F`                      | Open pinned project 4 folder                          |
 
+
+# Support MPF
+
+You can support MPF’s development with a donation:  
+[Donate with PayPal](https://paypal.me/TasksBooster)
+
+You can also support MPF by liking and sharing videos about it:  
+[MPF on YouTube](https://www.youtube.com/@MultiProjectFocus)
+
+Many, many thanks for your support!
+
+
+# Ask for Help
+
+If you have any problems, questions, or other feedback, please email me at “gt4dev at gmail” or open an issue in the project. You can also start a discussion. See the top tabs: “Issues” or “Discussions”.
+
+
 # Others
 
 ## Your data and privacy safety
@@ -219,14 +238,3 @@ Your project files are not read nor processed by MPF.
 You can modify this project in any way you need, but only for your personal, private, or professional needs.  
 You are not allowed to modify the code and publish it as your own.  
 You can distribute the original sources as they are, without modifications.
-
-## Contact
-
-In case of problems or unclear cases, please email me or report an issue in the project.  
-It is valuable to me because it gives feedback on what must be refined.
-
-
-## What next
-
-The project is still under development.  
-Please stay tuned for further improvements.   
